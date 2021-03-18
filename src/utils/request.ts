@@ -66,10 +66,15 @@ const errorHandler = (error: { response: Response }): Response => {
  */
 const request = extend({
   prefix: 'https://fall-relation.megahealth.cn',
-  errorHandler, // 默认错误处理
-  headers: {
-    Authorization: 'Bearer ' + localStorage.getItem('token') || '',
-  },
+  errorHandler,
+});
+
+request.interceptors.request.use((url, options: any) => {
+  options.headers.Authorization =
+    'Bearer ' + localStorage.getItem('token') || '';
+  return {
+    options: { ...options, interceptors: true },
+  };
 });
 
 export default request;
