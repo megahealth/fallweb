@@ -48,6 +48,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
       mode="inline"
       theme="light"
       className="progressbar"
+      siderCollapsed
     >
       {renderMenu(menusData)}
     </Menu>
