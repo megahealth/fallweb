@@ -9,7 +9,7 @@ export interface UserInfoParamsType {
 }
 
 export async function queryLogin(params: LoginParamsType) {
-  return request('/api/login', {
+  return request('/login', {
     method: 'POST',
     data: params,
   });

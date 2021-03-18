@@ -46,7 +46,7 @@ const UserSettingLayout: FC<HeaderLayoutProps> = ({ global, dispatch }) => {
       }}
     >
       <Dropdown overlay={menu} placement="bottomRight">
-        <span style={{ cursor: 'pointer', color: '#fff', fontSize: 16 }}>
+        <span style={{ cursor: 'pointer', fontSize: 16 }}>
           {userInfo.username} <DownOutlined />
         </span>
       </Dropdown>

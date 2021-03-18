@@ -4,30 +4,30 @@
 
   /***系统头部***/
   .contentHeader {
-    height: 44px;
-    line-height: 44px;
     display: flex;
     justify-content: space-between;
+    height: 60px;
     padding: 0 24px;
-    background: url(../../assets/headerbg.png) 100%/100% no-repeat;
+    line-height: 60px;
+    background: #fff;
   }
 
   /***系统内容区域***/
   .content {
-    flex: auto;
     display: flex;
+    flex: auto;
+    min-height: 280px;
     margin: 16px 24px;
     padding: 24px;
     background: #fff;
-    min-height: 280px;
     & > div {
       width: 100%;
     }
   }
   .footerContent {
     height: 40px;
-    line-height: 40px;
     padding: 0 24px;
+    line-height: 40px;
     text-align: center;
   }
 }

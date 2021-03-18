@@ -60,18 +60,22 @@ const LoginForm: FC<LoginFormProps & ParentProps> = ({
         )}
       </div>
       <Form.Item
-        name="username"
+        name="name"
         rules={[
           {
             required: true,
             message: '请输入用户名',
+          },
+          {
+            pattern: new RegExp('^\\w+$', 'g'),
+            message: '账号必须字母或数字',
           },
         ]}
       >
         <Input
           prefix={<UserOutlined />}
           onChange={handleChange}
-          placeholder="请输入用户名: admin"
+          placeholder="请输入用户名"
         />
       </Form.Item>
       <Form.Item
@@ -80,10 +84,6 @@ const LoginForm: FC<LoginFormProps & ParentProps> = ({
           { required: true, message: '请输入密码' },
           { min: 6, message: '密码最少6位数' },
           { max: 18, message: '密码最多18位数' },
-          {
-            pattern: new RegExp('^\\w+$', 'g'),
-            message: '账号必须字母或数字',
-          },
         ]}
       >
         <Input
@@ -91,7 +91,7 @@ const LoginForm: FC<LoginFormProps & ParentProps> = ({
           type="password"
           autoComplete="off"
           onChange={handleChange}
-          placeholder="请输入密码: 123456"
+          placeholder="请输入密码"
         />
       </Form.Item>
 

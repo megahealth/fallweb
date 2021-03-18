@@ -37,17 +37,15 @@ const LoginModel: LoginModelType = {
     *queryLogin({ payload }, { call, put }) {
       // const { name } = yield select((state: ConnectState) => state.global);
       const response = yield call(queryLogin, { ...payload });
-      if (response.status === 'ok') {
+      console.log(response);
+      if (response.code === 0) {
         yield put({
           type: 'save',
           payload: {
-            userInfo: response.currentAuthority,
+            userInfo: response.msg,
           },
         });
-        localStorage.setItem(
-          'userid',
-          JSON.stringify(response.currentAuthority.userid),
-        );
+        localStorage.setItem('userid', JSON.stringify(response.msg.user_id));
         message.success('登录成功！');
         history.replace('/');
       } else {
@@ -71,11 +69,11 @@ const LoginModel: LoginModelType = {
     },
     *logout(_, { call }) {
       const response = yield call(logout);
-      if (response.status === 'ok') {
+      if (response.code === 0) {
         localStorage.removeItem('userid');
         history.replace({
           pathname: '/login',
-          search: `timestamp=${new Date().getTime()}`,
+          // search: `timestamp=${new Date().getTime()}`,
         });
       }
     },

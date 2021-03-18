@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout } from 'antd';
 import HeaderContent from './header';
 import MenuContent from './menu';
+// import UserSetting from './header/userSetting';
 import styles from './index.less';
 
 const { Header, Content, Sider } = Layout;
@@ -15,6 +16,7 @@ export default (props: any) => {
       <Layout style={{ padding: 0 }}>
         <Sider width={200} style={{ background: '#fff' }}>
           <MenuContent />
+          {/* <UserSetting></UserSetting> */}
         </Sider>
         <Content className={styles.content}>{props.children}</Content>
       </Layout>

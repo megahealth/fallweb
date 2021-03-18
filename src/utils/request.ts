@@ -65,8 +65,8 @@ const errorHandler = (error: { response: Response }): Response => {
  * 配置request请求时的默认参数
  */
 const request = extend({
+  prefix: 'https://fall-relation.megahealth.cn',
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
 });
 
 export default request;

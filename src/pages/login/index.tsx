@@ -12,7 +12,7 @@ export interface LoginLayoutProps {
 }
 
 export interface SubmitValProps {
-  username: string;
+  name: string;
   password: string;
 }
 
@@ -37,11 +37,7 @@ const Login: FC<LoginLayoutProps> = ({ dispatch }) => {
                 className={styles.logo}
                 style={{ textAlign: 'center' }}
               >
-                <span
-                  style={{ fontSize: 22, fontWeight: 600, color: '#1abc9c' }}
-                >
-                  数据管理平台
-                </span>
+                <span className="text-gray-900 text-3xl">跌倒监测平台</span>
               </Col>
             </Row>
             <LoginForm onSubmit={handleSubmit} />
