@@ -2,7 +2,7 @@ import { defineConfig } from 'umi';
 import { resolve } from 'path';
 
 export default defineConfig({
-  title: '管理平台业务模版',
+  title: '跌倒监测系统',
   hash: true,
   antd: {},
   dva: {
