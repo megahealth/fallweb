@@ -27,10 +27,6 @@ export default defineConfig({
   theme: {
     '@primary-color': '#293AB9',
   },
-  tailwindcss: {
-    // tailwindCssFilePath: '@/tailwind.css',
-    // tailwindConfigFilePath: 'tailwind.config.js' // 默认取值 tailwindConfigFilePath || join(process.env.APP_ROOT || api.cwd, 'tailwind.config.js'),,
-  },
   proxy: {
     '/api': {
       target: 'http://128.1.1.1:8010/',
