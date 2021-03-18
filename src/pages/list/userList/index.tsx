@@ -3,9 +3,9 @@ import { connect } from 'umi';
 import { Divider, Badge } from 'antd';
 import TableComponent from '@/components/tableComponent';
 import { ColumnsType } from 'antd/es/table';
-import { QueryTableState, Loading } from '@/models/connect';
+import { QueryUserState, Loading } from '@/models/connect';
 import FilterRegion from './components/filterRegion';
-import { QueryTableProps } from './queryTable';
+import { QueryTableProps } from './userList';
 
 type RecordType = {};
 // const columns: ColumnsType<RecordType> = [
@@ -16,8 +16,8 @@ type RecordType = {};
 //   },
 // ];
 
-const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
-  const { queryTableSource } = queryTable;
+const UserList: FC<QueryTableProps> = ({ dispatch, queryUser, loading }) => {
+  const { queryUserSource } = queryUser;
   function setStepFormValues(record: any) {
     console.log(record);
   }
@@ -40,37 +40,29 @@ const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
 
   useEffect(() => {
     dispatch({
-      type: 'queryTable/queryTableList',
+      type: 'queryUser/queryUserList',
       payload: {},
     });
   }, []);
 
   const columns: ColumnsType<RecordType> = [
     {
-      title: 'sn',
-      key: 'sn',
-      dataIndex: 'sn',
-    },
-    {
-      title: 'device_id',
-      dataIndex: 'device_id',
+      title: 'user_id',
+      key: 'user_id',
+      dataIndex: 'user_id',
       // ellipsis: true,
     },
     {
-      title: 'parent_id',
-      dataIndex: 'parent_id',
+      title: 'name',
+      dataIndex: 'name',
     },
     {
-      title: 'parent_name',
-      dataIndex: 'parent_name',
+      title: 'group_name',
+      dataIndex: 'group_name',
     },
     {
-      title: 'sub_id',
-      dataIndex: 'sub_id',
-    },
-    {
-      title: 'sub_name',
-      dataIndex: 'sub_name',
+      title: 'group_id',
+      dataIndex: 'group_id',
     },
     {
       title: '操作',
@@ -93,11 +85,11 @@ const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
 
   return (
     <div>
-      <FilterRegion />
+      {/* <FilterRegion /> */}
       <TableComponent
         columns={columns}
-        dataSource={queryTableSource}
-        rowKey="sn"
+        dataSource={queryUserSource}
+        rowKey="user_id"
         loading={loading}
       />
     </div>
@@ -106,13 +98,13 @@ const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
 
 export default connect(
   ({
-    queryTable,
+    queryUser,
     loading,
   }: {
-    queryTable: QueryTableState;
+    queryUser: QueryUserState;
     loading: Loading;
   }) => ({
-    queryTable,
-    loading: loading.models.queryTable,
+    queryUser,
+    loading: loading.models.queryUser,
   }),
-)(QueryTable);
+)(UserList);

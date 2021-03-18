@@ -16,9 +16,9 @@ export async function queryLogin(params: LoginParamsType) {
 }
 
 export async function queryUserInfo(params: UserInfoParamsType) {
-  return request('/api/userInfo', {
-    method: 'POST',
-    data: params,
+  const id = params.userid;
+  return request(`/user/${id}`, {
+    method: 'GET',
   });
 }
 

@@ -3,7 +3,7 @@ import { connect, Dispatch } from 'umi';
 import { Loading, DashboardState } from '@/models/connect';
 import PageLoading from './components/PageLoading';
 
-const VisitCard = React.lazy(() => import('./components/visitCard'));
+// const VisitCard = React.lazy(() => import('./components/visitCard'));
 interface DashboardProps {
   dispatch: Dispatch;
   dashboard: DashboardState;
@@ -13,16 +13,17 @@ interface DashboardProps {
 const Dashboard: FC<DashboardProps> = ({ dashboard, dispatch, loading }) => {
   const { cardSource } = dashboard;
 
-  useEffect(() => {
-    dispatch({
-      type: 'dashboard/queryCard',
-      payload: {},
-    });
-  }, []);
+  // useEffect(() => {
+  //   dispatch({
+  //     type: 'dashboard/queryCard',
+  //     payload: {},
+  //   });
+  // }, []);
   return (
     <div>
       <Suspense fallback={<PageLoading />}>
-        <VisitCard totalData={cardSource} loading={loading} />
+        {/* <VisitCard totalData={cardSource} loading={loading} /> */}
+        ...
       </Suspense>
     </div>
   );

@@ -37,11 +37,11 @@ const GlobalModel: GlobalModelType = {
     *queryUserInfo({ payload }, { call, put }) {
       const userid = localStorage.getItem('userid');
       const response = yield call(queryUserInfo, { ...payload, userid });
-      if (response.status === 'ok') {
+      if (response.code === 0) {
         yield put({
           type: 'save',
           payload: {
-            userInfo: response.data,
+            userInfo: response.result,
           },
         });
       }

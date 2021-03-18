@@ -67,6 +67,9 @@ const errorHandler = (error: { response: Response }): Response => {
 const request = extend({
   prefix: 'https://fall-relation.megahealth.cn',
   errorHandler, // 默认错误处理
+  headers: {
+    Authorization: 'Bearer ' + localStorage.getItem('token') || '',
+  },
 });
 
 export default request;

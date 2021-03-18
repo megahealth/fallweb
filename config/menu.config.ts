@@ -1,6 +1,6 @@
 export default [
   {
-    title: 'Dashboard',
+    title: '监控页',
     link: '/dashboard',
     key: 'dashboard',
     icon: '',
@@ -13,38 +13,16 @@ export default [
     icon: '',
     children: [
       {
-        title: '查询列表',
+        title: '设备列表',
         link: '/list/queryTable',
         key: 'queryTable',
         icon: '',
         children: [],
       },
-    ],
-  },
-  {
-    title: '功能页',
-    link: '/func',
-    key: 'func',
-    icon: '',
-    children: [
       {
-        title: '拖拽排序',
-        link: '/func/draggable',
-        key: 'draggable',
-        icon: '',
-        children: [],
-      },
-      {
-        title: 'gg-editor',
-        link: '/func/ggEditor',
-        key: 'ggEditor',
-        icon: '',
-        children: [],
-      },
-      {
-        title: 'antvX6',
-        link: '/func/antvX6',
-        key: 'antvX6',
+        title: '用户列表',
+        link: '/list/userList',
+        key: 'queryUser',
         icon: '',
         children: [],
       },

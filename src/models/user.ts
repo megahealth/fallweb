@@ -1,42 +1,42 @@
 import { Effect, Reducer } from 'umi';
-import { queryTableList } from '@/services/list';
+import { queryUserList } from '@/services/user';
 
 interface TableListProps {
   [key: string]: any;
 }
 
-export interface QueryTableState {
+export interface QueryUserState {
   searchContentVal: string;
   statusVal: string;
-  queryTableSource: TableListProps[];
+  queryUserSource: TableListProps[];
 }
 
 export interface QueryTableType {
-  namespace: 'queryTable';
-  state: QueryTableState;
+  namespace: 'queryUser';
+  state: QueryUserState;
   effects: {
-    queryTableList: Effect;
+    queryUserList: Effect;
   };
   reducers: {
-    save: Reducer<QueryTableState>;
+    save: Reducer<QueryUserState>;
     // 启用 immer 之后
-    // save: ImmerReducer<QueryTableState>;
+    // save: ImmerReducer<QueryUserState>;
   };
 }
 
 const QueryTableModel: QueryTableType = {
-  namespace: 'queryTable',
+  namespace: 'queryUser',
   state: {
     searchContentVal: '',
     statusVal: '',
-    queryTableSource: [],
+    queryUserSource: [],
   },
   effects: {
-    *queryTableList(_, { call, put, select }) {
+    *queryUserList(_, { call, put, select }) {
       const { searchContentVal, statusVal } = yield select(
-        (state: QueryTableState) => state,
+        (state: QueryUserState) => state,
       );
-      const response = yield call(queryTableList, {
+      const response = yield call(queryUserList, {
         searchContentVal,
         statusVal,
       });
@@ -44,7 +44,7 @@ const QueryTableModel: QueryTableType = {
         yield put({
           type: 'save',
           payload: {
-            queryTableSource: response.result,
+            queryUserSource: response.result,
           },
         });
       }

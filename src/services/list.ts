@@ -6,8 +6,8 @@ export interface tableParamsType {
 }
 
 export async function queryTableList(params: tableParamsType) {
-  return request('/api/queryTableList', {
-    method: 'POST',
+  return request('/devices', {
+    method: 'GET',
     data: params,
   });
 }

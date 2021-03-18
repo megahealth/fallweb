@@ -45,7 +45,8 @@ const LoginModel: LoginModelType = {
             userInfo: response.msg,
           },
         });
-        localStorage.setItem('userid', JSON.stringify(response.msg.user_id));
+        localStorage.setItem('userid', response.msg.id);
+        localStorage.setItem('token', response.msg.token);
         message.success('登录成功！');
         history.replace('/');
       } else {
@@ -68,14 +69,10 @@ const LoginModel: LoginModelType = {
       });
     },
     *logout(_, { call }) {
-      const response = yield call(logout);
-      if (response.code === 0) {
-        localStorage.removeItem('userid');
-        history.replace({
-          pathname: '/login',
-          // search: `timestamp=${new Date().getTime()}`,
-        });
-      }
+      localStorage.clear();
+      history.replace({
+        pathname: '/login',
+      });
     },
   },
   reducers: {
