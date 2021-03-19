@@ -44,7 +44,7 @@ const QueryTableModel: QueryTableType = {
         yield put({
           type: 'save',
           payload: {
-            queryTableSource: response.result,
+            queryTableSource: response.msg,
           },
         });
       }

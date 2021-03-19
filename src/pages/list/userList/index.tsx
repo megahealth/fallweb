@@ -18,25 +18,6 @@ type RecordType = {};
 
 const UserList: FC<QueryTableProps> = ({ dispatch, queryUser, loading }) => {
   const { queryUserSource } = queryUser;
-  function setStepFormValues(record: any) {
-    console.log(record);
-  }
-  function getStatusText(status: number) {
-    if (status === 1) {
-      return (
-        <span>
-          <Badge status="processing" />
-          运行中
-        </span>
-      );
-    }
-    return (
-      <span>
-        <Badge status="default" />
-        关闭
-      </span>
-    );
-  }
 
   useEffect(() => {
     dispatch({
@@ -63,6 +44,18 @@ const UserList: FC<QueryTableProps> = ({ dispatch, queryUser, loading }) => {
     {
       title: 'group_id',
       dataIndex: 'group_id',
+    },
+    {
+      title: 'sex',
+      dataIndex: 'sex',
+    },
+    {
+      title: 'age',
+      dataIndex: 'age',
+    },
+    {
+      title: 'phone',
+      dataIndex: 'phone',
     },
     {
       title: '操作',

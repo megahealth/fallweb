@@ -36,14 +36,13 @@ const GlobalModel: GlobalModelType = {
   effects: {
     *queryUserInfo({ payload }, { call, put }) {
       const userid = localStorage.getItem('userid');
-      console.log(localStorage.getItem('token'));
       if (!userid) return;
       const response = yield call(queryUserInfo, { ...payload, userid });
       if (response.code === 0) {
         yield put({
           type: 'save',
           payload: {
-            userInfo: response.result,
+            userInfo: response.msg,
           },
         });
       }

@@ -18,25 +18,6 @@ type RecordType = {};
 
 const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
   const { queryTableSource } = queryTable;
-  function setStepFormValues(record: any) {
-    console.log(record);
-  }
-  function getStatusText(status: number) {
-    if (status === 1) {
-      return (
-        <span>
-          <Badge status="processing" />
-          运行中
-        </span>
-      );
-    }
-    return (
-      <span>
-        <Badge status="default" />
-        关闭
-      </span>
-    );
-  }
 
   useEffect(() => {
     dispatch({
@@ -47,30 +28,34 @@ const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
 
   const columns: ColumnsType<RecordType> = [
     {
+      title: 'device_id',
+      dataIndex: 'device_id',
+    },
+    {
       title: 'sn',
       key: 'sn',
       dataIndex: 'sn',
     },
     {
-      title: 'device_id',
-      dataIndex: 'device_id',
+      title: 'online',
+      dataIndex: 'online',
+    },
+    {
+      title: 'group_name',
+      dataIndex: 'group_name',
       // ellipsis: true,
     },
     {
-      title: 'parent_id',
-      dataIndex: 'parent_id',
+      title: 'group_id',
+      dataIndex: 'group_id',
     },
     {
-      title: 'parent_name',
-      dataIndex: 'parent_name',
+      title: 'count',
+      dataIndex: 'count',
     },
     {
-      title: 'sub_id',
-      dataIndex: 'sub_id',
-    },
-    {
-      title: 'sub_name',
-      dataIndex: 'sub_name',
+      title: 'drop',
+      dataIndex: 'drop',
     },
     {
       title: '操作',
