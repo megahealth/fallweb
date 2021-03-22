@@ -1,42 +1,42 @@
 import { Effect, Reducer } from 'umi';
-import { queryTableList } from '@/services/list';
+import { queryDeviceList } from '@/services/device';
 
-interface TableListProps {
+interface DeviceListProps {
   [key: string]: any;
 }
 
-export interface QueryTableState {
+export interface DeviceState {
   searchContentVal: string;
   statusVal: string;
-  queryTableSource: TableListProps[];
+  deviceList: DeviceListProps[];
 }
 
-export interface QueryTableType {
-  namespace: 'queryTable';
-  state: QueryTableState;
+export interface QueryDeviceType {
+  namespace: 'device';
+  state: DeviceState;
   effects: {
-    queryTableList: Effect;
+    queryDeviceList: Effect;
   };
   reducers: {
-    save: Reducer<QueryTableState>;
+    save: Reducer<DeviceState>;
     // 启用 immer 之后
-    // save: ImmerReducer<QueryTableState>;
+    // save: ImmerReducer<QueryDeviceState>;
   };
 }
 
-const QueryTableModel: QueryTableType = {
-  namespace: 'queryTable',
+const DeviceModel: QueryDeviceType = {
+  namespace: 'device',
   state: {
     searchContentVal: '',
     statusVal: '',
-    queryTableSource: [],
+    deviceList: [],
   },
   effects: {
-    *queryTableList(_, { call, put, select }) {
+    *queryDeviceList(_, { call, put, select }) {
       const { searchContentVal, statusVal } = yield select(
-        (state: QueryTableState) => state,
+        (state: DeviceState) => state,
       );
-      const response = yield call(queryTableList, {
+      const response = yield call(queryDeviceList, {
         searchContentVal,
         statusVal,
       });
@@ -44,7 +44,7 @@ const QueryTableModel: QueryTableType = {
         yield put({
           type: 'save',
           payload: {
-            queryTableSource: response.msg,
+            deviceList: response.msg,
           },
         });
       }
@@ -64,4 +64,4 @@ const QueryTableModel: QueryTableType = {
   },
 };
 
-export default QueryTableModel;
+export default DeviceModel;

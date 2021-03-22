@@ -14,8 +14,8 @@ export default [
     children: [
       {
         title: '设备列表',
-        link: '/list/queryTable',
-        key: 'queryTable',
+        link: '/list/queryDevice',
+        key: 'queryDevice',
         icon: '',
         children: [],
       },

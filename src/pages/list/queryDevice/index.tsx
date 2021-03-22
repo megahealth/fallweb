@@ -1,27 +1,20 @@
 import React, { FC, useEffect } from 'react';
 import { connect } from 'umi';
-import { Divider, Badge } from 'antd';
+import { Divider } from 'antd';
 import TableComponent from '@/components/tableComponent';
 import { ColumnsType } from 'antd/es/table';
-import { QueryTableState, Loading } from '@/models/connect';
+import { DeviceState, Loading } from '@/models/connect';
 import FilterRegion from './components/filterRegion';
-import { QueryTableProps } from './queryTable';
+import { QueryDeviceProps } from './queryDevice';
 
 type RecordType = {};
-// const columns: ColumnsType<RecordType> = [
-//   {
-//     key: 'name',
-//     title: 'Name',
-//     dataIndex: 'name',
-//   },
-// ];
 
-const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
-  const { queryTableSource } = queryTable;
+const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
+  const { deviceList } = device;
 
   useEffect(() => {
     dispatch({
-      type: 'queryTable/queryTableList',
+      type: 'device/queryDeviceList',
       payload: {},
     });
   }, []);
@@ -81,7 +74,7 @@ const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
       <FilterRegion />
       <TableComponent
         columns={columns}
-        dataSource={queryTableSource}
+        dataSource={deviceList}
         rowKey="sn"
         loading={loading}
       />
@@ -90,14 +83,8 @@ const QueryTable: FC<QueryTableProps> = ({ dispatch, queryTable, loading }) => {
 };
 
 export default connect(
-  ({
-    queryTable,
-    loading,
-  }: {
-    queryTable: QueryTableState;
-    loading: Loading;
-  }) => ({
-    queryTable,
-    loading: loading.models.queryTable,
+  ({ device, loading }: { device: DeviceState; loading: Loading }) => ({
+    device,
+    loading: loading.models.device,
   }),
-)(QueryTable);
+)(QueryDevice);

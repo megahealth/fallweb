@@ -5,7 +5,7 @@ export interface tableParamsType {
   statusVal: string;
 }
 
-export async function queryTableList(params: tableParamsType) {
+export async function queryDeviceList(params: tableParamsType) {
   return request('/devices', {
     method: 'GET',
     data: params,

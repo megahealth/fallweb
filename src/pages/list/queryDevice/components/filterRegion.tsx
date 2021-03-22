@@ -2,17 +2,17 @@ import React, { FC } from 'react';
 import { Input, Select, Button } from 'antd';
 import { connect } from 'umi';
 import { SearchOutlined } from '@ant-design/icons';
-import { QueryTableState } from '@/models/connect';
-import { QueryTableProps } from '../queryTable';
+import { DeviceState } from '@/models/connect';
+import { QueryDeviceProps } from '../queryDevice';
 
 const { Option } = Select;
 
-const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryTable }) => {
-  const { searchContentVal, statusVal } = queryTable;
+const ListFilterRegion: FC<QueryDeviceProps> = ({ dispatch, device }) => {
+  const { searchContentVal, statusVal } = device;
 
   const onInputChange = (e: any) => {
     dispatch({
-      type: 'queryTable/save',
+      type: 'device/save',
       payload: {
         searchContentVal: e.target.value,
       },
@@ -20,7 +20,7 @@ const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryTable }) => {
   };
   const onStatusChange = (val: string) => {
     dispatch({
-      type: 'queryTable/save',
+      type: 'device/save',
       payload: {
         statusVal: val,
       },
@@ -29,7 +29,7 @@ const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryTable }) => {
 
   const onSearchChange = () => {
     dispatch({
-      type: 'queryTable/queryTableList',
+      type: 'device/queryDeviceList',
       payload: {},
     });
   };
@@ -54,6 +54,6 @@ const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryTable }) => {
   );
 };
 
-export default connect(({ queryTable }: { queryTable: QueryTableState }) => ({
-  queryTable,
+export default connect(({ device }: { device: DeviceState }) => ({
+  device,
 }))(ListFilterRegion);
