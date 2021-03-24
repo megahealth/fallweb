@@ -7,9 +7,6 @@ let show = false;
 function Room(props: any) {
   const { e, f } = props;
 
-  const toDetail = (room: any) => {
-    window.location.hash = `/detail/${room}`;
-  };
   const style = (e: any, f: any) => {
     if (e === 0) {
       return Style.grey;
@@ -30,7 +27,6 @@ function Room(props: any) {
       className={`${Style.container} ${style(e, f)}`}
       onMouseEnter={() => (show = true)}
       onMouseLeave={() => (show = false)}
-      onClick={() => toDetail(props.room)}
     >
       <div className={Style.item}>房间号：{props.room || '--'}</div>
       <div className={Style.item}>呼吸率：{props.br || '--'}</div>

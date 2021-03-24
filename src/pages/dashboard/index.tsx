@@ -50,7 +50,7 @@ const Dashboard: FC<DashboardProps> = ({ dashboard, dispatch, loading }) => {
   }, 1000);
 
   useEffect(() => {
-    const client = mqtt.connect('ws://115.28.188.166:8083/mqtt', {
+    const client = mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
       clean: true,
       connectTimeout: 4000,
       clientId:
