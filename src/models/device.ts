@@ -11,7 +11,7 @@ export interface DeviceState {
   deviceList: DeviceListProps[];
 }
 
-export interface QueryDeviceType {
+export interface DeviceType {
   namespace: 'device';
   state: DeviceState;
   effects: {
@@ -24,7 +24,7 @@ export interface QueryDeviceType {
   };
 }
 
-const DeviceModel: QueryDeviceType = {
+const DeviceModel: DeviceType = {
   namespace: 'device',
   state: {
     searchContentVal: '',

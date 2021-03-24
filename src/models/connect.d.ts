@@ -3,6 +3,7 @@ import { LoginModelState } from './login';
 import { DeviceState } from './device';
 import { QueryUserState } from './user';
 import { DashboardState } from './dashboard';
+import { GroupState } from './group';
 
 export {
   GlobalModelState,
@@ -10,6 +11,7 @@ export {
   DeviceState,
   QueryUserState,
   DashboardState,
+  GroupState,
 };
 
 export interface Loading {
@@ -24,6 +26,7 @@ export interface Loading {
     device: boolean;
     queryUser: boolean;
     dashboard: boolean;
+    group: boolean;
   };
 }
 

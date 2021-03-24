@@ -22,7 +22,14 @@ export default [
       {
         title: '用户列表',
         link: '/list/userList',
-        key: 'queryUser',
+        key: 'userList',
+        icon: '',
+        children: [],
+      },
+      {
+        title: '分组列表',
+        link: '/list/groupList',
+        key: 'groupList',
         icon: '',
         children: [],
       },
