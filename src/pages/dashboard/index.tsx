@@ -43,10 +43,11 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
       console.log('连接失败:', error);
     });
     client.on('message', (topic, payload, packet) => {
-      const { sn, fall, breath } = JSON.parse(payload.toString());
+      const { sn, fall, breath, point } = JSON.parse(payload.toString());
       const o = messages.get(sn) || {};
       if (fall) o.fall = fall;
       if (breath) o.breath = breath;
+      if (point) o.point = point;
       messages.set(sn, o);
       setMessages(messages);
     });
@@ -73,10 +74,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
           node.children.forEach(node => {
             const ids = node.key.split('-');
             const id = ids[ids.length - 1];
-            const tfall = `web/${id}/fall`;
-            const tpoint = `web/${id}/poinet`;
-            const tbreath = `web/${id}/breath`;
-            ts.push(tfall, tpoint, tbreath);
+            ts.push(`web/${id}/#`);
             search(node, key);
           });
         }
