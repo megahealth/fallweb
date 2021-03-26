@@ -1,48 +1,21 @@
 import React, { FC, Suspense, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
-import { TreeSelect, Card, Spin } from 'antd';
-import { Loading, DashboardState } from '@/models/connect';
+import { TreeSelect, message, Spin } from 'antd';
+import { Loading, GroupState, DashboardState } from '@/models/connect';
 import mqtt from 'mqtt';
 import { useInterval } from 'ahooks';
 import styles from './index.less';
 import Room from './components/room';
+import { QueryDashboardProps } from './queryDashboard';
 
 const { SHOW_PARENT } = TreeSelect;
 
-const treeData = [
-  {
-    title: '兆观',
-    value: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: '实验室1',
-        value: '0-1-0',
-        key: '0-1-0',
-      },
-      {
-        title: '实验室2',
-        value: '0-1-1',
-        key: '0-1-1',
-      },
-      {
-        title: '实验室3',
-        value: '0-1-2',
-        key: '0-1-2',
-      },
-    ],
-  },
-];
-
-interface DashboardProps {
-  dispatch: Dispatch;
-  dashboard: DashboardState;
-  loading?: boolean;
-}
-
-const Dashboard: FC<DashboardProps> = ({ dashboard, dispatch, loading }) => {
+const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [messages, setMessages] = useState(new Map());
+  const [value, setValue] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const { groupList } = group;
 
   useInterval(() => {
     const m = new Map(messages);
@@ -57,10 +30,13 @@ const Dashboard: FC<DashboardProps> = ({ dashboard, dispatch, loading }) => {
         '877741DB6A0999626FA4E2A82BE75DC3FB5140DF4E7838BD3A480E357D6DEA2C',
       username: 'user_test1',
       password: '123456!',
+      reconnectPeriod: 0,
     });
     client.on('connect', () => {
       console.log('connect');
-      client.subscribe(['web/6/fall', 'web/6/breath'], console.log);
+      if (topics.length > 0) {
+        client.subscribe(topics, console.log);
+      }
       setConnectionStatus(true);
     });
     client.on('error', error => {
@@ -78,19 +54,49 @@ const Dashboard: FC<DashboardProps> = ({ dashboard, dispatch, loading }) => {
     return () => {
       client.end();
     };
+  }, [topics]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'group/queryGroupList',
+      payload: {},
+    });
   }, []);
 
-  const { cardSource } = dashboard;
+  const onChange = (keys: any) => {
+    console.log('onChange ', keys);
+    let ts: [] = [];
 
-  const [value, setValue] = useState(['0-1']);
+    const search = (node, key) => {
+      if (node.key === key) {
+        if (node.children.length > 0) {
+          node.children.forEach(node => {
+            const ids = node.key.split('-');
+            const id = ids[ids.length - 1];
+            const tfall = `web/${id}/fall`;
+            const tpoint = `web/${id}/poinet`;
+            const tbreath = `web/${id}/breath`;
+            ts.push(tfall, tpoint, tbreath);
+            search(node, key);
+          });
+        }
+      }
+    };
 
-  const onChange = (value: any) => {
-    console.log('onChange ', value);
-    setValue(value);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const node = groupList[0];
+      search(node, key);
+    }
+
+    console.log(ts);
+
+    setValue(keys);
+    setTopics(ts);
   };
 
   const tProps = {
-    treeData,
+    treeData: groupList,
     value,
     onChange: onChange,
     treeCheckable: true,
@@ -133,12 +139,15 @@ const Dashboard: FC<DashboardProps> = ({ dashboard, dispatch, loading }) => {
 export default connect(
   ({
     dashboard,
+    group,
     loading,
   }: {
     dashboard: DashboardState;
+    group: GroupState;
     loading: Loading;
   }) => ({
     dashboard,
-    loading: loading.effects['dashboard/queryCard'],
+    group,
+    loading: loading.models.group,
   }),
 )(Dashboard);

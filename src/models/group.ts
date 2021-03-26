@@ -1,13 +1,12 @@
 import { Effect, Reducer } from 'umi';
 import { queryGroupList } from '@/services/group';
-import MultiwayTree from './tree';
 
 interface GroupListProps {
   [key: string]: any;
 }
 
 export interface GroupState {
-  groupList: [][];
+  groupList: [];
 }
 
 export interface GroupType {
@@ -31,26 +30,44 @@ const GroupModel: GroupType = {
       const response = yield call(queryGroupList);
       if (response.code === 0) {
         const list = response.msg;
-        const parent = list[0].length > 1 ? list[0] : null;
-        const self = list[0].length > 1 ? list[1] : list[0];
+        // const parent = list[0].length > 1 ? list[0][0] : null;
+        const self = list[0].length > 1 ? list[1][0] : list[0][0];
         const child = list[1];
 
-        // const tree = new MultiwayTree();
-        // tree.add(self)
-        // tree.add(2, 1, tree.traverseBF)
-        // tree.add(3, 1, tree.traverseBF)
-        // tree.add(4, 2, tree.traverseBF)
-        // for (let i = 0; i < child.length; i++) {
-        //   const e = child[i];
-        //   console.log(e)
-        //   tree.add(e.sub_id, e.parent_id, tree.traverseBF)
-        // }
-        // console.log(tree)
+        let root = {
+          title: self.sub_name,
+          key: self.parent_id + '-' + self.sub_id,
+          parent_id: self.parent_id,
+          sub_id: self.sub_id,
+          parent_name: self.parent_name,
+          sub_name: self.sub_name,
+          children: [],
+        };
+        for (let i = 0; i < child.length; i++) {
+          const n = child[i];
+          if (root.parent_id > n.parent_id) {
+            root = n;
+          }
+        }
+
+        const add = (c: any) => {
+          for (let i = 0; i < child.length; i++) {
+            const n = child[i];
+            if (n.parent_id == c.sub_id) {
+              n.title = n.sub_name;
+              n.key = n.parent_id + '-' + n.sub_id;
+              c.children.push(n);
+              add(n);
+            }
+          }
+          return c;
+        };
+        // console.log(add(root))
 
         yield put({
           type: 'save',
           payload: {
-            groupList: response.msg,
+            groupList: [add(root)],
           },
         });
       }
