@@ -56,6 +56,7 @@ const LoginModel: LoginModelType = {
             isError: true,
           },
         });
+        yield logout();
       }
     },
     *getUserInfo({ payload }, { call, put, select }) {

@@ -1,7 +1,12 @@
 import React, { FC, Suspense, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
-import { TreeSelect, message, Spin } from 'antd';
-import { Loading, GroupState, DashboardState } from '@/models/connect';
+import { TreeSelect, message, Spin, Empty } from 'antd';
+import {
+  Loading,
+  GroupState,
+  DashboardState,
+  GlobalModelState,
+} from '@/models/connect';
 import mqtt from 'mqtt';
 import { useInterval } from 'ahooks';
 import styles from './index.less';
@@ -10,11 +15,18 @@ import { QueryDashboardProps } from './queryDashboard';
 
 const { SHOW_PARENT } = TreeSelect;
 
-const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
+const Dashboard: FC<QueryDashboardProps> = ({
+  group,
+  global,
+  dispatch,
+  loading,
+}) => {
+  const groupKeys = JSON.parse(localStorage.getItem('groupKeys') || '[]');
+  const localTopics = JSON.parse(localStorage.getItem('topics') || '[]');
   const [connectionStatus, setConnectionStatus] = useState(false);
   const [messages, setMessages] = useState(new Map());
-  const [value, setValue] = useState([]);
-  const [topics, setTopics] = useState([]);
+  const [value, setValue] = useState(groupKeys);
+  const [topics, setTopics] = useState(localTopics);
   const { groupList } = group;
 
   useInterval(() => {
@@ -23,13 +35,12 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
   }, 1000);
 
   useEffect(() => {
+    console.log(global.userInfo);
     const client = mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
       clean: true,
       connectTimeout: 4000,
-      clientId:
-        '877741DB6A0999626FA4E2A82BE75DC3FB5140DF4E7838BD3A480E357D6DEA2C',
-      username: 'user_test1',
-      password: '123456!',
+      clientId: global.userInfo.user_id,
+      username: 'user_' + global.userInfo.name,
       reconnectPeriod: 0,
     });
     client.on('connect', () => {
@@ -51,11 +62,14 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
       messages.set(sn, o);
       setMessages(messages);
     });
+    client.on('close', () => {
+      console.log('close connect');
+    });
 
     return () => {
       client.end();
     };
-  }, [topics]);
+  }, [global, topics]);
 
   useEffect(() => {
     dispatch({
@@ -66,17 +80,20 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
 
   const onChange = (keys: any) => {
     console.log('onChange ', keys);
+    console.log('groupList: ', groupList);
     let ts: [] = [];
 
     const search = (node, key) => {
-      if (node.key === key) {
-        if (node.children.length > 0) {
-          node.children.forEach(node => {
-            const ids = node.key.split('-');
-            const id = ids[ids.length - 1];
-            ts.push(`web/${id}/#`);
-            search(node, key);
-          });
+      const len = node && node.children && node.children.length;
+      if (len > 0) {
+        node.children.forEach(node => {
+          search(node, key);
+        });
+      } else {
+        if (node.key === key) {
+          const ids = node.key.split('-');
+          const id = ids[ids.length - 1];
+          ts.push(`web/${id}/#`);
         }
       }
     };
@@ -87,27 +104,27 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
       search(node, key);
     }
 
-    console.log(ts);
+    console.log(keys);
+    console.log('ts:', ts);
+    console.log('keys:', keys);
 
     setValue(keys);
+    localStorage.setItem('groupKeys', JSON.stringify(keys));
     setTopics(ts);
-  };
-
-  const tProps = {
-    treeData: groupList,
-    value,
-    onChange: onChange,
-    treeCheckable: true,
-    showCheckedStrategy: SHOW_PARENT,
-    placeholder: '请选择群组',
-    style: {
-      width: '100%',
-    },
+    localStorage.setItem('topics', JSON.stringify(ts));
   };
 
   return (
     <div>
-      <TreeSelect {...tProps} />
+      <TreeSelect
+        treeData={groupList}
+        value={value}
+        onChange={onChange}
+        treeCheckable={true}
+        showCheckedStrategy={SHOW_PARENT}
+        placeholder="请选择群组"
+        style={{ width: '100%' }}
+      />
       <Spin tip="连接中..." spinning={!connectionStatus}>
         <div className={styles.devices}>
           {[...messages.keys()].map(key => {
@@ -128,6 +145,11 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, dispatch, loading }) => {
               <Room key={key} room={key} br={breath} e={e} f={f} b={b} d={d} />
             );
           })}
+          {messages.size == 0 && (
+            <div className={styles.emptyBox}>
+              <Empty />
+            </div>
+          )}
         </div>
       </Spin>
     </div>
@@ -138,14 +160,17 @@ export default connect(
   ({
     dashboard,
     group,
+    global,
     loading,
   }: {
     dashboard: DashboardState;
     group: GroupState;
+    global: GlobalModelState;
     loading: Loading;
   }) => ({
     dashboard,
     group,
+    global,
     loading: loading.models.group,
   }),
 )(Dashboard);
