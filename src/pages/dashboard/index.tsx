@@ -38,10 +38,11 @@ const Dashboard: FC<QueryDashboardProps> = ({
     console.log(global.userInfo);
     const client = mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
       clean: true,
+      keepalive: 10,
       connectTimeout: 4000,
       clientId: global.userInfo.user_id,
       username: 'user_' + global.userInfo.name,
-      reconnectPeriod: 0,
+      reconnectPeriod: 1000,
     });
     client.on('connect', () => {
       console.log('connect');
@@ -79,24 +80,40 @@ const Dashboard: FC<QueryDashboardProps> = ({
   }, []);
 
   const onChange = (keys: any) => {
-    console.log('onChange ', keys);
-    console.log('groupList: ', groupList);
+    // console.log('onChange ', keys);
+    // console.log('groupList: ', groupList);
     let ts: [] = [];
 
     const search = (node, key) => {
       const len = node && node.children && node.children.length;
-      if (len > 0) {
-        node.children.forEach(node => {
-          search(node, key);
-        });
-      } else {
-        if (node.key === key) {
+      // console.log('len ',len)
+      // console.log(node.key, key)
+
+      if (node.key === key) {
+        if (len > 0) {
+          node.children.forEach(n => {
+            search(n, n.key);
+          });
+        } else {
           const ids = node.key.split('-');
           const id = ids[ids.length - 1];
-          ts.push(`web/${id}/#`);
+          const topic = `web/${id}/#`;
+          ts.push(topic);
+        }
+      } else {
+        if (len > 0) {
+          node.children.forEach(n => {
+            if (n.key === key) {
+              search(n, n.key);
+            } else {
+              search(n, key);
+            }
+          });
         }
       }
     };
+    // 如果当前节点key等于要查找的key，全选叶节点(有子节点，向下遍历，没有子节点，添加)
+    // 如果当前节点key不等于要查找的key，且有子节点，继续向下遍历；没有子节点，。
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
@@ -104,7 +121,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
       search(node, key);
     }
 
-    console.log(keys);
     console.log('ts:', ts);
     console.log('keys:', keys);
 
