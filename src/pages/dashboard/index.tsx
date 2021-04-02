@@ -47,13 +47,17 @@ const Dashboard: FC<QueryDashboardProps> = ({
     deviceList.forEach(d => {
       const sn = d.sn;
       const o = msgs.get(sn);
+      if (topics.length == 0) {
+        msgs.clear();
+        return;
+      }
       if (type == 'all') {
         msgs.set(sn, { ...d, ...o });
       } else {
         msgs.delete(sn);
       }
     });
-  }, [deviceList, type]);
+  }, [deviceList, type, topics]);
 
   useEffect(() => {
     dispatch({
