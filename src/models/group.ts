@@ -63,11 +63,14 @@ const GroupModel: GroupType = {
           return c;
         };
         // console.log(add(root))
+        const data = add(root);
+        const arr = [];
+        arr.push(data);
 
         yield put({
           type: 'save',
           payload: {
-            groupList: [add(root)],
+            groupList: arr,
           },
         });
       }

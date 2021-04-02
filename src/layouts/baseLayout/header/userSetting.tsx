@@ -11,10 +11,10 @@ import { LoginModelState, GlobalModelState } from '@/models/connect';
 
 export interface HeaderLayoutProps {
   dispatch: Dispatch;
-  global: GlobalModelState;
+  login: LoginModelState;
 }
 
-const UserSettingLayout: FC<HeaderLayoutProps> = ({ global, dispatch }) => {
+const UserSettingLayout: FC<HeaderLayoutProps> = ({ login, dispatch }) => {
   function handleSubmit(event: ClickParam) {
     const { key } = event;
     if (key === 'logout') {
@@ -23,7 +23,7 @@ const UserSettingLayout: FC<HeaderLayoutProps> = ({ global, dispatch }) => {
       });
     }
   }
-  const { userInfo } = global;
+  // const { userInfo } = login;
 
   const menu = (
     <Menu onClick={handleSubmit}>
@@ -47,7 +47,7 @@ const UserSettingLayout: FC<HeaderLayoutProps> = ({ global, dispatch }) => {
     >
       <Dropdown overlay={menu} placement="bottomRight">
         <span style={{ cursor: 'pointer', fontSize: 16 }}>
-          {userInfo.name} <DownOutlined />
+          {localStorage.getItem('name')} <DownOutlined />
         </span>
       </Dropdown>
     </div>

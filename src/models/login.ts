@@ -45,8 +45,9 @@ const LoginModel: LoginModelType = {
             userInfo: response.msg,
           },
         });
-        localStorage.setItem('userid', response.msg.id);
+        localStorage.setItem('user_id', response.msg.user_id);
         localStorage.setItem('token', response.msg.token);
+        localStorage.setItem('name', response.msg.name);
         message.success('登录成功！');
         history.replace('/');
       } else {

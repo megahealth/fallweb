@@ -31,6 +31,11 @@ const GlobalModel: GlobalModelType = {
     userInfo: {
       id: '',
       name: '',
+      group_id: '',
+      user_id: '',
+      phone: '',
+      age: '',
+      sex: '',
     },
   },
   effects: {
@@ -60,19 +65,19 @@ const GlobalModel: GlobalModelType = {
     //   state.name = action.payload;
     // },
   },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname }) => {
-        const reg = /^\/login/g;
-        if (!reg.test(pathname)) {
-          dispatch({
-            type: 'queryUserInfo',
-            payload: {},
-          });
-        }
-      });
-    },
-  },
+  // subscriptions: {
+  //   setup({ dispatch, history }) {
+  //     return history.listen(({ pathname }) => {
+  //       const reg = /^\/login/g;
+  //       if (!reg.test(pathname)) {
+  //         dispatch({
+  //           type: 'queryUserInfo',
+  //           payload: {},
+  //         });
+  //       }
+  //     });
+  //   },
+  // },
 };
 
 export default GlobalModel;
