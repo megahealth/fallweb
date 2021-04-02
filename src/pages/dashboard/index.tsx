@@ -1,4 +1,4 @@
-import React, { FC, Suspense, useEffect, useState } from 'react';
+import React, { FC, useMemo, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import { TreeSelect, message, Select, Empty, Row, Col } from 'antd';
 import {
@@ -17,8 +17,7 @@ import { QueryDashboardProps } from './queryDashboard';
 const { SHOW_PARENT } = TreeSelect;
 const { Option } = Select;
 
-// let client: MqttClient;
-// const msgs = new Map();
+const msgs = new Map();
 
 const Dashboard: FC<QueryDashboardProps> = ({
   group,
@@ -34,12 +33,14 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const [connectStatus, setConnectStatus] = useState('Connect');
   const [isSubed, setIsSub] = useState(false);
   const [messages, setMessages] = useState(new Map());
+  // const data = useMemo(()=>({messages}),[messages]);
 
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
 
+  console.log('start');
+
   useEffect(() => {
-    console.log('getlist');
     dispatch({
       type: 'group/queryGroupList',
       payload: {},
@@ -87,12 +88,14 @@ const Dashboard: FC<QueryDashboardProps> = ({
         message.success('mqtt reconnecting');
       });
       client.on('message', (topic, payload) => {
+        // console.log(payload.toString())
         const { sn, fall, breath, point } = JSON.parse(payload.toString());
-        const o = messages.get(sn) || {};
+        const o = msgs.get(sn) || {};
         if (fall) o.fall = fall;
         if (breath) o.breath = breath;
         if (point) o.point = point;
-        messages.set(sn, o);
+        msgs.set(sn, o);
+        // setMessages(new Map(messages));
       });
     }
 
@@ -135,8 +138,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
   };
 
   useInterval(() => {
-    const m = new Map(messages);
+    // console.log(messages)
+    const m = new Map(msgs);
     setMessages(m);
+    console.log(m);
   }, 1000);
 
   const onChange = (keys: any) => {
