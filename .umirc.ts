@@ -4,6 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
   title: '跌倒监测系统',
   hash: true,
+  history: { type: 'hash' },
   antd: {},
   dva: {
     hmr: true,
