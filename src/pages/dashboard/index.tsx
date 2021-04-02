@@ -7,6 +7,7 @@ import {
   DashboardState,
   GlobalModelState,
   LoginModelState,
+  DeviceState,
 } from '@/models/connect';
 import mqtt, { MqttClient } from 'mqtt';
 import { useInterval } from 'ahooks';
@@ -23,6 +24,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
   group,
   global,
   login,
+  device,
   dispatch,
   // loading,
 }) => {
@@ -33,16 +35,34 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const [connectStatus, setConnectStatus] = useState('Connect');
   const [isSubed, setIsSub] = useState(false);
   const [messages, setMessages] = useState(new Map());
-  // const data = useMemo(()=>({messages}),[messages]);
+  const [type, setType] = useState('all');
 
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
 
-  console.log('start');
+  const { groupList } = group;
+  const { deviceList } = device;
+
+  useEffect(() => {
+    deviceList.forEach(d => {
+      const sn = d.sn;
+      const o = msgs.get(sn);
+      if (type == 'all') {
+        msgs.set(sn, { ...d, ...o });
+      } else {
+        msgs.delete(sn);
+      }
+    });
+  }, [deviceList, type]);
 
   useEffect(() => {
     dispatch({
       type: 'group/queryGroupList',
+      payload: {},
+    });
+
+    dispatch({
+      type: 'device/queryDeviceList',
       payload: {},
     });
 
@@ -197,9 +217,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   const handleChange = value => {
     console.log(`selected ${value}`);
+    setType(value);
   };
-
-  const { groupList } = group;
 
   return (
     <div>
@@ -223,6 +242,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
           >
             <Option value="all">全部</Option>
             <Option value="online">在线</Option>
+            {/* <Option value="offline">离线</Option> */}
           </Select>
         </Col>
       </Row>
@@ -268,13 +288,14 @@ const Dashboard: FC<QueryDashboardProps> = ({
 };
 
 export default connect(({ // dashboard,
-  group, global, login }: // loading,
+  group, global, login, device }: // loading,
 { // dashboard: DashboardState;
-  group: GroupState; global: GlobalModelState; login: LoginModelState }) => ({
+  group: GroupState; global: GlobalModelState; login: LoginModelState; device: DeviceState }) => ({
   // loading: Loading;
   // dashboard,
   group,
   global,
   login,
+  device,
   // loading: loading.models.group,
 }))(Dashboard);

@@ -3,6 +3,7 @@ import {
   GroupState,
   GlobalModelState,
   LoginModelState,
+  DeviceState,
 } from '@/models/connect';
 
 export interface QueryDashboardProps {
@@ -10,5 +11,6 @@ export interface QueryDashboardProps {
   group: GroupState;
   global: GlobalModelState;
   login: LoginModelState;
+  device: DeviceState;
   loading?: boolean;
 }
