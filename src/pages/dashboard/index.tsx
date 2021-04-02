@@ -45,6 +45,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
       type: 'group/queryGroupList',
       payload: {},
     });
+
+    return () => {
+      mqttDisconnect();
+    };
   }, []);
 
   const mqttConnect = (host, mqttOption) => {
@@ -138,10 +142,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
   };
 
   useInterval(() => {
-    // console.log(messages)
     const m = new Map(msgs);
     setMessages(m);
-    console.log(m);
   }, 1000);
 
   const onChange = (keys: any) => {
