@@ -31,8 +31,8 @@ const GroupModel: GroupType = {
       if (response.code === 0) {
         const list = response.msg;
         // const parent = list[0].length > 1 ? list[0][0] : null;
-        const self = list[0].length > 1 ? list[1][0] : list[0][0];
-        const child = list[1];
+        const self = response.msg.parents_self[0];
+        const child = response.msg.children;
 
         let root = {
           title: self.sub_name,

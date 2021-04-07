@@ -1,6 +1,18 @@
 import React, { FC, useMemo, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
-import { TreeSelect, message, Select, Empty, Row, Col } from 'antd';
+import {
+  TreeSelect,
+  message,
+  Select,
+  Empty,
+  Row,
+  Col,
+  Pagination,
+  Badge,
+  Button,
+  Space,
+} from 'antd';
+import { PoweroffOutlined } from '@ant-design/icons';
 import {
   Loading,
   GroupState,
@@ -32,13 +44,23 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const localTopics = JSON.parse(localStorage.getItem('topics') || '[]');
 
   const [client, setClient] = useState(null);
-  const [connectStatus, setConnectStatus] = useState('Connect');
-  const [isSubed, setIsSub] = useState(false);
+  const [connectStatus, setConnectStatus] = useState('UnConnected');
+  // UnConnected  未连接，初始状态
+  // Connecting   连接中
+  // Connected    已连接
+  // Reconnecting 重连中
+  // Offline      脱机
+  // Disconnected 代理通知断开连接
+  // Closed       连接已断开
+  const [isSub, setIsSub] = useState(false);
+  // true   已订阅
+  // false  取消订阅
   const [messages, setMessages] = useState(new Map());
   const [type, setType] = useState('all');
 
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
+  const [current, setCurrent] = useState(1);
 
   const { groupList } = group;
   const { deviceList } = device;
@@ -75,20 +97,22 @@ const Dashboard: FC<QueryDashboardProps> = ({
     };
   }, []);
 
-  const mqttConnect = (host, mqttOption) => {
-    setConnectStatus('Connecting');
-    setClient(mqtt.connect(host, mqttOption));
+  const mqttConnect = () => {
+    setMqttStatus('Connecting');
+    setClient(
+      mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
+        clean: true,
+        keepalive: 10,
+        connectTimeout: 4000,
+        clientId: localStorage.getItem('user_id'),
+        username: 'user_' + localStorage.getItem('name'),
+        reconnectPeriod: 1000,
+      }),
+    );
   };
 
   useEffect(() => {
-    mqttConnect('wss://wss8084.megahealth.cn/mqtt', {
-      clean: true,
-      keepalive: 10,
-      connectTimeout: 4000,
-      clientId: localStorage.getItem('user_id'),
-      username: 'user_' + localStorage.getItem('name'),
-      reconnectPeriod: 1000,
-    });
+    mqttConnect();
 
     return () => {
       mqttDisconnect();
@@ -98,32 +122,36 @@ const Dashboard: FC<QueryDashboardProps> = ({
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        setConnectStatus('Connected');
-        message.success('mqtt connect success');
+        setMqttStatus('Connected');
         if (topics.length > 0) {
-          // client.subscribe(topics, console.log);
           mqttSub(topics);
-          setIsSub(true);
         }
       });
       client.on('error', err => {
-        console.error('Connection error: ', err);
-        client.end();
-        message.success('mqtt disconnect');
+        // mqttDisconnect(err);
+        console.log(err);
       });
       client.on('reconnect', () => {
-        setConnectStatus('Reconnecting');
-        message.success('mqtt reconnecting');
+        setMqttStatus('Reconnecting');
       });
       client.on('message', (topic, payload) => {
-        // console.log(payload.toString())
         const { sn, fall, breath, point } = JSON.parse(payload.toString());
         const o = msgs.get(sn) || {};
         if (fall) o.fall = fall;
         if (breath) o.breath = breath;
         if (point) o.point = point;
         msgs.set(sn, o);
-        // setMessages(new Map(messages));
+      });
+      client.on('close', () => {
+        setMqttStatus('Closed');
+      });
+      client.on('disconnect', packet => {
+        setMqttStatus('Disconnected');
+        // 代理通知断开连接
+      });
+      client.on('offline', () => {
+        setMqttStatus('Offline');
+        // 客户端脱机，紧接着会close
       });
     }
 
@@ -135,9 +163,15 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const mqttDisconnect = () => {
     if (client) {
       client.end(() => {
-        message.error('mqtt disconnect');
+        // message.error('client end');
       });
     }
+  };
+
+  const setMqttStatus = (status: string) => {
+    console.log(status);
+    message.success(status);
+    setConnectStatus(status);
   };
 
   const mqttSub = topics => {
@@ -216,7 +250,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
     setTopics(ts);
     localStorage.setItem('topics', JSON.stringify(ts));
 
-    mqttSub(ts);
+    if (ts.length > 0) {
+      mqttSub(ts);
+    }
   };
 
   const handleChange = value => {
@@ -224,10 +260,31 @@ const Dashboard: FC<QueryDashboardProps> = ({
     setType(value);
   };
 
+  const showTotal = (total: number) => {
+    return `共 ${total} 台`;
+  };
+
+  const onSizeChange = page => {
+    console.log(page);
+    setCurrent(page);
+  };
+
+  const onConnectBtn = () => {
+    if (connectStatus === 'Connected') {
+      mqttDisconnect();
+    } else {
+      if (client) {
+        client.reconnect();
+      } else {
+        mqttConnect();
+      }
+    }
+  };
+
   return (
     <div>
       <Row gutter={16}>
-        <Col span={18}>
+        <Col span={15}>
           <TreeSelect
             treeData={groupList}
             value={value}
@@ -238,7 +295,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
             style={{ width: '100%' }}
           />
         </Col>
-        <Col span={6}>
+        <Col span={3}>
           <Select
             defaultValue="all"
             style={{ width: '100%' }}
@@ -249,44 +306,80 @@ const Dashboard: FC<QueryDashboardProps> = ({
             {/* <Option value="offline">离线</Option> */}
           </Select>
         </Col>
+        <Col span={6}>
+          <Space align="center">
+            <Button
+              danger={connectStatus === 'Connected' ? true : false}
+              icon={<PoweroffOutlined />}
+              onClick={onConnectBtn}
+            >
+              {' '}
+              {connectStatus === 'Connected' ? '断开' : '连接'}{' '}
+            </Button>
+            <Badge
+              status={connectStatus === 'Connected' ? 'success' : 'error'}
+              text={connectStatus}
+            />
+            <Badge
+              status={
+                isSub && connectStatus === 'Connected' ? 'success' : 'error'
+              }
+              text={
+                isSub && connectStatus === 'Connected' ? '已订阅' : '未订阅'
+              }
+            />
+          </Space>
+        </Col>
       </Row>
       <div className={styles.devices}>
-        {[...messages.keys()].map(key => {
-          const data = messages.get(key);
-          const { e, f, b, d, c } = (data && data.fall) || {
-            e: 0,
-            f: 0,
-            b: 0,
-            d: 0,
-            c: 0,
-          };
-          const { b: breath } = (data && data.breath) || {
-            b: 0,
-          };
-          const { x, y } = (data && data.point) || {
-            x: 0,
-            y: 0,
-          };
-          return (
-            <Room
-              key={key}
-              room={key}
-              br={breath}
-              e={e}
-              f={f}
-              b={b}
-              d={d}
-              x={x}
-              y={y}
-            />
-          );
-        })}
+        {[...messages.keys()]
+          .slice((current - 1) * 10, current * 10)
+          .map(key => {
+            const data = messages.get(key);
+            const { e, f, b, d, c } = (data && data.fall) || {
+              e: 0,
+              f: 0,
+              b: 0,
+              d: 0,
+              c: 0,
+            };
+            const { b: breath } = (data && data.breath) || {
+              b: 0,
+            };
+            const { x, y } = (data && data.point) || {
+              x: 0,
+              y: 0,
+            };
+            return (
+              <Room
+                key={key}
+                room={key}
+                br={breath}
+                e={e}
+                f={f}
+                b={b}
+                d={d}
+                x={x}
+                y={y}
+              />
+            );
+          })}
         {messages.size == 0 && (
           <div className={styles.emptyBox}>
             <Empty />
           </div>
         )}
       </div>
+      <Pagination
+        size="small"
+        total={messages.size}
+        current={current}
+        pageSize={10}
+        showTotal={showTotal}
+        // showSizeChanger
+        showQuickJumper
+        onChange={onSizeChange}
+      />
     </div>
   );
 };
