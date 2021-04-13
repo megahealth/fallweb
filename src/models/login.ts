@@ -35,10 +35,8 @@ const LoginModel: LoginModelType = {
   },
   effects: {
     *queryLogin({ payload }, { call, put }) {
-      // const { name } = yield select((state: ConnectState) => state.global);
       const response = yield call(queryLogin, { ...payload });
-      console.log(response);
-      if (response.code === 0) {
+      if (response && response.code === 0) {
         yield put({
           type: 'save',
           payload: {
@@ -57,7 +55,6 @@ const LoginModel: LoginModelType = {
             isError: true,
           },
         });
-        yield logout();
       }
     },
     *getUserInfo({ payload }, { call, put, select }) {
