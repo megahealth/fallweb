@@ -1,13 +1,13 @@
 import request from '@/utils/request';
 
 export interface tableParamsType {
-  searchContentVal: string;
-  statusVal: string;
+  start: number;
+  limit: number;
 }
 
 export async function queryDeviceList(params: tableParamsType) {
-  return request('/devices', {
+  const { start, limit } = params;
+  return request(`/devices?start=${start}&limit=${limit}&orderby=asc`, {
     method: 'GET',
-    data: params,
   });
 }

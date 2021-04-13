@@ -1,14 +1,23 @@
 import { Effect, Reducer } from 'umi';
 import { queryDeviceList } from '@/services/device';
+import { queryGroupList } from '@/services/group';
 
 interface DeviceListProps {
   [key: string]: any;
 }
 
+interface Group {
+  sub_id: number;
+  parent_id: number;
+  sub_name: string;
+  dev_cnt: number;
+  parent_name: string;
+}
+
 export interface DeviceState {
   searchContentVal: string;
-  statusVal: string;
   deviceList: DeviceListProps[];
+  count: number;
 }
 
 export interface DeviceType {
@@ -16,6 +25,7 @@ export interface DeviceType {
   state: DeviceState;
   effects: {
     queryDeviceList: Effect;
+    queryDeviceCount: Effect;
   };
   reducers: {
     save: Reducer<DeviceState>;
@@ -28,23 +38,35 @@ const DeviceModel: DeviceType = {
   namespace: 'device',
   state: {
     searchContentVal: '',
-    statusVal: '',
     deviceList: [],
+    count: 0,
   },
   effects: {
-    *queryDeviceList(_, { call, put, select }) {
-      const { searchContentVal, statusVal } = yield select(
-        (state: DeviceState) => state,
-      );
-      const response = yield call(queryDeviceList, {
-        searchContentVal,
-        statusVal,
-      });
+    *queryDeviceList({ payload }, { call, put, select }) {
+      const { searchContentVal } = yield select((state: DeviceState) => state);
+      const response = yield call(queryDeviceList, { ...payload });
       if (response.code === 0) {
         yield put({
           type: 'save',
           payload: {
             deviceList: response.msg,
+          },
+        });
+      }
+    },
+    *queryDeviceCount(_, { call, put, select }) {
+      const response = yield call(queryGroupList);
+      if (response.code === 0) {
+        const child = response.msg.children;
+        let count = 0;
+        child.forEach((g: Group) => {
+          count += g.dev_cnt;
+        });
+
+        yield put({
+          type: 'save',
+          payload: {
+            count,
           },
         });
       }

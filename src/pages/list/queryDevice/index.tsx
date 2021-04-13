@@ -1,6 +1,6 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import { connect } from 'umi';
-import { Divider } from 'antd';
+import { Divider, Table } from 'antd';
 import TableComponent from '@/components/tableComponent';
 import { ColumnsType } from 'antd/es/table';
 import { DeviceState, Loading } from '@/models/connect';
@@ -10,11 +10,23 @@ import { QueryDeviceProps } from './queryDevice';
 type RecordType = {};
 
 const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
-  const { deviceList } = device;
+  const { deviceList, count } = device;
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     dispatch({
       type: 'device/queryDeviceList',
+      payload: {
+        start: pageSize * (current - 1),
+        limit: pageSize,
+      },
+    });
+  }, [current, pageSize]);
+
+  useEffect(() => {
+    dispatch({
+      type: 'device/queryDeviceCount',
       payload: {},
     });
   }, []);
@@ -69,6 +81,18 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
     },
   ];
 
+  const onPageChange = (current: number, pageSize: number) => {
+    setCurrent(current);
+    setPageSize(pageSize);
+  };
+
+  const pagination = {
+    total: count,
+    current,
+    pageSize,
+    onChange: onPageChange,
+  };
+
   return (
     <div>
       <FilterRegion />
@@ -77,6 +101,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
         dataSource={deviceList}
         rowKey="sn"
         loading={loading}
+        pagination={pagination}
       />
     </div>
   );
