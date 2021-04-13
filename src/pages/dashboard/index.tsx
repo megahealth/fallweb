@@ -42,9 +42,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
 }) => {
   const groupKeys = JSON.parse(localStorage.getItem('groupKeys') || '[]');
   const localTopics = JSON.parse(localStorage.getItem('topics') || '[]');
+  const groupCounts = JSON.parse(localStorage.getItem('groupCounts') || '[]');
 
-  const [client, setClient] = useState(null);
-  const [connectStatus, setConnectStatus] = useState('UnConnected');
+  const [client, setClient] = useState<MqttClient>();
+  const [connectStatus, setConnectStatus] = useState<string>('UnConnected');
   // UnConnected  未连接，初始状态
   // Connecting   连接中
   // Connected    已连接
@@ -52,18 +53,34 @@ const Dashboard: FC<QueryDashboardProps> = ({
   // Offline      脱机
   // Disconnected 代理通知断开连接
   // Closed       连接已断开
-  const [isSub, setIsSub] = useState(false);
+  const [isSub, setIsSub] = useState<boolean>(false);
   // true   已订阅
   // false  取消订阅
   const [messages, setMessages] = useState(new Map());
-  const [type, setType] = useState('all');
+  const [type, setType] = useState<string>('all');
 
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
+  const [counts, setCounts] = useState(groupCounts);
   const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const { groupList } = group;
-  const { deviceList } = device;
+  const { deviceList, count } = device;
+
+  useEffect(() => {
+    console.log('merge');
+    deviceList.forEach(d => {
+      const sn = d.sn;
+      const o = msgs.get(sn);
+      if (type == 'all') {
+        msgs.set(sn, { ...d, ...o });
+      } else {
+        msgs.delete(sn);
+      }
+    });
+    console.log(msgs);
+  }, [deviceList, type, topics]);
 
   useEffect(() => {
     deviceList.forEach(d => {
@@ -371,10 +388,11 @@ const Dashboard: FC<QueryDashboardProps> = ({
         )}
       </div>
       <Pagination
+        className={styles.custonPagi}
         size="small"
-        total={messages.size}
+        total={count}
         current={current}
-        pageSize={10}
+        pageSize={pageSize}
         showTotal={showTotal}
         // showSizeChanger
         showQuickJumper
