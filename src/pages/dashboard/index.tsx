@@ -152,9 +152,13 @@ const Dashboard: FC<QueryDashboardProps> = ({
       client.on('message', (topic, payload) => {
         const { sn, fall, breath, point } = JSON.parse(payload.toString());
         const o = msgs.get(sn) || {};
-        if (fall) o.fall = fall;
+        if (fall) {
+          o.action_state = fall.a;
+          o.outdoor = fall.d;
+          o.count = fall.c;
+          o.roll = fall.r;
+        }
         if (breath) o.breath = breath;
-        if (point) o.point = point;
         msgs.set(sn, o);
       });
       client.on('close', () => {
@@ -175,6 +179,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   useInterval(() => {
     const m = new Map(msgs);
+    // console.log(m)
     setMessages(m);
   }, interval);
 

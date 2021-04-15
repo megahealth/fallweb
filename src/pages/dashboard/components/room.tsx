@@ -57,7 +57,7 @@ function Room(props: any) {
   return (
     <div style={{ position: 'relative' }} className={`${Style.container}`}>
       <div className={Style.head} style={{ background: color }}>
-        {props.sn}
+        {props.sn}-{props.count}
       </div>
       <div className={Style.status}>
         <span className={Style.breath}>
