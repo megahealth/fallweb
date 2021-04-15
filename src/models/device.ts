@@ -17,6 +17,7 @@ interface Group {
 export interface DeviceState {
   searchContentVal: string;
   deviceList: DeviceListProps[];
+  selectedDeviceList: DeviceListProps[];
   count: number;
 }
 
@@ -26,6 +27,7 @@ export interface DeviceType {
   effects: {
     queryDeviceList: Effect;
     queryDeviceCount: Effect;
+    queryDevicesBySelectedGroup: Effect;
   };
   reducers: {
     save: Reducer<DeviceState>;
@@ -39,6 +41,7 @@ const DeviceModel: DeviceType = {
   state: {
     searchContentVal: '',
     deviceList: [],
+    selectedDeviceList: [],
     count: 0,
   },
   effects: {
@@ -53,6 +56,31 @@ const DeviceModel: DeviceType = {
           },
         });
       }
+    },
+    *queryDevicesBySelectedGroup({ payload }, { call, put, select }) {
+      const { selectedGroups } = payload;
+      var list = [];
+      for (let i = 0; i < selectedGroups.length; i++) {
+        const group = selectedGroups[i];
+        const { sub_id, dev_cnt } = group;
+        if (dev_cnt === 0) continue;
+        const response = yield call(queryDeviceList, {
+          group: sub_id,
+          start: 0,
+          limit: dev_cnt,
+        });
+        if (response.code === 0) {
+          // console.log(response.msg)
+          list = list.concat(response.msg);
+        }
+      }
+      console.log(list);
+      yield put({
+        type: 'save',
+        payload: {
+          selectedDeviceList: list,
+        },
+      });
     },
     *queryDeviceCount(_, { call, put, select }) {
       const response = yield call(queryGroupList);

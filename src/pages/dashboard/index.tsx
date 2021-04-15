@@ -26,11 +26,24 @@ import { useInterval } from 'ahooks';
 import styles from './index.less';
 import Room from './components/room';
 import { QueryDashboardProps } from './queryDashboard';
+import { createGroupTreeList } from '@/utils/utils';
 
 const { SHOW_PARENT } = TreeSelect;
 const { Option } = Select;
 
 const msgs = new Map();
+
+// 【拼接数组的分页算法】
+// 默认选全部分组    groupId [1,2,3,4,5...]
+// 获取分组数量列表groupList [9,10,111,34,2...]，计算设备总数count 166，默认每页10个
+// 每次切页都重新计算，根据当前页码，例如页码n，取10个，范围就是 (10n-9,10n)，start参数取 10n-10，limit 取 10，遍历 groupList 累加直到值大于等于start，记录此次累加值和累加结果，如果累加结果小于10n，再取一个值，直到结果大于等于10n，将几次累加值都保存到新的变量
+// 空间换时间，不必每次切换页面都重新计算，计算出每一页需要请求的分组参数，比如第一页，分组1和分组2的第一项；第二页，分组2的第二项到最后一项和分组3的第一项；第三页，分组3的第二项到第十一项
+// [[1,0,9],[2,0,1]]
+// [[2,1,10],[3,0,1]]
+// [[3,1,11]]
+// [[3,11,21]]
+// 简单点开始，获取所有分组所有设备，拼接成map放入内存
+// 订阅时也先订阅所有已选择的分组，直接动态更新上述map
 
 const Dashboard: FC<QueryDashboardProps> = ({
   group,
@@ -42,7 +55,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
 }) => {
   const groupKeys = JSON.parse(localStorage.getItem('groupKeys') || '[]');
   const localTopics = JSON.parse(localStorage.getItem('topics') || '[]');
-  const groupCounts = JSON.parse(localStorage.getItem('groupCounts') || '[]');
+  const localSelectedGroups = JSON.parse(
+    localStorage.getItem('localSelectedGroups') || '[]',
+  );
 
   const [client, setClient] = useState<MqttClient>();
   const [connectStatus, setConnectStatus] = useState<string>('UnConnected');
@@ -61,58 +76,16 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
-  const [counts, setCounts] = useState(groupCounts);
+  const [selectedGroups, setSelectedGroups] = useState(localSelectedGroups);
+
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const { groupList } = group;
-  const { deviceList, count } = device;
+  const [interval, setInterval] = useState(1000);
 
-  useEffect(() => {
-    console.log('merge');
-    deviceList.forEach(d => {
-      const sn = d.sn;
-      const o = msgs.get(sn);
-      if (type == 'all') {
-        msgs.set(sn, { ...d, ...o });
-      } else {
-        msgs.delete(sn);
-      }
-    });
-    console.log(msgs);
-  }, [deviceList, type, topics]);
-
-  useEffect(() => {
-    deviceList.forEach(d => {
-      const sn = d.sn;
-      const o = msgs.get(sn);
-      if (topics.length == 0) {
-        msgs.clear();
-        return;
-      }
-      if (type == 'all') {
-        msgs.set(sn, { ...d, ...o });
-      } else {
-        msgs.delete(sn);
-      }
-    });
-  }, [deviceList, type, topics]);
-
-  useEffect(() => {
-    dispatch({
-      type: 'group/queryGroupList',
-      payload: {},
-    });
-
-    dispatch({
-      type: 'device/queryDeviceList',
-      payload: {},
-    });
-
-    return () => {
-      mqttDisconnect();
-    };
-  }, []);
+  const { groupList: groupData } = group;
+  const { selectedDeviceList } = device;
+  const groupList = createGroupTreeList(groupData);
 
   const mqttConnect = () => {
     setMqttStatus('Connecting');
@@ -130,11 +103,35 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   useEffect(() => {
     mqttConnect();
-
-    return () => {
-      mqttDisconnect();
-    };
   }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: 'group/queryGroupList',
+      payload: {},
+    });
+  }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: 'device/queryDevicesBySelectedGroup',
+      payload: {
+        selectedGroups: selectedGroups,
+      },
+    });
+  }, [selectedGroups]);
+
+  useEffect(() => {
+    console.log('merge selectedDevices into msgs');
+    msgs.clear();
+
+    selectedDeviceList.forEach(d => {
+      const sn = d.sn;
+      const o = msgs.get(sn);
+      msgs.set(sn, { ...d, ...o });
+    });
+    console.log(msgs);
+  }, [selectedDeviceList]);
 
   useEffect(() => {
     if (client) {
@@ -145,7 +142,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
         }
       });
       client.on('error', err => {
-        // mqttDisconnect(err);
         console.log(err);
       });
       client.on('reconnect', () => {
@@ -176,6 +172,11 @@ const Dashboard: FC<QueryDashboardProps> = ({
       mqttDisconnect();
     };
   }, [client]);
+
+  useInterval(() => {
+    const m = new Map(msgs);
+    setMessages(m);
+  }, interval);
 
   const mqttDisconnect = () => {
     if (client) {
@@ -211,20 +212,28 @@ const Dashboard: FC<QueryDashboardProps> = ({
           console.log('Unsubscribe error', error);
           return;
         }
+        setTopics([]);
         setIsSub(false);
       });
     }
   };
 
-  useInterval(() => {
-    const m = new Map(msgs);
-    setMessages(m);
-  }, 1000);
-
   const onChange = (keys: any) => {
-    mqttUnSub();
+    if (topics && topics.length > 0) {
+      mqttUnSub();
+    }
+
+    if (keys.length === 0) {
+      setInterval(null);
+      // msgs.clear();
+      // messages.clear();
+      setMessages(new Map());
+    } else {
+      setInterval(1000);
+    }
 
     let ts: [] = [];
+    let nodes = [];
     const search = (node, key) => {
       const len = node && node.children && node.children.length;
       if (node.key === key) {
@@ -235,8 +244,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
         } else {
           const ids = node.key.split('-');
           const id = ids[ids.length - 1];
-          const topic = `web/${id}/#`;
-          ts.push(topic);
+          // const topic = `web/${id}/#`;
+          ts.push(`web/${id}/breath`);
+          ts.push(`web/${id}/fall`);
+          nodes.push(node);
         }
       } else {
         if (len > 0) {
@@ -266,8 +277,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
     localStorage.setItem('groupKeys', JSON.stringify(keys));
     setTopics(ts);
     localStorage.setItem('topics', JSON.stringify(ts));
+    setSelectedGroups(nodes);
+    localStorage.setItem('localSelectedGroups', JSON.stringify(nodes));
 
-    if (ts.length > 0) {
+    if (ts.length > 0 && connectStatus === 'Connected') {
       mqttSub(ts);
     }
   };
@@ -281,9 +294,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
     return `共 ${total} 台`;
   };
 
-  const onSizeChange = page => {
-    console.log(page);
-    setCurrent(page);
+  const onCurrentChange = current => {
+    console.log(current);
+    setCurrent(current);
   };
 
   const onConnectBtn = () => {
@@ -301,7 +314,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
   return (
     <div>
       <Row gutter={16}>
-        <Col span={15}>
+        <Col span={24}>
           <TreeSelect
             treeData={groupList}
             value={value}
@@ -312,18 +325,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
             style={{ width: '100%' }}
           />
         </Col>
-        <Col span={3}>
-          <Select
-            defaultValue="all"
-            style={{ width: '100%' }}
-            onChange={handleChange}
-          >
-            <Option value="all">全部</Option>
-            <Option value="online">在线</Option>
-            {/* <Option value="offline">离线</Option> */}
-          </Select>
-        </Col>
-        <Col span={6}>
+        {/* <Col span={6}>
           <Space align="center">
             <Button
               danger={connectStatus === 'Connected' ? true : false}
@@ -346,41 +348,40 @@ const Dashboard: FC<QueryDashboardProps> = ({
               }
             />
           </Space>
-        </Col>
+        </Col> */}
       </Row>
       <div className={styles.devices}>
-        {[...messages.keys()]
-          .slice((current - 1) * 10, current * 10)
-          .map(key => {
-            const data = messages.get(key);
-            const { e, f, b, d, c } = (data && data.fall) || {
-              e: 0,
-              f: 0,
-              b: 0,
-              d: 0,
-              c: 0,
-            };
-            const { b: breath } = (data && data.breath) || {
-              b: 0,
-            };
-            const { x, y } = (data && data.point) || {
-              x: 0,
-              y: 0,
-            };
-            return (
-              <Room
-                key={key}
-                room={key}
-                br={breath}
-                e={e}
-                f={f}
-                b={b}
-                d={d}
-                x={x}
-                y={y}
-              />
-            );
-          })}
+        {[...messages].slice((current - 1) * 10, current * 10).map(data => {
+          // const data = messages.get(key);
+          const { e, f, b, d, c } = (data && data[1].fall) || {
+            e: 0,
+            f: 0,
+            b: 0,
+            d: 0,
+            c: 0,
+          };
+          const { b: breath } = (data && data[1].breath) || {
+            b: 0,
+          };
+          const { x, y } = (data && data[1].point) || {
+            x: 0,
+            y: 0,
+          };
+          return (
+            <Room
+              key={data[0]}
+              room={data[0]}
+              online={data[1].online}
+              br={breath}
+              e={e}
+              f={f}
+              b={b}
+              d={d}
+              x={x}
+              y={y}
+            />
+          );
+        })}
         {messages.size == 0 && (
           <div className={styles.emptyBox}>
             <Empty />
@@ -390,13 +391,13 @@ const Dashboard: FC<QueryDashboardProps> = ({
       <Pagination
         className={styles.custonPagi}
         size="small"
-        total={count}
+        total={selectedDeviceList.length}
         current={current}
         pageSize={pageSize}
         showTotal={showTotal}
-        // showSizeChanger
+        showSizeChanger={false}
         showQuickJumper
-        onChange={onSizeChange}
+        onChange={onCurrentChange}
       />
     </div>
   );

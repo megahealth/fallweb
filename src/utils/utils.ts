@@ -1,3 +1,4 @@
+import { Groups } from '@/models/group';
 /**
  * menu Highlight key
  * @param pathname string
@@ -11,30 +12,44 @@ export const queryKeysByPath = (
   return { openKey: routes[0], selectKey: routes[1] || routes[0] };
 };
 
-export const searchNode = (node, key) => {
-  const len = node && node.children && node.children.length;
-  let ts = [];
-  if (node.key === key) {
-    if (len > 0) {
-      node.children.forEach(n => {
-        searchNode(n, n.key);
-      });
-    } else {
-      const ids = node.key.split('-');
-      const id = ids[ids.length - 1];
-      const topic = `web/${id}/#`;
-      ts.push(topic);
-    }
-  } else {
-    if (len > 0) {
-      node.children.forEach(n => {
-        if (n.key === key) {
-          searchNode(n, n.key);
-        } else {
-          searchNode(n, key);
-        }
-      });
+export const createGroupTreeList = (groupList: Groups) => {
+  if (groupList.children.length === 0) {
+    return [];
+  }
+  const self = groupList.parents_self[0];
+  const child = groupList.children;
+
+  let root = {
+    title: self.sub_name,
+    key: self.parent_id + '-' + self.sub_id,
+    parent_id: self.parent_id,
+    sub_id: self.sub_id,
+    parent_name: self.parent_name,
+    sub_name: self.sub_name,
+    children: [],
+  };
+  for (let i = 0; i < child.length; i++) {
+    const n = child[i];
+    if (root.parent_id > n.parent_id) {
+      root = n;
     }
   }
-  return ts;
+
+  const add = (c: any) => {
+    for (let i = 0; i < child.length; i++) {
+      const n = child[i];
+      if (n.parent_id == c.sub_id) {
+        n.title = n.sub_name;
+        n.key = n.parent_id + '-' + n.sub_id;
+        c.children.push(n);
+        add(n);
+      }
+    }
+    return c;
+  };
+  // console.log(add(root))
+  const data = add(root);
+  const arr = [];
+  arr.push(data);
+  return arr;
 };

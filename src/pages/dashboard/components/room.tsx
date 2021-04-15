@@ -1,44 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Style from './room.less';
-import { Button } from 'antd';
-
-let show = false;
+import 离线 from '@/assets/离线.png';
 
 function Room(props: any) {
-  const { e, f } = props;
+  // const [color, setColor] = useState('#999');
+  let color = '#999';
 
-  const style = (e: any, f: any) => {
-    if (e === 0) {
-      return Style.grey;
-    }
-    if (e === 1) {
-      // return Style.grey
-      if (f == 1) {
-        return Style.warning;
-      } else {
-        return Style.normal;
-      }
-    }
-  };
+  if (props.online === 1) {
+    color = '#51b988';
+  }
 
   return (
-    <div
-      style={{ position: 'relative' }}
-      className={`${Style.container} ${style(e, f)}`}
-      onMouseEnter={() => (show = true)}
-      onMouseLeave={() => (show = false)}
-    >
-      <div className={Style.item}>房间号：{props.room || '--'}</div>
-      <div className={Style.item}>呼吸率：{props.br || '--'}</div>
-      <div className={Style.item}>人体存在：{props.e ? '有人' : '无人'}</div>
-      <div className={Style.item}>
-        人体位置：x: {props.x} y: {props.y}
+    <div style={{ position: 'relative' }} className={`${Style.container}`}>
+      <div className={Style.head} style={{ background: color }}>
+        {props.room}
       </div>
-      <div className={Style.item}>区域人数：{props.c}</div>
-      <div className={Style.item}>在床离床：{props.b || '--'}</div>
-      <div className={Style.item}>
-        跌倒检测：
-        {props.f === 1 ? '有人跌倒' : props.f == 2 ? '低姿态' : '正常'}
+      <div className={Style.status}>
+        <span className={Style.breath}>呼吸率：16</span>
+        <img src={离线}></img>
+        <span className={Style.title}>设备离线</span>
       </div>
     </div>
   );
