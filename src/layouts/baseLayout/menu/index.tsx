@@ -3,6 +3,8 @@ import { Link, connect, useLocation, Loading } from 'umi';
 import { Menu } from 'antd';
 import { GlobalModelState } from '@/models/connect';
 import { queryKeysByPath } from '@/utils/utils';
+import 监控 from '@/assets/监控.png';
+import 文件夹 from '@/assets/文件夹.png';
 
 const { SubMenu, Item } = Menu;
 
@@ -19,7 +21,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
     const rows = Array.isArray(data) ? data : [];
     return rows.map(row => {
       if (row === undefined) return false;
-      const { title, link = '', key, children, ...restState } = row;
+      const { title, icon, link = '', key, children, ...restState } = row;
       if (children && children.length > 0) {
         const subMenu = renderMenu(children);
         return (
@@ -28,11 +30,21 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
           </SubMenu>
         );
       }
+      const img = icon => {
+        if (icon === '监控') {
+          return 监控;
+        } else {
+          return 文件夹;
+        }
+      };
       return (
         <Item key={key} title={title}>
           <Link to={{ pathname: link, state: { ...restState, key } }}>
-            {/* <Icon type={icon} /> */}
-            <span>{title}</span>
+            <img
+              src={img(icon)}
+              style={{ width: '25px', marginRight: '10px' }}
+            ></img>
+            <span style={{ fontSize: '16px' }}>{title}</span>
           </Link>
         </Item>
       );
@@ -49,6 +61,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
       theme="light"
       className="progressbar"
       siderCollapsed
+      style={{ background: '#5ec394' }}
     >
       {renderMenu(menusData)}
     </Menu>

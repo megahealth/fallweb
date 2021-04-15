@@ -122,7 +122,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
   }, [selectedGroups]);
 
   useEffect(() => {
-    console.log('merge selectedDevices into msgs');
     msgs.clear();
 
     selectedDeviceList.forEach(d => {
@@ -130,7 +129,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
       const o = msgs.get(sn);
       msgs.set(sn, { ...d, ...o });
     });
-    console.log(msgs);
   }, [selectedDeviceList]);
 
   useEffect(() => {
@@ -160,11 +158,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
       });
       client.on('disconnect', packet => {
         setMqttStatus('Disconnected');
-        // 代理通知断开连接
       });
       client.on('offline', () => {
         setMqttStatus('Offline');
-        // 客户端脱机，紧接着会close
       });
     }
 
@@ -180,9 +176,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   const mqttDisconnect = () => {
     if (client) {
-      client.end(() => {
-        // message.error('client end');
-      });
+      client.end();
     }
   };
 
@@ -225,8 +219,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
     if (keys.length === 0) {
       setInterval(null);
-      // msgs.clear();
-      // messages.clear();
       setMessages(new Map());
     } else {
       setInterval(1000);
@@ -313,46 +305,19 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   return (
     <div>
-      <Row gutter={16}>
-        <Col span={24}>
-          <TreeSelect
-            treeData={groupList}
-            value={value}
-            onChange={onChange}
-            treeCheckable={true}
-            showCheckedStrategy={SHOW_PARENT}
-            placeholder="请选择群组"
-            style={{ width: '100%' }}
-          />
-        </Col>
-        {/* <Col span={6}>
-          <Space align="center">
-            <Button
-              danger={connectStatus === 'Connected' ? true : false}
-              icon={<PoweroffOutlined />}
-              onClick={onConnectBtn}
-            >
-              {' '}
-              {connectStatus === 'Connected' ? '断开' : '连接'}{' '}
-            </Button>
-            <Badge
-              status={connectStatus === 'Connected' ? 'success' : 'error'}
-              text={connectStatus}
-            />
-            <Badge
-              status={
-                isSub && connectStatus === 'Connected' ? 'success' : 'error'
-              }
-              text={
-                isSub && connectStatus === 'Connected' ? '已订阅' : '未订阅'
-              }
-            />
-          </Space>
-        </Col> */}
-      </Row>
+      <div className={styles.tree}>
+        <TreeSelect
+          treeData={groupList}
+          value={value}
+          onChange={onChange}
+          treeCheckable={true}
+          showCheckedStrategy={SHOW_PARENT}
+          placeholder="请选择群组"
+          style={{ width: '100%' }}
+        />
+      </div>
       <div className={styles.devices}>
         {[...messages].slice((current - 1) * 10, current * 10).map(data => {
-          // const data = messages.get(key);
           const { e, f, b, d, c } = (data && data[1].fall) || {
             e: 0,
             f: 0,
