@@ -10,7 +10,8 @@ import {
   Pagination,
   Badge,
   Button,
-  Space,
+  Divider,
+  Cascader,
 } from 'antd';
 import { PoweroffOutlined } from '@ant-design/icons';
 import {
@@ -58,6 +59,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const localSelectedGroups = JSON.parse(
     localStorage.getItem('localSelectedGroups') || '[]',
   );
+  const localCurrentGroup = localStorage.getItem('localCurrentGroup');
 
   const [client, setClient] = useState<MqttClient>();
   const [connectStatus, setConnectStatus] = useState<string>('UnConnected');
@@ -77,6 +79,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
   const [selectedGroups, setSelectedGroups] = useState(localSelectedGroups);
+  const [currentGroup, setCurrentGroup] = useState(localCurrentGroup);
+  const [popupVisible, setPopupVisible] = useState(false);
 
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -182,7 +186,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   const setMqttStatus = (status: string) => {
     console.log(status);
-    message.success(status);
+    // message.success(status);
     setConnectStatus(status);
   };
 
@@ -193,7 +197,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
           console.log('Subscribe to topics error', error);
           return;
         }
-        message.success(`sub success ${JSON.stringify(topics)}`);
+        // message.success(`sub success ${JSON.stringify(topics)}`);
         setIsSub(true);
       });
     }
@@ -303,10 +307,55 @@ const Dashboard: FC<QueryDashboardProps> = ({
     }
   };
 
+  const onCascaderChange = (value, selectedOptions) => {
+    // console.log(selectedOptions.map(o => o.label).join(' > '))
+    // console.log(selectedOptions.map(o => o.value).join(', '))
+    let groupStr = selectedOptions.map(o => o.label).join(' > ');
+    setCurrentGroup(groupStr);
+    localStorage.setItem('localCurrentGroup', groupStr);
+
+    let obj = selectedOptions.pop();
+    let key = obj.value;
+    let keys = [key];
+    localStorage.setItem('groupKeys', JSON.stringify(keys));
+  };
+
+  const finalChange = () => {
+    let keys = JSON.parse(localStorage.getItem('groupKeys'));
+    onChange(keys);
+    setPopupVisible(false);
+  };
+
+  const dropdownRender = menus => {
+    return (
+      <div>
+        {menus}
+        <Divider style={{ margin: 0 }} />
+        <div style={{ padding: 8 }}>
+          <a href="#" onClick={finalChange}>
+            确定
+          </a>
+          <Divider type="vertical" />
+          <a href="#" onClick={cancel}>
+            取消
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const startChoose = () => {
+    setPopupVisible(true);
+  };
+
+  const cancel = () => {
+    setPopupVisible(false);
+  };
+
   return (
     <div>
       <div className={styles.tree}>
-        <TreeSelect
+        {/* <TreeSelect
           treeData={groupList}
           value={value}
           onChange={onChange}
@@ -314,36 +363,32 @@ const Dashboard: FC<QueryDashboardProps> = ({
           showCheckedStrategy={SHOW_PARENT}
           placeholder="请选择群组"
           style={{ width: '100%' }}
-        />
+        /> */}
+        <Cascader
+          options={groupList}
+          onChange={onCascaderChange}
+          // changeOnSelect
+          popupVisible={popupVisible}
+          expandTrigger="hover"
+          dropdownRender={dropdownRender}
+        >
+          <a href="#" onClick={startChoose}>
+            {currentGroup || '选择群组'}
+          </a>
+        </Cascader>
       </div>
       <div className={styles.devices}>
         {[...messages].slice((current - 1) * 10, current * 10).map(data => {
-          const { e, f, b, d, c } = (data && data[1].fall) || {
-            e: 0,
-            f: 0,
-            b: 0,
-            d: 0,
-            c: 0,
-          };
-          const { b: breath } = (data && data[1].breath) || {
-            b: 0,
-          };
-          const { x, y } = (data && data[1].point) || {
-            x: 0,
-            y: 0,
-          };
+          const { action_state, breath, count, online, sn } = data[1];
+
           return (
             <Room
-              key={data[0]}
-              room={data[0]}
-              online={data[1].online}
-              br={breath}
-              e={e}
-              f={f}
-              b={b}
-              d={d}
-              x={x}
-              y={y}
+              key={sn}
+              sn={sn}
+              online={online}
+              count={count}
+              action={action_state}
+              breath={breath}
             />
           );
         })}

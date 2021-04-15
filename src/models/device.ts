@@ -59,6 +59,7 @@ const DeviceModel: DeviceType = {
     },
     *queryDevicesBySelectedGroup({ payload }, { call, put, select }) {
       const { selectedGroups } = payload;
+      console.log(selectedGroups);
       var list = [];
       for (let i = 0; i < selectedGroups.length; i++) {
         const group = selectedGroups[i];
