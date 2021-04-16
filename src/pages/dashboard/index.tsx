@@ -69,11 +69,11 @@ const Dashboard: FC<QueryDashboardProps> = ({
   // Offline      脱机
   // Disconnected 代理通知断开连接
   // Closed       连接已断开
-  const [isSub, setIsSub] = useState<boolean>(false);
+  // const [isSub, setIsSub] = useState<boolean>(false);
   // true   已订阅
   // false  取消订阅
   const [messages, setMessages] = useState(new Map());
-
+  const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
   const [selectedGroups, setSelectedGroups] = useState(localSelectedGroups);
   const [currentGroup, setCurrentGroup] = useState(localCurrentGroup);
@@ -192,35 +192,35 @@ const Dashboard: FC<QueryDashboardProps> = ({
   };
 
   const mqttSub = topics => {
+    console.log(topics);
     if (client) {
-      client.subscribe(topics, error => {
-        if (error) {
-          console.log('Subscribe to topics error', error);
-          return;
-        }
-        // message.success(`sub success ${JSON.stringify(topics)}`);
-        setIsSub(true);
-      });
+      if (topics && topics.length > 0) {
+        client.unsubscribe('#', () => {
+          console.log('已取消全部订阅');
+          client.subscribe(topics);
+        });
+      }
     }
   };
 
   const mqttUnSub = () => {
+    console.log('取消订阅');
     if (client) {
-      client.unsubscribe(topics, error => {
+      client.unsubscribe('#', error => {
         if (error) {
           console.log('Unsubscribe error', error);
           return;
         }
-        setTopics([]);
-        setIsSub(false);
+        // console.log(topics)
+        // setTopics([]);
+        // // setIsSub(false);
+        // localStorage.setItem('topics', JSON.stringify([]));
       });
     }
   };
 
   const onChange = (keys: any) => {
-    if (topics && topics.length > 0) {
-      mqttUnSub();
-    }
+    // mqttUnSub();
 
     if (keys.length === 0) {
       setInterval(null);
@@ -276,6 +276,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
     localStorage.setItem('topics', JSON.stringify(ts));
     setSelectedGroups(nodes);
     localStorage.setItem('localSelectedGroups', JSON.stringify(nodes));
+    // 以上逻辑放入订阅方法中
 
     if (ts.length > 0 && connectStatus === 'Connected') {
       mqttSub(ts);
@@ -285,18 +286,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
   const onCurrentChange = current => {
     console.log(current);
     setCurrent(current);
-  };
-
-  const onConnectBtn = () => {
-    if (connectStatus === 'Connected') {
-      mqttDisconnect();
-    } else {
-      if (client) {
-        client.reconnect();
-      } else {
-        mqttConnect();
-      }
-    }
   };
 
   const onCascaderChange = (value, selectedOptions) => {
@@ -329,16 +318,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
           <Badge
             status={connectStatus === 'Connected' ? 'success' : 'error'}
             text={connectStatus}
-          />
-          <Badge
-            status={
-              isSub && connectStatus === 'Connected' ? 'success' : 'error'
-            }
-            text={
-              isSub && connectStatus === 'Connected'
-                ? 'Subscribed'
-                : 'Not Sbscribed'
-            }
           />
         </Space>
       </div>
