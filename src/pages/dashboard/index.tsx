@@ -73,13 +73,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
   // true   已订阅
   // false  取消订阅
   const [messages, setMessages] = useState(new Map());
-  const [type, setType] = useState<string>('all');
 
-  const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
   const [selectedGroups, setSelectedGroups] = useState(localSelectedGroups);
   const [currentGroup, setCurrentGroup] = useState(localCurrentGroup);
-  const [popupVisible, setPopupVisible] = useState(false);
 
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -285,15 +282,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
     }
   };
 
-  const handleChange = value => {
-    console.log(`selected ${value}`);
-    setType(value);
-  };
-
-  const showTotal = (total: number) => {
-    return `共 ${total} 台`;
-  };
-
   const onCurrentChange = current => {
     console.log(current);
     setCurrent(current);
@@ -326,38 +314,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
     onChange(keys);
   };
 
-  const finalChange = () => {
-    let keys = JSON.parse(localStorage.getItem('groupKeys'));
-    onChange(keys);
-    setPopupVisible(false);
-  };
-
-  const dropdownRender = menus => {
-    return (
-      <div>
-        {menus}
-        <Divider style={{ margin: 0 }} />
-        <div style={{ padding: 8 }}>
-          <a href="#" onClick={finalChange}>
-            确定
-          </a>
-          <Divider type="vertical" />
-          <a href="#" onClick={cancel}>
-            取消
-          </a>
-        </div>
-      </div>
-    );
-  };
-
-  const startChoose = () => {
-    setPopupVisible(true);
-  };
-
-  const cancel = () => {
-    setPopupVisible(false);
-  };
-
   return (
     <div>
       <div className={styles.tree}>
@@ -365,13 +321,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
           options={groupList}
           onChange={onCascaderChange}
           changeOnSelect
-          // popupVisible={popupVisible}
           expandTrigger="hover"
-          // dropdownRender={dropdownRender}
         >
-          <a href="#" onClick={startChoose}>
-            {currentGroup || '选择群组'}
-          </a>
+          <a href="#">{currentGroup || '选择群组'}</a>
         </Cascader>
         <Space align="center">
           <Badge
@@ -382,7 +334,11 @@ const Dashboard: FC<QueryDashboardProps> = ({
             status={
               isSub && connectStatus === 'Connected' ? 'success' : 'error'
             }
-            text={isSub && connectStatus === 'Connected' ? '已订阅' : '未订阅'}
+            text={
+              isSub && connectStatus === 'Connected'
+                ? 'Subscribed'
+                : 'Not Sbscribed'
+            }
           />
         </Space>
       </div>
