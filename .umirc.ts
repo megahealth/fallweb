@@ -2,7 +2,7 @@ import { defineConfig } from 'umi';
 import { resolve } from 'path';
 
 export default defineConfig({
-  title: '跌倒监测系统',
+  title: '毫米波雷达监测系统',
   hash: true,
   history: { type: 'hash' },
   antd: {},

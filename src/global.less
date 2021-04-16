@@ -15,30 +15,29 @@ ol {
 
 .ant-menu-item {
   width: 100% !important;
-}
-
-.ant-menu-item::after {
-  content: none !important;
+  &:hover {
+    background-color: #4c9f78 !important;
+  }
+  &:active {
+    background-color: #4c9f78 !important;
+  }
+  &:after {
+    content: none !important;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    color: #fff !important;
+  }
 }
 
 .ant-menu-inline {
   border-right: none !important;
 }
 
-.ant-menu-item a {
-  display: flex;
-  align-items: center;
-  color: #fff !important;
-}
-
-.ant-menu-item:active {
-  background-color: #4c9f78 !important;
-}
-
 .ant-pagination-item-active {
   background: @primary-color;
-}
-
-.ant-pagination-item-active a {
-  color: #fff;
+  a {
+    color: #fff;
+  }
 }
