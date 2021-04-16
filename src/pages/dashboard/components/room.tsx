@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'umi';
 import Style from './room.less';
 import 离线 from '@/assets/离线.png';
 import 跌倒 from '@/assets/跌倒.png';
@@ -21,13 +22,10 @@ function Room(props: any) {
   let text = '设备离线';
   let img = 离线;
   let pImg = null;
-  if (action > 0) {
-    if (count == 1) {
-      pImg = 单人;
-    }
-    if (count > 1) {
-      pImg = 多人;
-    }
+  if (action != 0 && count < 2) {
+    pImg = 单人;
+  } else {
+    pImg = 多人;
   }
 
   if (online === 1) {
@@ -66,19 +64,21 @@ function Room(props: any) {
   }
 
   return (
-    <div style={{ position: 'relative' }} className={`${Style.container}`}>
-      <div className={Style.head} style={{ background: color }}>
-        {pImg && <img src={pImg}></img>}
-        {sn}
+    <Link to={`/detail/${sn}`}>
+      <div style={{ position: 'relative' }} className={`${Style.container}`}>
+        <div className={Style.head} style={{ background: color }}>
+          {pImg && <img src={pImg}></img>}
+          {sn}
+        </div>
+        <div className={Style.status}>
+          <span className={Style.breath}>
+            {action == 3 && `呼吸率：${breath}`}
+          </span>
+          <img src={img}></img>
+          <span className={Style.title}>{text}</span>
+        </div>
       </div>
-      <div className={Style.status}>
-        <span className={Style.breath}>
-          {action == 3 && `呼吸率：${breath}`}
-        </span>
-        <img src={img}></img>
-        <span className={Style.title}>{text}</span>
-      </div>
-    </div>
+    </Link>
   );
 }
 

@@ -1,9 +1,6 @@
 import React, { FC, useMemo, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import {
-  TreeSelect,
-  message,
-  Select,
   Empty,
   Space,
   Pagination,
@@ -12,7 +9,6 @@ import {
   Divider,
   Cascader,
 } from 'antd';
-import { PoweroffOutlined } from '@ant-design/icons';
 import {
   Loading,
   GroupState,
@@ -27,9 +23,6 @@ import styles from './index.less';
 import Room from './components/room';
 import { QueryDashboardProps } from './queryDashboard';
 import { createGroupTreeList } from '@/utils/utils';
-
-const { SHOW_PARENT } = TreeSelect;
-const { Option } = Select;
 
 const msgs = new Map();
 
@@ -356,14 +349,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
 };
 
 export default connect(({ // dashboard,
-  group, global, login, device }: // loading,
-{ // dashboard: DashboardState;
-  group: GroupState; global: GlobalModelState; login: LoginModelState; device: DeviceState }) => ({
-  // loading: Loading;
-  // dashboard,
+  group, global, login, device }: { group: GroupState; global: GlobalModelState; login: LoginModelState; device: DeviceState }) => ({
   group,
   global,
   login,
   device,
-  // loading: loading.models.group,
 }))(Dashboard);
