@@ -37,7 +37,7 @@ const Login: FC<LoginLayoutProps> = ({ dispatch }) => {
                 className={styles.logo}
                 style={{ textAlign: 'center' }}
               >
-                <span className={styles.title}>跌倒监测平台</span>
+                <span className={styles.title}>毫米波雷达监测系统</span>
               </Col>
             </Row>
             <LoginForm onSubmit={handleSubmit} />

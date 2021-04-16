@@ -5,8 +5,7 @@ import {
   message,
   Select,
   Empty,
-  Row,
-  Col,
+  Space,
   Pagination,
   Badge,
   Button,
@@ -313,8 +312,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
   };
 
   const onCascaderChange = (value, selectedOptions) => {
-    // console.log(selectedOptions.map(o => o.label).join(' > '))
-    // console.log(selectedOptions.map(o => o.value).join(', '))
+    console.log(selectedOptions.map(o => o.label).join(' > '));
+    console.log(selectedOptions.map(o => o.value).join(', '));
     let groupStr = selectedOptions.map(o => o.label).join(' > ');
     setCurrentGroup(groupStr);
     localStorage.setItem('localCurrentGroup', groupStr);
@@ -323,6 +322,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
     let key = obj.value;
     let keys = [key];
     localStorage.setItem('groupKeys', JSON.stringify(keys));
+
+    onChange(keys);
   };
 
   const finalChange = () => {
@@ -360,27 +361,30 @@ const Dashboard: FC<QueryDashboardProps> = ({
   return (
     <div>
       <div className={styles.tree}>
-        {/* <TreeSelect
-          treeData={groupList}
-          value={value}
-          onChange={onChange}
-          treeCheckable={true}
-          showCheckedStrategy={SHOW_PARENT}
-          placeholder="请选择群组"
-          style={{ width: '100%' }}
-        /> */}
         <Cascader
           options={groupList}
           onChange={onCascaderChange}
-          // changeOnSelect
-          popupVisible={popupVisible}
+          changeOnSelect
+          // popupVisible={popupVisible}
           expandTrigger="hover"
-          dropdownRender={dropdownRender}
+          // dropdownRender={dropdownRender}
         >
           <a href="#" onClick={startChoose}>
             {currentGroup || '选择群组'}
           </a>
         </Cascader>
+        <Space align="center">
+          <Badge
+            status={connectStatus === 'Connected' ? 'success' : 'error'}
+            text={connectStatus}
+          />
+          <Badge
+            status={
+              isSub && connectStatus === 'Connected' ? 'success' : 'error'
+            }
+            text={isSub && connectStatus === 'Connected' ? '已订阅' : '未订阅'}
+          />
+        </Space>
       </div>
       <div className={styles.devices}>
         {[...messages].slice((current - 1) * 10, current * 10).map(data => {
