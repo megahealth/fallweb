@@ -192,35 +192,33 @@ const Dashboard: FC<QueryDashboardProps> = ({
   };
 
   const mqttSub = topics => {
-    console.log(topics);
     if (client) {
       if (topics && topics.length > 0) {
-        client.unsubscribe('#', () => {
-          console.log('已取消全部订阅');
-          client.subscribe(topics);
+        client.subscribe(topics, error => {
+          if (error) {
+            console.log('Unsubscribe error', error);
+            return;
+          }
         });
       }
     }
   };
 
-  const mqttUnSub = () => {
-    console.log('取消订阅');
+  const mqttUnSub = topics => {
     if (client) {
-      client.unsubscribe('#', error => {
-        if (error) {
-          console.log('Unsubscribe error', error);
-          return;
-        }
-        // console.log(topics)
-        // setTopics([]);
-        // // setIsSub(false);
-        // localStorage.setItem('topics', JSON.stringify([]));
-      });
+      if (topics && topics.length > 0) {
+        client.unsubscribe(topics, error => {
+          if (error) {
+            console.log('Unsubscribe error', error);
+            return;
+          }
+        });
+      }
     }
   };
 
   const onChange = (keys: any) => {
-    // mqttUnSub();
+    mqttUnSub(topics);
 
     if (keys.length === 0) {
       setInterval(null);
