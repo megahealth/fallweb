@@ -76,14 +76,20 @@ const UserList: FC<QueryTableProps> = ({ dispatch, queryUser, loading }) => {
     },
   ];
 
+  const pagination = {
+    size: 'small',
+  };
+
   return (
-    <div>
+    <div style={{ background: '#fff', borderRadius: '10px', padding: '20px' }}>
       {/* <FilterRegion /> */}
       <TableComponent
         columns={columns}
         dataSource={queryUserSource}
         rowKey="user_id"
+        bordered={true}
         loading={loading}
+        pagination={pagination}
       />
     </div>
   );

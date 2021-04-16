@@ -26,7 +26,8 @@ export default defineConfig({
   //   ie: 11,
   // },
   theme: {
-    '@primary-color': '#293AB9',
+    '@primary-color': '#5ec394',
+    '@border-radius-base': '5px',
   },
   proxy: {
     '/api': {

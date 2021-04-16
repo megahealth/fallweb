@@ -33,34 +33,30 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
 
   const columns: ColumnsType<RecordType> = [
     {
-      title: 'device_id',
+      title: 'ID',
       dataIndex: 'device_id',
     },
     {
-      title: 'sn',
+      title: 'SN号',
       key: 'sn',
       dataIndex: 'sn',
     },
     {
-      title: 'online',
+      title: '在线状态',
       dataIndex: 'online',
     },
     {
-      title: 'group_name',
+      title: '群组名',
       dataIndex: 'group_name',
       // ellipsis: true,
     },
     {
-      title: 'group_id',
+      title: '群组ID',
       dataIndex: 'group_id',
     },
     {
-      title: 'count',
+      title: '设备总数',
       dataIndex: 'count',
-    },
-    {
-      title: 'drop',
-      dataIndex: 'drop',
     },
     {
       title: '操作',
@@ -90,17 +86,19 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
     total: count,
     current,
     pageSize,
+    size: 'small',
     onChange: onPageChange,
   };
 
   return (
-    <div>
+    <div style={{ background: '#fff', borderRadius: '10px', padding: '20px' }}>
       <FilterRegion />
       <TableComponent
         columns={columns}
         dataSource={deviceList}
         rowKey="sn"
         loading={loading}
+        bordered={true}
         pagination={pagination}
       />
     </div>

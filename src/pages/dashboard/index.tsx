@@ -413,7 +413,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
         total={selectedDeviceList.length}
         current={current}
         pageSize={pageSize}
-        showTotal={showTotal}
+        // showTotal={showTotal}
         showSizeChanger={false}
         showQuickJumper
         onChange={onCurrentChange}

@@ -59,13 +59,19 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
     },
   ];
 
+  const pagination = {
+    size: 'small',
+  };
+
   return (
-    <div>
+    <div style={{ background: '#fff', borderRadius: '10px', padding: '20px' }}>
       <TableComponent
         columns={columns}
         dataSource={groupData.children}
         rowKey="sub_id"
+        bordered={true}
         loading={loading}
+        pagination={pagination}
       />
     </div>
   );

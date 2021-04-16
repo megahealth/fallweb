@@ -26,7 +26,7 @@ const TableComponent: FC<TableProps<RType>> = props => {
     pageConfigs = {
       showTotal: (total: string | number) => {
         // const pSize = Math.ceil(total / pagination.pageSize - 0);
-        return `共${total}条数据`;
+        return `共 ${total} 条`;
       },
       showQuickJumper: true,
       // pageSizeOptions: ['10', '20', '50', '100'],
