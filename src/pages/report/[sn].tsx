@@ -67,7 +67,7 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
     let list = [];
     data.forEach(d => {
       let n = d.states.map(a => {
-        if(title=='跌倒') {
+        if(title=='状态') {
           if(a[2]<5) {
             a[2] = 0
           }else{
@@ -154,9 +154,9 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         onOk={onOk}
         defaultValue={[moment(start), moment(end)]}
       />
-      <ReactECharts option={getOption(fall, '跌倒')} />
+      <ReactECharts option={getOption(fall, '状态')} />
       <ReactECharts option={getOption(breath, '呼吸')} />
-      <ReactECharts option={getOption(running, '运行')} />
+      <ReactECharts option={getOption(running, '设备状态')} />
     </div>
   )
 }

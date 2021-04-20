@@ -8,6 +8,7 @@ import {
   Button,
   Divider,
   Cascader,
+  message,
 } from 'antd';
 import {
   Loading,
@@ -65,6 +66,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
   // const [isSub, setIsSub] = useState<boolean>(false);
   // true   已订阅
   // false  取消订阅
+  const [reconnectTimes, setReconnectTimes] = useState([]);
+
   const [messages, setMessages] = useState(new Map());
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
@@ -90,6 +93,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
         clientId: localStorage.getItem('user_id'),
         username: 'user_' + localStorage.getItem('name'),
         reconnectPeriod: 1000,
+        protocolVersion: 5,
       }),
     );
   };
@@ -137,10 +141,36 @@ const Dashboard: FC<QueryDashboardProps> = ({
       });
       client.on('reconnect', () => {
         setMqttStatus('Reconnecting');
+
+        let now = new Date().getTime();
+        setReconnectTimes(reconnectTimes.push(now));
+
+        let last3 = reconnectTimes[reconnectTimes.length - 3];
+        if (last3 && now - last3 < 10 * 1000) {
+          mqttDisconnect();
+          dispatch({
+            type: 'login/logout',
+            payload: {},
+          });
+          message.error('有人登陆您的账号，已被迫下线！');
+        }
       });
       client.on('message', (topic, payload) => {
-        const { sn, fall, breath, point } = JSON.parse(payload.toString());
-        const o = msgs.get(sn) || {};
+        const { sn, fall, breath, username } = JSON.parse(payload.toString());
+        let deviceSN;
+        if (sn) {
+          deviceSN = sn;
+        }
+        if (username) {
+          deviceSN = username.split('-')[1];
+        }
+        const o = msgs.get(deviceSN) || {};
+        if (topic.indexOf('downline') !== -1) {
+          o.online = 0;
+        }
+        if (topic.indexOf('upline') !== -1) {
+          o.online = 1;
+        }
         if (fall) {
           o.action_state = fall.a;
           o.outdoor = fall.d;
@@ -148,12 +178,13 @@ const Dashboard: FC<QueryDashboardProps> = ({
           o.roll = fall.r;
         }
         if (breath) o.breath = breath.b;
-        msgs.set(sn, o);
+        msgs.set(deviceSN, o);
       });
       client.on('close', () => {
         setMqttStatus('Closed');
       });
       client.on('disconnect', packet => {
+        console.log(packet);
         setMqttStatus('Disconnected');
       });
       client.on('offline', () => {
@@ -235,6 +266,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
           // const topic = `web/${id}/#`;
           ts.push(`web/${id}/breath`);
           ts.push(`web/${id}/fall`);
+          ts.push(`web/${id}/upline`);
+          ts.push(`web/${id}/downline`);
           nodes.push(node);
         }
       } else {
