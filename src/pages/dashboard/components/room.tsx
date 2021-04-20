@@ -10,7 +10,7 @@ import 单人 from '@/assets/单人.png';
 import 多人 from '@/assets/多人.png';
 
 function Room(props: any) {
-  const { sn, online, count, action, breath } = props;
+  const { sn, online, count, action, breath, name } = props;
 
   let colors = {
     grey: '#999',
@@ -19,13 +19,16 @@ function Room(props: any) {
     red: '#e15e5e',
   };
   let color = colors.grey;
+  let textColor = '#000';
   let text = '设备离线';
   let img = 离线;
   let pImg = null;
-  if (action != 0 && count < 2) {
-    pImg = 单人;
-  } else {
-    pImg = 多人;
+  if (action > 0) {
+    if (count > 1) {
+      pImg = 多人;
+    } else {
+      pImg = 单人;
+    }
   }
 
   if (online === 1) {
@@ -58,9 +61,15 @@ function Room(props: any) {
         text = '有人跌倒';
         img = 跌倒;
         color = colors.blue;
+        textColor = '#c52f2f';
         break;
       default:
     }
+  } else {
+    text = '无人';
+    img = 无人;
+    pImg = null;
+    color = colors.grey;
   }
 
   return (
@@ -68,14 +77,16 @@ function Room(props: any) {
       <div style={{ position: 'relative' }} className={`${Style.container}`}>
         <div className={Style.head} style={{ background: color }}>
           {pImg && <img src={pImg}></img>}
-          {sn}
+          {name}
         </div>
         <div className={Style.status}>
           <span className={Style.breath}>
             {action == 3 && `呼吸率：${breath}`}
           </span>
           <img src={img}></img>
-          <span className={Style.title}>{text}</span>
+          <span className={Style.title} style={{ color: textColor }}>
+            {text}
+          </span>
         </div>
       </div>
     </Link>

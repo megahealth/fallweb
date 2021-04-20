@@ -14,49 +14,46 @@ export const queryKeysByPath = (
 
 export const createGroupTreeList = (groupList: Groups) => {
   try {
-    if (groupList.children.length === 0) {
-      return [];
+    let parent, self, child;
+    if (groupList.parents_self.length === 1) {
+      parent = groupList.parents_self[1];
+    } else {
+      parent = null;
     }
-    const self = groupList.parents_self[0];
-    const child = groupList.children;
+    self = groupList.parents_self[0];
+    child = groupList.children;
 
     let root = {
-      title: self.sub_name,
-      label: self.sub_name,
       key: self.parent_id + '-' + self.sub_id,
+      value: self.parent_id + '-' + self.sub_id,
       parent_id: self.parent_id,
       sub_id: self.sub_id,
-      value: self.parent_id + '-' + self.sub_id,
       parent_name: self.parent_name,
       sub_name: self.sub_name,
+      title: self.sub_name,
+      label: self.sub_name + '(' + self.dev_cnt + ')',
       children: [],
+      dev_cnt: self.dev_cnt,
     };
-    for (let i = 0; i < child.length; i++) {
-      const n = child[i];
-      if (root.parent_id > n.parent_id) {
-        root = n;
-      }
-    }
 
-    const add = (c: any) => {
-      for (let i = 0; i < child.length; i++) {
-        const n = child[i];
-        if (n.parent_id == c.sub_id) {
+    const add = (root: any, list: any) => {
+      for (let i = 0; i < list.length; i++) {
+        const n = list[i];
+        if (n.parent_id == root.sub_id) {
           n.title = n.sub_name;
           n.label = n.sub_name + '(' + n.dev_cnt + ')';
           n.value = n.parent_id + '-' + n.sub_id;
           n.key = n.parent_id + '-' + n.sub_id;
-          c.children && c.children.push(n);
-          add(n);
+          n.children = [];
+          let newNode = add(n, list);
+          root.children && root.children.push(newNode);
         }
       }
-      return c;
+      return root;
     };
-    // console.log(add(root))
-    const data = add(root);
-    const arr = [];
-    arr.push(data);
-    return arr;
+
+    let data = add(root, child);
+    return [data];
   } catch (error) {
     return [];
   }

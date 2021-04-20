@@ -2,6 +2,10 @@ import React, { FC, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import { ReportState, Loading } from '@/models/connect';
 import ReactECharts from 'echarts-for-react';
+import { DatePicker, Space } from 'antd';
+import moment from 'moment';
+
+const { RangePicker } = DatePicker;
 
 export interface ReportProps {
   dispatch: Dispatch;
@@ -10,9 +14,13 @@ export interface ReportProps {
 }
 
 const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
+  const startNum = parseInt(moment().startOf('day').format('x'));
+  const endNum = parseInt(moment().endOf('day').format('x'));
 
   const [sn, setSn] = useState(localStorage.getItem('sn'));
   const [option, setOption] = useState();
+  const [start, setStart] = useState(startNum);
+  const [end, setEnd] = useState(endNum);
 
   const { fall, breath, running} = report;
   // console.log(report)
@@ -24,8 +32,8 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         orderby: -1,
         skip: 0,
         limit: 100,
-        start: 0,
-        end: new Date().getTime(),
+        start,
+        end,
         sn
       },
     });
@@ -36,8 +44,8 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         orderby: -1,
         skip: 0,
         limit: 100,
-        start: 0,
-        end: new Date().getTime(),
+        start,
+        end,
         sn
       },
     });
@@ -48,12 +56,12 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         orderby: -1,
         skip: 0,
         limit: 100,
-        start: 0,
-        end: new Date().getTime(),
+        start,
+        end,
         sn
       },
     });
-  }, []);
+  }, [start, end]);
 
   const getOption = (data, title) => {
     let list = [];
@@ -77,17 +85,16 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
       // console.log(d.states)
       list = list.concat(n)
     })
-      list.sort(function compare(a, b) {
-        if (a[0] < b[0] ) {
-          return -1;
-        }
-        if (a[0] > b[0] ) {
-          return 1;
-        }
-        // a must be equal to b
-        return 0;
-      })
-    console.log(list)
+    list.sort(function compare(a, b) {
+      if (a[0] < b[0] ) {
+        return -1;
+      }
+      if (a[0] > b[0] ) {
+        return 1;
+      }
+      // a must be equal to b
+      return 0;
+    })
 
     return {
       title: {
@@ -99,19 +106,22 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
       },
       xAxis: {
         type: 'time',
-        boundaryGap: false
+        min: start,
+        max: end,
+        axisLabel: {
+          showMinLabel: true,
+          showMaxLabel: true,
+          formatter: function (value, index) {
+            if(value===start || value===end) {
+              return moment(value).format('MM-DD HH:mm')
+            }
+            return moment(value).format('HH:mm');
+          }
+        },
       },
       yAxis: {
         type: 'value'
       },
-      dataZoom: [{
-        type: 'inside',
-        start: 0,
-        end: 100
-    }, {
-        start: 0,
-        end: 100
-    }],
       series: [
         {
           name: title,
@@ -124,11 +134,29 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
     };
   }
 
+  const onChange = (value, dateString) => {
+    console.log('Selected Time: ', value);
+    console.log('Formatted Selected Time: ', dateString);
+  }
+  
+  const onOk = (value) => {
+    console.log('onOk: ', value);
+    setStart(parseInt(value[0].format('x')));
+    setEnd(parseInt(value[1].format('x')));
+  }
+
   return (
     <div style={{background: '#fff', borderRadius: '25px', padding: '20px'}}>
+      <RangePicker
+        showTime={{ format: 'HH:mm' }}
+        format="YYYY-MM-DD HH:mm"
+        onChange={onChange}
+        onOk={onOk}
+        defaultValue={[moment(start), moment(end)]}
+      />
       <ReactECharts option={getOption(fall, '跌倒')} />
       <ReactECharts option={getOption(breath, '呼吸')} />
-      <ReactECharts option={getOption(running, '运动')} />
+      <ReactECharts option={getOption(running, '运行')} />
     </div>
   )
 }

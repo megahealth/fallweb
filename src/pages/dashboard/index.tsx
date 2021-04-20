@@ -147,7 +147,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
           o.count = fall.c;
           o.roll = fall.r;
         }
-        if (breath) o.breath = breath;
+        if (breath) o.breath = breath.b;
         msgs.set(sn, o);
       });
       client.on('close', () => {
@@ -314,12 +314,13 @@ const Dashboard: FC<QueryDashboardProps> = ({
       </div>
       <div className={styles.devices}>
         {[...messages].slice((current - 1) * 10, current * 10).map(data => {
-          const { action_state, breath, count, online, sn } = data[1];
+          const { action_state, breath, count, online, sn, name } = data[1];
 
           return (
             <Room
               key={sn}
               sn={sn}
+              name={name}
               online={online}
               count={count}
               action={action_state}

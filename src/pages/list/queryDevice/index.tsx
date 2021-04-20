@@ -37,6 +37,11 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, loading }) => {
       dataIndex: 'device_id',
     },
     {
+      title: '名称',
+      key: 'name',
+      dataIndex: 'name',
+    },
+    {
       title: 'SN号',
       key: 'sn',
       dataIndex: 'sn',
