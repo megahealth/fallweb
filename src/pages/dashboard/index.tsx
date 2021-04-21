@@ -157,14 +157,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
       });
       client.on('message', (topic, payload) => {
         const { sn, fall, breath, username } = JSON.parse(payload.toString());
-        let deviceSN;
-        if (sn) {
-          deviceSN = sn;
-        }
-        if (username) {
-          deviceSN = username.split('-')[1];
-        }
-        const o = msgs.get(deviceSN) || {};
+        const o = msgs.get(sn) || {};
         if (topic.indexOf('downline') !== -1) {
           o.online = 0;
         }
@@ -178,7 +171,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
           o.roll = fall.r;
         }
         if (breath) o.breath = breath.b;
-        msgs.set(deviceSN, o);
+        msgs.set(sn, o);
       });
       client.on('close', () => {
         setMqttStatus('Closed');
