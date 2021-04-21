@@ -4,6 +4,9 @@ import { ReportState, Loading } from '@/models/connect';
 import ReactECharts from 'echarts-for-react';
 import { DatePicker, Space } from 'antd';
 import moment from 'moment';
+import StateChart from './stateChart';
+import BreathChart from './breathChart';
+import RunningChart from './runningChart';
 
 const { RangePicker } = DatePicker;
 
@@ -18,12 +21,10 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
   const endNum = parseInt(moment().endOf('day').format('x'));
 
   const [sn, setSn] = useState(localStorage.getItem('sn'));
-  const [option, setOption] = useState();
   const [start, setStart] = useState(startNum);
   const [end, setEnd] = useState(endNum);
 
   const { fall, breath, running} = report;
-  // console.log(report)
 
   useEffect(() => {
     dispatch({
@@ -63,77 +64,6 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
     });
   }, [start, end]);
 
-  const getOption = (data, title) => {
-    let list = [];
-    data.forEach(d => {
-      let n = d.states.map(a => {
-        if(title=='状态') {
-          if(a[2]<5) {
-            a[2] = 0
-          }else{
-            a[2] = 1
-          }
-          return [a[4], a[2]]
-        }else{
-          if(title=='呼吸' && a[0]==0) {
-            
-          }else{
-            return [a[1], a[0]]
-          }
-        }
-      })
-      // console.log(d.states)
-      list = list.concat(n)
-    })
-    list.sort(function compare(a, b) {
-      if (a[0] < b[0] ) {
-        return -1;
-      }
-      if (a[0] > b[0] ) {
-        return 1;
-      }
-      // a must be equal to b
-      return 0;
-    })
-
-    return {
-      title: {
-        left: 'center',
-        text: title,
-      },
-      tooltip: {
-        trigger: 'axis',
-      },
-      xAxis: {
-        type: 'time',
-        min: start,
-        max: end,
-        axisLabel: {
-          showMinLabel: true,
-          showMaxLabel: true,
-          formatter: function (value, index) {
-            if(value===start || value===end) {
-              return moment(value).format('MM-DD HH:mm')
-            }
-            return moment(value).format('HH:mm');
-          }
-        },
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: [
-        {
-          name: title,
-          symbol: 'none',
-          smooth: true,
-          type: 'line',
-          data: list
-        }
-      ]
-    };
-  }
-
   const onChange = (value, dateString) => {
     console.log('Selected Time: ', value);
     console.log('Formatted Selected Time: ', dateString);
@@ -154,9 +84,9 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         onOk={onOk}
         defaultValue={[moment(start), moment(end)]}
       />
-      <ReactECharts option={getOption(fall, '状态')} />
-      <ReactECharts option={getOption(breath, '呼吸')} />
-      <ReactECharts option={getOption(running, '设备状态')} />
+      <StateChart start={start} end={end} data={fall} />
+      <BreathChart start={start} end={end} data={breath} />
+      <RunningChart start={start} end={end} data={running} />
     </div>
   )
 }
