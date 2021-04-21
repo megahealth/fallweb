@@ -66,8 +66,8 @@ function Room(props: any) {
       default:
     }
   } else {
-    text = '无人';
-    img = 无人;
+    text = '离线';
+    img = 离线;
     pImg = null;
     color = colors.grey;
   }
@@ -81,7 +81,7 @@ function Room(props: any) {
         </div>
         <div className={Style.status}>
           <span className={Style.breath}>
-            {action == 3 && `呼吸率：${breath}`}
+            {online == 1 && action == 3 && `呼吸率：${breath}`}
           </span>
           <img src={img}></img>
           <span className={Style.title} style={{ color: textColor }}>
