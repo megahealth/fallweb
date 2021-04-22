@@ -4,6 +4,7 @@
  */
 import { extend } from 'umi-request';
 import { notification } from 'antd';
+import { history } from 'umi';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -11,7 +12,7 @@ const codeMessage = {
   202: '一个请求已经进入后台排队（异步任务）。',
   204: '删除数据成功。',
   400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-  401: '用户没有权限（令牌、用户名、密码错误）。',
+  401: '登录失效！',
   403: '拒绝访问！',
   404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
   406: '请求的格式不可得。',
@@ -54,6 +55,10 @@ const errorHandler = (error: { response: Response }): Response => {
     });
     if (status === 401) {
       console.log('token失效');
+      localStorage.clear();
+      history.replace({
+        pathname: '/login',
+      });
     }
   } else if (!response) {
     notification.error({
