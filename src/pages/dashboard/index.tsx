@@ -340,17 +340,27 @@ const Dashboard: FC<QueryDashboardProps> = ({
       </div>
       <div className={styles.devices}>
         {[...messages].slice((current - 1) * 10, current * 10).map(data => {
-          const { action_state, breath, count, online, sn, name } = data[1];
+          const {
+            action_state,
+            breath,
+            count,
+            online,
+            sn,
+            name,
+            group_id,
+          } = data[1];
 
           return (
             <Room
               key={sn}
               sn={sn}
+              group={group_id}
               name={name}
               online={online}
               count={count}
               action={action_state}
               breath={breath}
+              data={data[1]}
             />
           );
         })}

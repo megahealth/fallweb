@@ -18,7 +18,7 @@ export interface ReportProps {
 
 const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
   const startNum = parseInt(moment().startOf('day').format('x'));
-  const endNum = parseInt(moment().endOf('day').format('x'));
+  const endNum = parseInt(moment().format('x'));
 
   const [sn, setSn] = useState(localStorage.getItem('sn'));
   const [start, setStart] = useState(startNum);

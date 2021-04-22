@@ -87,7 +87,7 @@ const BreathChart = props => {
       series: [
         {
           name: '呼吸',
-          symbolSize: 10,
+          symbolSize: 5,
           data: list,
           type: 'scatter',
         },

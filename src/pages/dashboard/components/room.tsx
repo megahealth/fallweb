@@ -10,7 +10,7 @@ import 单人 from '@/assets/单人.png';
 import 多人 from '@/assets/多人.png';
 
 function Room(props: any) {
-  const { sn, online, count, action, breath, name } = props;
+  const { sn, online, count, action, breath, name, group, data } = props;
 
   let colors = {
     grey: '#999',
@@ -72,9 +72,17 @@ function Room(props: any) {
     color = colors.grey;
   }
 
+  const next = () => {
+    localStorage.setItem('data', JSON.stringify(data));
+  };
+
   return (
-    <Link to={`/detail/${sn}`}>
-      <div style={{ position: 'relative' }} className={`${Style.container}`}>
+    <Link to={`/detail/${sn}?group=${group}`}>
+      <div
+        style={{ position: 'relative' }}
+        className={`${Style.container}`}
+        onClick={next}
+      >
         <div className={Style.head} style={{ background: color }}>
           {pImg && <img src={pImg}></img>}
           {name}
