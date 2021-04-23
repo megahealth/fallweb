@@ -3,7 +3,7 @@
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { message, notification } from 'antd';
 import { history } from 'umi';
 
 const codeMessage = {
@@ -55,6 +55,7 @@ const errorHandler = (error: { response: Response }): Response => {
     });
     if (status === 401) {
       console.log('token失效');
+      message.error('令牌失效，已自动登出！');
       localStorage.clear();
       history.replace({
         pathname: '/login',

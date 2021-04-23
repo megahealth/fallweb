@@ -57,9 +57,11 @@ function draw(ctx, location) {
   // ctx.transform(0.3,0.5,1,0,location.x,location.y);
   ctx.restore();
 
+
   // ctx.save();
-  // ctx.rotate(30 * Math.PI / 180);
   // ctx.restore();
+  // ctx.rotate(30 * Math.PI / 180);
+
 }
 
 const Detail = (props) => {
@@ -83,13 +85,15 @@ const Detail = (props) => {
     online: localonline,
     outdoor: localoutdoor,
     roll: localroll,
-    update_at, } = JSON.parse(data);
+    update_at
+  } = JSON.parse(data);
   const [online, setOnline] = useState(localonline);
   const [state, setState] = useState(action_state);
   const [outdoor, setOutdoor] = useState(localoutdoor);
   const [count, setCount] = useState(localcount);
   const [roll, setRoll] = useState(localroll);
   const [breath, setBreath] = useState(localbreath);
+  const [rollTime, setRollTime] = useState(last_roll_time);
 
   const mqttConnect = () => {
     setClient(
@@ -187,6 +191,9 @@ const Detail = (props) => {
         breath={breath}
         state={state}
         online={online}
+        count={count}
+        roll={roll}
+        last_roll_time={rollTime}
       ></Status>
       <div className={styles.point}>
         <canvas

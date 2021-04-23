@@ -40,11 +40,8 @@ function Room(props: any) {
         color = colors.grey;
         break;
       case 1:
-        text = '有人活动';
-        img = 有人活动;
-        color = colors.green;
-        break;
       case 2:
+      case 4:
         text = '有人活动';
         img = 有人活动;
         color = colors.green;
@@ -54,6 +51,9 @@ function Room(props: any) {
         img = 在床;
         color = colors.blue;
         break;
+      case 5:
+      case 6:
+      case 7:
       case 8:
       case 9:
       case 10:

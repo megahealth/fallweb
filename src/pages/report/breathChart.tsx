@@ -14,7 +14,9 @@ const BreathChart = props => {
     let list = [];
     data.forEach(d => {
       let n = d.states.map(a => {
-        return [a[1], a[0]];
+        console.log(a[0]);
+        let b = a[0] || null;
+        return [a[1], b];
       });
       list = list.concat(n);
     });
@@ -87,9 +89,11 @@ const BreathChart = props => {
       series: [
         {
           name: '呼吸',
-          symbolSize: 5,
+          symbol: false,
+          // symbolSize: 5,
+          smooth: true,
           data: list,
-          type: 'scatter',
+          type: 'line',
         },
         // {
         //   name: 'line',

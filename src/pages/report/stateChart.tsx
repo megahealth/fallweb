@@ -9,7 +9,11 @@ const StateChart = props => {
     let list = [];
     data.forEach(d => {
       let n = d.states.map(a => {
-        return [a[4], a[2]];
+        if (a[2] >= 5) {
+          return [a[4], 5];
+        } else {
+          return [a[4], a[2]];
+        }
       });
       list = list.concat(n);
     });
@@ -49,26 +53,29 @@ const StateChart = props => {
               str = '低姿态';
               break;
             case 5:
-              str = '1级跌倒';
+              str = '跌倒';
               break;
-            case 6:
-              str = '2级跌倒';
-              break;
-            case 7:
-              str = '3级跌倒';
-              break;
-            case 8:
-              str = '4级跌倒';
-              break;
-            case 9:
-              str = '5级跌倒';
-              break;
-            case 10:
-              str = '6级跌倒';
-              break;
-            case 11:
-              str = '7级跌倒';
-              break;
+            // case 5:
+            //   str = '1级跌倒';
+            //   break;
+            // case 6:
+            //   str = '2级跌倒';
+            //   break;
+            // case 7:
+            //   str = '3级跌倒';
+            //   break;
+            // case 8:
+            //   str = '4级跌倒';
+            //   break;
+            // case 9:
+            //   str = '5级跌倒';
+            //   break;
+            // case 10:
+            //   str = '6级跌倒';
+            //   break;
+            // case 11:
+            //   str = '7级跌倒';
+            //   break;
             default:
               str = '无人';
               break;
@@ -100,9 +107,9 @@ const StateChart = props => {
       ],
       yAxis: {
         type: 'value',
-        splitNumber: 10,
+        splitNumber: 5,
         min: 0,
-        max: 11,
+        max: 5,
         axisLabel: {
           formatter: function(data) {
             switch (data) {
@@ -117,19 +124,21 @@ const StateChart = props => {
               case 4:
                 return '低姿态';
               case 5:
-                return '1级跌倒';
-              case 6:
-                return '2级跌倒';
-              case 7:
-                return '3级跌倒';
-              case 8:
-                return '4级跌倒';
-              case 9:
-                return '5级跌倒';
-              case 10:
-                return '6级跌倒';
-              case 11:
-                return '7级跌倒';
+                return '跌倒';
+              // case 5:
+              //   return '1级跌倒';
+              // case 6:
+              //   return '2级跌倒';
+              // case 7:
+              //   return '3级跌倒';
+              // case 8:
+              //   return '4级跌倒';
+              // case 9:
+              //   return '5级跌倒';
+              // case 10:
+              //   return '6级跌倒';
+              // case 11:
+              //   return '7级跌倒';
               default:
                 return '无人';
             }
