@@ -73,7 +73,7 @@ const Detail = (props) => {
   const { group } = props.location.query;
   localStorage.setItem('sn', sn);
   const canvasRef = useRef(null)
-  const [location, setLocation] = React.useState({x:350,y:400})
+  const [location, setLocation] = React.useState({x:1350,y:1400})
   const [client, setClient] = useState<MqttClient>();
   const data = localStorage.getItem('data');
   const { 
