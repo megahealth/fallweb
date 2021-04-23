@@ -133,6 +133,7 @@ const Detail = (props) => {
       client.on('message', (topic, payload) => {
         const { sn: msgSn, point, fall, breath } = JSON.parse(payload.toString());
 
+        if(msgSn===sn) {
         if (topic.indexOf('downline') !== -1) {
           setOnline(0);
         }
@@ -152,14 +153,14 @@ const Detail = (props) => {
           const {x,y} = point;
           // x:-200,300
           // y: 600
-          if(msgSn===sn) {
+          
             setLocation({
               x: 100*x+200+100,
               y: 100*y+100
             });
-          }
+          
         }
-
+        }
       });
       client.on('close', () => {
       });
