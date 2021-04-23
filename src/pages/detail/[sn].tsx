@@ -25,6 +25,8 @@ function draw(ctx, location) {
   ctx.save();
   ctx.fillStyle = '#ddd';
   ctx.fillRect(280, 100, 40, 40);
+  ctx.fillStyle = '#fff';
+  ctx.fillText("设备",290, 120);
   ctx.restore();
 
   ctx.save();
@@ -54,6 +56,7 @@ function draw(ctx, location) {
   ctx.save();
   ctx.fillStyle = '#fff';
   ctx.fillText("目标",location.x-30,location.y-37);
+
   // ctx.transform(0.3,0.5,1,0,location.x,location.y);
   ctx.restore();
 
@@ -202,7 +205,7 @@ const Detail = (props) => {
           height={800}
           onClick={e => {
             const newLocation = { x: e.clientX-225, y: e.clientY-80 }
-            setLocation(newLocation)
+            // setLocation(newLocation)
           }}
         />
       </div>
