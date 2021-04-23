@@ -25,6 +25,10 @@ const Status = props => {
   }
 
   const rolltime = localStorage.getItem('last_roll_time') || last_roll_time;
+  const time =
+    typeof rolltime === 'string'
+      ? moment(parseInt(rolltime)).format('HH:mm')
+      : moment().format('HH:mm');
 
   return (
     <div className={styles.status}>
@@ -89,7 +93,7 @@ const Status = props => {
           <img src={翻身时间}></img>
           <div>
             <p>最后翻身时间</p>
-            <p>{moment(rolltime).format('HH:mm')}</p>
+            <p>{time}</p>
           </div>
         </div>
       )}
