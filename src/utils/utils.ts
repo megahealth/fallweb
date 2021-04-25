@@ -31,7 +31,8 @@ export const createGroupTreeList = (groupList: Groups) => {
       parent_name: self.parent_name,
       sub_name: self.sub_name,
       title: self.sub_name,
-      label: self.sub_name + '(' + self.dev_cnt + ')',
+      // label: self.sub_name + '(' + self.dev_cnt + ')',
+      label: self.sub_name,
       children: [],
       dev_cnt: self.dev_cnt,
     };

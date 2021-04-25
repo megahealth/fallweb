@@ -320,6 +320,10 @@ const Dashboard: FC<QueryDashboardProps> = ({
     onChange(keys);
   };
 
+  const onShowSizeChange = (current, size) => {
+    setPageSize(size);
+  };
+
   return (
     <div>
       <div className={styles.tree}>
@@ -339,31 +343,33 @@ const Dashboard: FC<QueryDashboardProps> = ({
         </Space>
       </div>
       <div className={styles.devices}>
-        {[...messages].slice((current - 1) * 10, current * 10).map(data => {
-          const {
-            action_state,
-            breath,
-            count,
-            online,
-            sn,
-            name,
-            group_id,
-          } = data[1];
+        {[...messages]
+          .slice((current - 1) * pageSize, current * pageSize)
+          .map(data => {
+            const {
+              action_state,
+              breath,
+              count,
+              online,
+              sn,
+              name,
+              group_id,
+            } = data[1];
 
-          return (
-            <Room
-              key={sn}
-              sn={sn}
-              group={group_id}
-              name={name}
-              online={online}
-              count={count}
-              action={action_state}
-              breath={breath}
-              data={data[1]}
-            />
-          );
-        })}
+            return (
+              <Room
+                key={sn}
+                sn={sn}
+                group={group_id}
+                name={name}
+                online={online}
+                count={count}
+                action={action_state}
+                breath={breath}
+                data={data[1]}
+              />
+            );
+          })}
       </div>
       {messages.size == 0 && (
         <div className={styles.emptyBox}>
@@ -377,7 +383,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
         current={current}
         pageSize={pageSize}
         // showTotal={showTotal}
-        showSizeChanger={false}
+        showSizeChanger={true}
+        onShowSizeChange={onShowSizeChange}
         showQuickJumper
         onChange={onCurrentChange}
       />
