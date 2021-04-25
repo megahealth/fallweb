@@ -10,26 +10,36 @@ export interface DetailProps {
 }
 
 function draw(ctx, location) {
-  ctx.save();
 
+
+  ctx.save();
   ctx.fillStyle = 'white';
   ctx.shadowColor = '#ccc';
-  ctx.shadowOffsetX = 2;
-  ctx.shadowOffsetY = 2;
-  ctx.shadowBlur = 2;
-  // ctx.rotate(30 * Math.PI / 180);
-  // ctx.transform(0.3,0.5,1,0,0,0);
+  ctx.shadowOffsetX = 3;
+  ctx.shadowOffsetY = 3;
+  ctx.shadowBlur = 3;
+  ctx.rotate(-90 * Math.PI / 180);
+  ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
   ctx.fillRect(100, 100, 500, 600);
   ctx.restore();
 
   ctx.save();
-  ctx.fillStyle = '#ddd';
+  ctx.rotate(-90 * Math.PI / 180);
+  ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
+  ctx.shadowColor = '#ccc';
+  ctx.shadowOffsetX = 3;
+  ctx.shadowOffsetY = 3;
+  ctx.shadowBlur = 5;
+  ctx.fillStyle = '#aaa';
   ctx.fillRect(280, 100, 40, 40);
   ctx.fillStyle = '#fff';
-  ctx.fillText("设备",290, 120);
+  ctx.font = "18px sans-serif";
+  ctx.fillText("设备",283, 123);
   ctx.restore();
 
   ctx.save();
+  ctx.rotate(-90 * Math.PI / 180);
+  ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
   ctx.beginPath();
   ctx.arc(location.x, location.y, 8, 0, Math.PI * 2, true); // 绘制
   ctx.fillStyle = '#5dc394';
@@ -42,28 +52,29 @@ function draw(ctx, location) {
   ctx.stroke();
   ctx.restore();
 
-  ctx.beginPath();
-  ctx.strokeStyle = '#5dc394';
-  ctx.moveTo(location.x, location.y);
-  ctx.lineTo(location.x, location.y-50);
-  ctx.stroke();
-
-  ctx.save();
-  ctx.fillStyle = '#5dc394';
-  ctx.fillRect(location.x-40, location.y-50, 40, 20);
-  ctx.restore();
-
-  ctx.save();
-  ctx.fillStyle = '#fff';
-  ctx.fillText("目标",location.x-30,location.y-37);
-
-  // ctx.transform(0.3,0.5,1,0,location.x,location.y);
-  ctx.restore();
-
+  // ctx.save();
+  // ctx.rotate(-90 * Math.PI / 180);
+  // ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
+  // ctx.beginPath();
+  // ctx.strokeStyle = '#5dc394';
+  // ctx.moveTo(location.x, location.y);
+  // ctx.lineTo(location.x, location.y-50);
+  // ctx.stroke();
+  // ctx.restore();
 
   // ctx.save();
+  // ctx.rotate(-90 * Math.PI / 180);
+  // ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
+  // ctx.fillStyle = '#5dc394';
+  // ctx.fillRect(location.x-40, location.y-50, 40, 20);
   // ctx.restore();
-  // ctx.rotate(30 * Math.PI / 180);
+
+  // ctx.save();
+  // ctx.rotate(-90 * Math.PI / 180);
+  // ctx.transform(0.5,0,0,0.5,-300,-50);
+  // ctx.fillStyle = '#fff';
+  // ctx.fillText("目标",location.x-30,location.y-37);
+  // ctx.restore();
 
 }
 
@@ -202,7 +213,7 @@ const Detail = (props) => {
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    ctx.clearRect(0,0,700,800);
+    ctx.clearRect(0,0,700,500);
     draw(ctx, location)
   })
 
@@ -220,7 +231,7 @@ const Detail = (props) => {
         <canvas
           ref={canvasRef}
           width={700}
-          height={800}
+          height={500}
           onClick={e => {
             // const newLocation = { x: e.clientX-225, y: e.clientY-80 }
             // setLocation(newLocation)
