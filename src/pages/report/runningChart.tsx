@@ -22,6 +22,8 @@ const BreathChart = props => {
       }
       return 0;
     });
+    list.unshift([start, list[0][1]]);
+    list.push([end, list[list.length - 1][1]]);
 
     return {
       title: {

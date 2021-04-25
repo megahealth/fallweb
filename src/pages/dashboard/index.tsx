@@ -364,12 +364,12 @@ const Dashboard: FC<QueryDashboardProps> = ({
             />
           );
         })}
-        {messages.size == 0 && (
-          <div className={styles.emptyBox}>
-            <Empty />
-          </div>
-        )}
       </div>
+      {messages.size == 0 && (
+        <div className={styles.emptyBox}>
+          <Empty />
+        </div>
+      )}
       <Pagination
         className={styles.custonPagi}
         size="small"

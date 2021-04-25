@@ -49,10 +49,10 @@ const errorHandler = (error: { response: Response }): Response => {
     const errorText =
       codeMessage[response.status as mapCode] || response.statusText;
     const { status, url } = response;
-    notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
+    // notification.error({
+    //   message: `请求错误 ${status}: ${url}`,
+    //   description: errorText,
+    // });
     if (status === 401) {
       console.log('token失效');
       message.error('令牌失效，已自动登出！');
@@ -62,10 +62,10 @@ const errorHandler = (error: { response: Response }): Response => {
       });
     }
   } else if (!response) {
-    notification.error({
-      description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
+    // notification.error({
+    //   description: '您的网络发生异常，无法连接服务器',
+    //   message: '网络异常',
+    // });
   }
   return response;
 };

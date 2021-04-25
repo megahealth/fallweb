@@ -83,11 +83,11 @@ const Detail = (props) => {
     device_id,
     group_id,
     group_name,
-    last_roll_time,
     name,
     online: localonline,
     outdoor: localoutdoor,
     roll: localroll,
+    last_roll_time,
     update_at
   } = JSON.parse(data);
   const [online, setOnline] = useState(localonline);
@@ -134,36 +134,53 @@ const Detail = (props) => {
         const { sn: msgSn, point, fall, breath } = JSON.parse(payload.toString());
 
         if(msgSn===sn) {
-        if (topic.indexOf('downline') !== -1) {
-          setOnline(0);
-        }
-        if (topic.indexOf('upline') !== -1) {
-          setOnline(1);
-        }
-        if (fall) {
-          const { a, d, c, r } = fall;
-          setState(a);
-          setOutdoor(d);
-          setCount(c);
-          setRoll(r);
-        }
-        if (breath) setBreath(breath.b);
+          if (topic.indexOf('downline') !== -1) {
+            setOnline(0);
+          }
+          if (topic.indexOf('upline') !== -1) {
+            setOnline(1);
+          }
+          if (fall) {
+            const { a, d, c, r } = fall;
+            setState(a);
+            setOutdoor(d);
+            setCount(c);
+            setRoll(r);
+            if(r===1) {
+              setRollTime(new Date().getTime());
+            }
+          }
+          if (breath) setBreath(breath.b);
 
-        if(point) {
-          const {x,y} = point;
-          // x:-200,300
-          // y: 600
-          
+          if(point) {
+            const {x,y} = point;
+            // x:-200,300
+            // y: 600
+            
             setLocation({
               x: 100*x+200+100,
               y: 100*y+100
             });
-          
-        }
+            
+          }
         }
       });
       client.on('close', () => {
       });
+      client.on('reconnect', () => {
+        // let now = new Date().getTime();
+        // setReconnectTimes(reconnectTimes.push(now));
+
+        // let last3 = reconnectTimes[reconnectTimes.length - 3];
+        // if (last3 && now - last3 < 10 * 1000) {
+        //   mqttDisconnect();
+        //   dispatch({
+        //     type: 'login/logout',
+        //     payload: {},
+        //   });
+        //   message.error('有人登陆您的账号，已被迫下线！');
+        // }
+      })
       client.on('disconnect', packet => {
         console.log(packet);
       });
@@ -197,7 +214,7 @@ const Detail = (props) => {
         online={online}
         count={count}
         roll={roll}
-        last_roll_time={rollTime}
+        rollTime={rollTime}
       ></Status>
       <div className={styles.point}>
         <canvas
@@ -205,7 +222,7 @@ const Detail = (props) => {
           width={700}
           height={800}
           onClick={e => {
-            const newLocation = { x: e.clientX-225, y: e.clientY-80 }
+            // const newLocation = { x: e.clientX-225, y: e.clientY-80 }
             // setLocation(newLocation)
           }}
         />

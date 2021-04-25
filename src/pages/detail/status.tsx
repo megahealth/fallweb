@@ -12,108 +12,64 @@ import 多人圆形 from '@/assets/多人圆形.png';
 import styles from './index.less';
 import moment from 'moment';
 
+const Card = props => {
+  const { src, name, value } = props;
+
+  return (
+    <div>
+      <img src={src}></img>
+      <div>
+        <p>{name}</p>
+        <p>{value}</p>
+      </div>
+    </div>
+  );
+};
+
 const Status = props => {
-  const { breath, state, online, count, last_roll_time, roll } = props;
-
-  if (roll === 1) {
-    localStorage.setItem(
-      'last_roll_time',
-      JSON.stringify(new Date().getTime()),
-    );
-  } else {
-    localStorage.removeItem('last_roll_time');
-  }
-
-  const rolltime = localStorage.getItem('last_roll_time') || last_roll_time;
-  const time =
-    typeof rolltime === 'string'
-      ? moment(parseInt(rolltime)).format('HH:mm')
-      : moment().format('HH:mm');
+  const { breath, state, online, count, rollTime, roll } = props;
 
   return (
     <div className={styles.status}>
       {online == 0 && (
-        <div>
-          <img src={离线圆形}></img>
-          <div>
-            <p>状态</p>
-            <p>设备离线</p>
-          </div>
-        </div>
+        <Card src={离线圆形} name={'状态'} value={'设备离线'}></Card>
       )}
       {online == 1 && state === 0 && (
-        <div>
-          <img src={无人圆形}></img>
-          <div>
-            <p>状态</p>
-            <p>无人</p>
-          </div>
-        </div>
+        <Card src={无人圆形} name={'状态'} value={'无人'}></Card>
       )}
       {online == 1 && state >= 5 && (
-        <div>
-          <img src={有人跌倒}></img>
-          <div>
-            <p>状态</p>
-            <p>有人跌倒</p>
-          </div>
-        </div>
+        <Card src={有人跌倒} name={'状态'} value={'有人跌倒'}></Card>
       )}
       {online == 1 && state === 1 && (
-        <div>
-          <img src={有人活动圆形}></img>
-          <div>
-            <p>状态</p>
-            <p>有人活动</p>
-          </div>
-        </div>
+        <Card src={有人活动圆形} name={'状态'} value={'有人活动'}></Card>
       )}
       {online == 1 && state === 3 && (
-        <div>
-          <img src={有人在床}></img>
-          <div>
-            <p>状态</p>
-            <p>有人在床</p>
-          </div>
-        </div>
+        <Card src={有人在床} name={'状态'} value={'有人在床'}></Card>
       )}
       {online == 1 && state === 3 && (
-        <div>
-          <img src={呼吸率}></img>
-          <div>
-            <p>呼吸率</p>
-            <p>
+        <Card
+          src={呼吸率}
+          name={'呼吸率'}
+          // value={breath}
+          value={breath => (
+            <>
               {breath} <span>bpm</span>
-            </p>
-          </div>
-        </div>
+            </>
+          )}
+        ></Card>
       )}
       {online == 1 && state === 3 && (
-        <div>
-          <img src={翻身时间}></img>
-          <div>
-            <p>最后翻身时间</p>
-            <p>{time}</p>
-          </div>
-        </div>
+        <Card
+          src={翻身时间}
+          name={'最后翻身时间'}
+          value={moment(rollTime).format('HH:mm')}
+        ></Card>
       )}
       {online == 1 && state === 2 && (
-        <div>
-          <img src={坐姿}></img>
-          <div>
-            <p>状态</p>
-            <p>坐姿</p>
-          </div>
-        </div>
+        <Card src={坐姿} name={'状态'} value={'坐姿'}></Card>
       )}
       {online == 1 && count > 1 && (
-        <div>
-          <img src={多人圆形}></img>
-          <div>
-            <p>人数</p>
-            <p>多人</p>
-          </div>
-        </div>
+        <Card src={多人圆形} name={'人数'} value={'多人'}></Card>
       )}
     </div>
   );

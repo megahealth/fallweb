@@ -60,7 +60,7 @@ function Room(props: any) {
       case 11:
         text = '有人跌倒';
         img = 跌倒;
-        color = colors.blue;
+        color = colors.red;
         textColor = '#c52f2f';
         break;
       default:
