@@ -51,11 +51,11 @@ const Status = props => {
           src={呼吸率}
           name={'呼吸率'}
           // value={breath}
-          value={breath => (
+          value={(breath => (
             <>
               {breath} <span>bpm</span>
             </>
-          )}
+          ))(breath)}
         ></Card>
       )}
       {online == 1 && state === 3 && (
