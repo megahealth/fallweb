@@ -6,10 +6,10 @@ export default function() {
   return (
     <>
       <div style={{ fontSize: 18 }}>
-        <img
+        {/* <img
           style={{ width: '30px', marginRight: '10px' }}
           src={iconlogo}
-        ></img>
+        ></img> */}
         Welcome! 毫米波雷达监测系统
       </div>
       <UserSetting />
