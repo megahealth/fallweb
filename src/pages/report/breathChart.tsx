@@ -61,14 +61,23 @@ const BreathChart = props => {
         min: 0,
         max: end - start,
         splitLine: {
+          // lineStyle: {
+          //   type: 'dashed',
+          // },
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLine: {
           lineStyle: {
-            type: 'dashed',
+            color: '#e2e9e6',
           },
         },
         axisLabel: {
           formatter: function(value, index) {
             return moment(t + value).format('HH:mm');
           },
+          color: '#666',
         },
       },
       dataZoom: [
@@ -80,9 +89,20 @@ const BreathChart = props => {
         min: 0,
         max: 50,
         splitLine: {
+          // lineStyle: {
+          //   type: 'dashed',
+          // },
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLine: {
           lineStyle: {
-            type: 'dashed',
+            color: '#e2e9e6',
           },
+        },
+        axisLabel: {
+          color: '#666',
         },
       },
       series: [
@@ -93,6 +113,9 @@ const BreathChart = props => {
           smooth: true,
           data: list,
           type: 'line',
+          lineStyle: {
+            color: '#fadd46',
+          },
         },
         // {
         //   name: 'line',

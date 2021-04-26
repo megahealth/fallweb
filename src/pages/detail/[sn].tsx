@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { connect, Dispatch, Link } from 'umi';
 import mqtt, { MqttClient } from 'mqtt';
-import styles from './index.less'
-import Status from './status'
+import styles from './index.less';
+import Status from './status';
+import Report from '../report/[sn]';
 
 export interface DetailProps {
   dispatch: Dispatch;
@@ -10,22 +11,20 @@ export interface DetailProps {
 }
 
 function draw(ctx, location) {
-
-
   ctx.save();
   ctx.fillStyle = 'white';
   ctx.shadowColor = '#ccc';
   ctx.shadowOffsetX = 3;
   ctx.shadowOffsetY = 3;
   ctx.shadowBlur = 3;
-  ctx.rotate(-90 * Math.PI / 180);
-  ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
+  ctx.rotate((-90 * Math.PI) / 180);
+  ctx.transform(0.25, 0.6, -0.3, 0.25, -150, -60);
   ctx.fillRect(100, 100, 500, 600);
   ctx.restore();
 
   ctx.save();
-  ctx.rotate(-90 * Math.PI / 180);
-  ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
+  ctx.rotate((-90 * Math.PI) / 180);
+  ctx.transform(0.25, 0.6, -0.3, 0.25, -150, -60);
   ctx.shadowColor = '#ccc';
   ctx.shadowOffsetX = 3;
   ctx.shadowOffsetY = 3;
@@ -33,22 +32,22 @@ function draw(ctx, location) {
   ctx.fillStyle = '#aaa';
   ctx.fillRect(280, 100, 40, 40);
   ctx.fillStyle = '#fff';
-  ctx.font = "18px sans-serif";
-  ctx.fillText("设备",283, 123);
+  ctx.font = '18px sans-serif';
+  ctx.fillText('设备', 283, 123);
   ctx.restore();
 
   ctx.save();
-  ctx.rotate(-90 * Math.PI / 180);
-  ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
+  ctx.rotate((-90 * Math.PI) / 180);
+  ctx.transform(0.25, 0.6, -0.3, 0.25, -150, -60);
   ctx.beginPath();
   ctx.arc(location.x, location.y, 8, 0, Math.PI * 2, true); // 绘制
   ctx.fillStyle = '#5dc394';
-  ctx.strokeStyle = "#5dc394"
+  ctx.strokeStyle = '#5dc394';
   ctx.shadowColor = '#5dc394';
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
   ctx.shadowBlur = 20;
-  ctx.fill()
+  ctx.fill();
   ctx.stroke();
   ctx.restore();
 
@@ -75,19 +74,17 @@ function draw(ctx, location) {
   // ctx.fillStyle = '#fff';
   // ctx.fillText("目标",location.x-30,location.y-37);
   // ctx.restore();
-
 }
 
-const Detail = (props) => {
-
+const Detail = props => {
   const { sn } = props.match.params;
   const { group } = props.location.query;
   localStorage.setItem('sn', sn);
-  const canvasRef = useRef(null)
-  const [location, setLocation] = React.useState({x:1350,y:1400})
+  const canvasRef = useRef(null);
+  const [location, setLocation] = React.useState({ x: 1350, y: 1400 });
   const [client, setClient] = useState<MqttClient>();
   const data = localStorage.getItem('data');
-  const { 
+  const {
     action_state,
     breath: localbreath,
     count: localcount,
@@ -99,7 +96,7 @@ const Detail = (props) => {
     outdoor: localoutdoor,
     roll: localroll,
     last_roll_time,
-    update_at
+    update_at,
   } = JSON.parse(data);
   const [online, setOnline] = useState(localonline);
   const [state, setState] = useState(action_state);
@@ -130,7 +127,7 @@ const Detail = (props) => {
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        console.log('connect')
+        console.log('connect');
         client.subscribe(`web/${group}/#`, error => {
           if (error) {
             console.log('Unsubscribe error', error);
@@ -142,9 +139,11 @@ const Detail = (props) => {
         console.log(err);
       });
       client.on('message', (topic, payload) => {
-        const { sn: msgSn, point, fall, breath } = JSON.parse(payload.toString());
+        const { sn: msgSn, point, fall, breath } = JSON.parse(
+          payload.toString(),
+        );
 
-        if(msgSn===sn) {
+        if (msgSn === sn) {
           if (topic.indexOf('downline') !== -1) {
             setOnline(0);
           }
@@ -157,31 +156,28 @@ const Detail = (props) => {
             setOutdoor(d);
             setCount(c);
             setRoll(r);
-            if(r===1) {
+            if (r === 1) {
               setRollTime(new Date().getTime());
             }
           }
           if (breath) setBreath(breath.b);
 
-          if(point) {
-            const {x,y} = point;
+          if (point) {
+            const { x, y } = point;
             // x:-200,300
             // y: 600
-            
+
             setLocation({
-              x: 100*x+200+100,
-              y: 100*y+100
+              x: 100 * x + 200 + 100,
+              y: 100 * y + 100,
             });
-            
           }
         }
       });
-      client.on('close', () => {
-      });
+      client.on('close', () => {});
       client.on('reconnect', () => {
         // let now = new Date().getTime();
         // setReconnectTimes(reconnectTimes.push(now));
-
         // let last3 = reconnectTimes[reconnectTimes.length - 3];
         // if (last3 && now - last3 < 10 * 1000) {
         //   mqttDisconnect();
@@ -191,12 +187,11 @@ const Detail = (props) => {
         //   });
         //   message.error('有人登陆您的账号，已被迫下线！');
         // }
-      })
+      });
       client.on('disconnect', packet => {
         console.log(packet);
       });
-      client.on('offline', () => {
-      });
+      client.on('offline', () => {});
     }
 
     return () => {
@@ -206,16 +201,15 @@ const Detail = (props) => {
     };
   }, [client]);
 
-
   // 绘制矩形，绘制点，变形（斜拉）
   // 清除矩形内容，绘制点
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    ctx.clearRect(0,0,700,500);
-    draw(ctx, location)
-  })
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 500, 400);
+    draw(ctx, location);
+  });
 
   return (
     <div>
@@ -227,27 +221,18 @@ const Detail = (props) => {
         roll={roll}
         rollTime={rollTime}
       ></Status>
-      <div className={styles.point}>
-        <canvas
-          ref={canvasRef}
-          width={700}
-          height={500}
-          onClick={e => {
-            // const newLocation = { x: e.clientX-225, y: e.clientY-80 }
-            // setLocation(newLocation)
-          }}
-        />
+      <div className={styles.warp}>
+        <div className={styles.point}>
+          <canvas ref={canvasRef} width={500} height={400} />
+          <div className={styles.fall}></div>
+        </div>
+        <div className={styles.report}>
+          {/* <Link to={`/report/${sn}`}>查看完整报告</Link> */}
+          <Report></Report>
+        </div>
       </div>
-      <Link to={`/report/${sn}`}>
-        查看完整报告
-      </Link>
     </div>
-    
-  )
-}
+  );
+};
 
-export default connect(({
-
-}) => ({
-
-}))(Detail);
+export default connect(({}) => ({}))(Detail);

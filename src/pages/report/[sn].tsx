@@ -17,14 +17,18 @@ export interface ReportProps {
 }
 
 const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
-  const startNum = parseInt(moment().startOf('day').format('x'));
+  const startNum = parseInt(
+    moment()
+      .startOf('day')
+      .format('x'),
+  );
   const endNum = parseInt(moment().format('x'));
 
   const [sn, setSn] = useState(localStorage.getItem('sn'));
   const [start, setStart] = useState(startNum);
   const [end, setEnd] = useState(endNum);
 
-  const { fall, breath, running} = report;
+  const { fall, breath, running } = report;
 
   useEffect(() => {
     dispatch({
@@ -35,7 +39,7 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         limit: 100,
         start,
         end,
-        sn
+        sn,
       },
     });
 
@@ -47,7 +51,7 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         limit: 100,
         start,
         end,
-        sn
+        sn,
       },
     });
 
@@ -59,7 +63,7 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
         limit: 100,
         start,
         end,
-        sn
+        sn,
       },
     });
   }, [start, end]);
@@ -67,37 +71,34 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
   const onChange = (value, dateString) => {
     console.log('Selected Time: ', value);
     console.log('Formatted Selected Time: ', dateString);
-  }
-  
-  const onOk = (value) => {
+  };
+
+  const onOk = value => {
     console.log('onOk: ', value);
     setStart(parseInt(value[0].format('x')));
     setEnd(parseInt(value[1].format('x')));
-  }
+  };
 
   return (
-    <div style={{background: '#fff', borderRadius: '25px', padding: '20px'}}>
+    <div style={{ background: '#fff', borderRadius: '25px', padding: '20px' }}>
       <RangePicker
         showTime={{ format: 'HH:mm' }}
         format="YYYY-MM-DD HH:mm"
         onChange={onChange}
         onOk={onOk}
+        bordered={false}
         defaultValue={[moment(start), moment(end)]}
       />
       <StateChart start={start} end={end} data={fall} />
       <BreathChart start={start} end={end} data={breath} />
       <RunningChart start={start} end={end} data={running} />
     </div>
-  )
-}
+  );
+};
 
-export default connect(({
-  report,
-  loading
-}: {
-  report: ReportState;
-  loading: Loading
-}) => ({
-  report,
-  loading: loading.models.report
-}))(Report);
+export default connect(
+  ({ report, loading }: { report: ReportState; loading: Loading }) => ({
+    report,
+    loading: loading.models.report,
+  }),
+)(Report);

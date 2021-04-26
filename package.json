@@ -9,6 +9,17 @@
     "test:coverage": "umi-test --coverage",
     "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx "
   },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
   "dependencies": {
     "@ant-design/icons": "^4.1.0",
     "@umijs/preset-react": "1.x",

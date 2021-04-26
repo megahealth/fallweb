@@ -7,6 +7,7 @@ const StateChart = props => {
 
   const getOption = () => {
     let list = [];
+    let listRoll = [];
     data.forEach(d => {
       let n = d.states.map(a => {
         if (a[2] >= 5) {
@@ -15,9 +16,26 @@ const StateChart = props => {
           return [a[4], a[2]];
         }
       });
+      let r = d.states.map(a => {
+        if (a[2] === 3 && a[3] === 1) {
+          return [a[4], 3];
+        } else {
+          return [a[4], null];
+        }
+      });
       list = list.concat(n);
+      listRoll = listRoll.concat(r);
     });
     list.sort(function compare(a, b) {
+      if (a[0] < b[0]) {
+        return -1;
+      }
+      if (a[0] > b[0]) {
+        return 1;
+      }
+      return 0;
+    });
+    listRoll.sort(function compare(a, b) {
       if (a[0] < b[0]) {
         return -1;
       }
@@ -33,6 +51,10 @@ const StateChart = props => {
       title: {
         left: 'center',
         text: '目标状态',
+      },
+      legend: {
+        data: ['目标状态', '翻身'],
+        right: 10,
       },
       tooltip: {
         trigger: 'axis',
@@ -91,6 +113,15 @@ const StateChart = props => {
         type: 'time',
         min: start,
         max: end,
+        splitLine: {},
+        axisTick: {
+          show: false,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#e2e9e6',
+          },
+        },
         axisLabel: {
           showMinLabel: true,
           showMaxLabel: true,
@@ -100,6 +131,7 @@ const StateChart = props => {
             }
             return moment(value).format('HH:mm');
           },
+          color: '#666',
         },
       },
       dataZoom: [
@@ -112,7 +144,17 @@ const StateChart = props => {
         splitNumber: 5,
         min: 0,
         max: 5,
+        splitLine: {},
+        axisTick: {
+          show: false,
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#e2e9e6',
+          },
+        },
         axisLabel: {
+          color: '#666',
           formatter: function(data) {
             switch (data) {
               case 0:
@@ -155,6 +197,14 @@ const StateChart = props => {
           type: 'line',
           step: 'end',
           data: list,
+        },
+        {
+          name: '翻身',
+          type: 'scatter',
+          data: listRoll,
+          itemStyle: {
+            color: '#ffa83e',
+          },
         },
       ],
     };
