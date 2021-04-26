@@ -60,7 +60,7 @@ const Status = props => {
           name={'呼吸率'}
           value={(breath => (
             <>
-              {breath} <span>bpm</span>
+              {breath > 0 ? breath : '--'} <span>bpm</span>
             </>
           ))(breath)}
         ></Card>
