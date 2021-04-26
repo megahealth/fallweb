@@ -197,13 +197,16 @@ const StateChart = props => {
           type: 'line',
           step: 'end',
           data: list,
+          z: 1,
         },
         {
           name: '翻身',
           type: 'scatter',
           data: listRoll,
+          z: 2,
           itemStyle: {
             color: '#ffa83e',
+            opacity: 1,
           },
         },
       ],
