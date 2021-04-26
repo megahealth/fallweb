@@ -80,10 +80,6 @@ const Status = props => {
       {online == 1 && state === 3 && (
         <Card src={有人在床} name={'状态'} value={'有人在床'}></Card>
       )}
-      {// temp
-      online == 1 && state !== 3 && (
-        <Card src={有人在床} name={'状态'} value={'无人在床'}></Card>
-      )}
       {online == 1 && state === 3 && (
         <Card
           src={翻身时间}
