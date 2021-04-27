@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { connect, Dispatch, Link } from 'umi';
+import { message } from 'antd';
+import { connect, Dispatch, history } from 'umi';
 import mqtt, { MqttClient } from 'mqtt';
 import styles from './index.less';
 import Status from './status';
@@ -83,6 +84,8 @@ const Detail = props => {
   const canvasRef = useRef(null);
   const [location, setLocation] = React.useState({ x: 1350, y: 1400 });
   const [client, setClient] = useState<MqttClient>();
+  const [reconnectTimes, setReconnectTimes] = useState([]);
+
   const data = localStorage.getItem('data');
   const {
     action_state,
@@ -176,17 +179,20 @@ const Detail = props => {
       });
       client.on('close', () => {});
       client.on('reconnect', () => {
-        // let now = new Date().getTime();
-        // setReconnectTimes(reconnectTimes.push(now));
-        // let last3 = reconnectTimes[reconnectTimes.length - 3];
-        // if (last3 && now - last3 < 10 * 1000) {
-        //   mqttDisconnect();
-        //   dispatch({
-        //     type: 'login/logout',
-        //     payload: {},
-        //   });
-        //   message.error('有人登陆您的账号，已被迫下线！');
-        // }
+        let now = new Date().getTime();
+        setReconnectTimes(reconnectTimes.push(now));
+        let last3 = reconnectTimes[reconnectTimes.length - 3];
+        if (last3 && now - last3 < 10 * 1000) {
+          if (client) {
+            client.end();
+          }
+
+          localStorage.clear();
+          history.replace({
+            pathname: '/login',
+          });
+          message.error('有人登陆您的账号，已被迫下线！');
+        }
       });
       client.on('disconnect', packet => {
         console.log(packet);

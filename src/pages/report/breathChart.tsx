@@ -8,7 +8,6 @@ import moment from 'moment';
 
 const BreathChart = props => {
   const { start, end, data } = props;
-  const chartRef = useRef(null);
 
   const getOption = () => {
     let list = [];
