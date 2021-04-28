@@ -226,6 +226,7 @@ const Detail = props => {
         count={count}
         roll={roll}
         rollTime={rollTime}
+        group={group}
       ></Status>
       <div className={styles.warp}>
         <div className={styles.point}>
