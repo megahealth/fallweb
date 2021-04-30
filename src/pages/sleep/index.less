@@ -1,0 +1,128 @@
+.breif {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+  .head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .title {
+      display: flex;
+      align-items: center;
+      img {
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+      }
+      span {
+        font-size: 20px;
+      }
+    }
+    .link {
+      display: flex;
+      align-items: center;
+      color: #666;
+      font-size: 14px;
+      cursor: pointer;
+      img {
+        height: 15px;
+        margin-left: 5px;
+      }
+    }
+  }
+  .body {
+    display: grid;
+    grid-column-gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    > div {
+      height: 250px;
+      background: #f5f6fa;
+      border-radius: 10px;
+    }
+    .left {
+      .title {
+        margin: 20px;
+        font-size: 16px;
+      }
+      .content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .stages {
+          display: grid;
+          grid-row-gap: 20px;
+          grid-column-gap: 20px;
+          grid-template-columns: 1fr 1fr;
+          .stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .name {
+              position: relative;
+              color: #666;
+              font-size: 12px;
+              &::before {
+                position: absolute;
+                top: 4px;
+                right: 40px;
+                width: 10px;
+                height: 10px;
+                background: #ccc;
+                border-radius: 10px;
+                content: '';
+              }
+            }
+            .value {
+              margin-top: 5px;
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+    .right {
+      .title {
+        margin: 20px;
+        font-size: 16px;
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .name {
+          margin-bottom: 10px;
+          color: #666;
+          font-size: 12px;
+        }
+        .value {
+          margin-bottom: 20px;
+          color: @primary-color;
+          font-size: 24px;
+        }
+        .group {
+          display: grid;
+          grid-column-gap: 30px;
+          grid-template-columns: 1fr 1fr 1fr;
+          > div {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            span {
+              &:nth-child(1) {
+                margin-bottom: 5px;
+                color: #666;
+                font-size: 12px;
+              }
+              &:nth-child(2) {
+                font-size: 18px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

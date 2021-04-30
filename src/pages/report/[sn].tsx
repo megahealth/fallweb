@@ -1,12 +1,16 @@
 import React, { FC, useEffect, useState } from 'react';
 import { connect, Dispatch } from 'umi';
 import { ReportState, Loading } from '@/models/connect';
-import ReactECharts from 'echarts-for-react';
 import { DatePicker, Space } from 'antd';
 import moment from 'moment';
 import StateChart from './stateChart';
 import BreathChart from './breathChart';
 import RunningChart from './runningChart';
+import IconTitle from '@/components/iconTitle';
+import 跌倒报告 from '@/assets/跌倒报告.png';
+import 呼吸率报告 from '@/assets/呼吸率报告.png';
+import 有人无人报告 from '@/assets/有人无人报告.png';
+import styles from './index.less';
 
 const { RangePicker } = DatePicker;
 
@@ -80,18 +84,29 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
   };
 
   return (
-    <div style={{ background: '#fff', borderRadius: '25px', padding: '20px' }}>
-      <RangePicker
-        showTime={{ format: 'HH:mm' }}
-        format="YYYY-MM-DD HH:mm"
-        onChange={onChange}
-        onOk={onOk}
-        bordered={false}
-        defaultValue={[moment(start), moment(end)]}
-      />
-      <StateChart start={start} end={end} data={fall} />
-      <BreathChart start={start} end={end} data={breath} />
-      <RunningChart start={start} end={end} data={running} />
+    <div className={styles.wrap}>
+      <div className={styles.range}>
+        <RangePicker
+          showTime={{ format: 'HH:mm' }}
+          format="YYYY-MM-DD HH:mm"
+          onChange={onChange}
+          onOk={onOk}
+          // bordered={false}
+          defaultValue={[moment(start), moment(end)]}
+        />
+      </div>
+      <IconTitle title="目标状态" img={跌倒报告}></IconTitle>
+      <div className={styles.chart}>
+        <StateChart start={start} end={end} data={fall} />
+      </div>
+      <IconTitle title="呼吸" img={呼吸率报告}></IconTitle>
+      <div className={styles.chart}>
+        <BreathChart start={start} end={end} data={breath} />
+      </div>
+      <IconTitle title="设备工作状态" img={有人无人报告}></IconTitle>
+      <div className={styles.chart}>
+        <RunningChart start={start} end={end} data={running} />
+      </div>
     </div>
   );
 };

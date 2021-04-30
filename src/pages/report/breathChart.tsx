@@ -33,18 +33,13 @@ const BreathChart = props => {
     });
 
     return {
-      title: {
-        left: 'center',
-        text: '呼吸',
+      grid: {
+        left: '2%',
+        right: '5%',
+        bottom: '5%',
+        top: '14%',
+        containLabel: true,
       },
-      // dataset: [{
-      //   source: data
-      // }, {
-      //   transform: {
-      //     type: 'ecStat:regression',
-      //     config: { method: 'polynomial', order: 3 }
-      //   }
-      // }],
       tooltip: {
         trigger: 'axis',
         formatter: function(params) {
@@ -131,7 +126,7 @@ const BreathChart = props => {
     };
   };
 
-  return <ReactECharts option={getOption()} />;
+  return <ReactECharts option={getOption()} style={{ height: '200px' }} />;
 };
 
 export default BreathChart;

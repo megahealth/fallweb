@@ -48,13 +48,16 @@ const StateChart = props => {
     // list.push([end, list[list.length-1][1]])
 
     return {
-      title: {
-        left: 'center',
-        text: '目标状态',
-      },
       legend: {
         data: ['目标状态', '翻身'],
-        right: 10,
+        right: 0,
+      },
+      grid: {
+        left: '2%',
+        right: '5%',
+        bottom: '5%',
+        top: '14%',
+        containLabel: true,
       },
       tooltip: {
         trigger: 'axis',
@@ -213,7 +216,7 @@ const StateChart = props => {
     };
   };
 
-  return <ReactECharts option={getOption()} />;
+  return <ReactECharts option={getOption()} style={{ height: '200px' }} />;
 };
 
 export default StateChart;

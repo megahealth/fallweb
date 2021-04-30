@@ -5,6 +5,7 @@ import { QueryUserState } from './user';
 import { DashboardState } from './dashboard';
 import { GroupState } from './group';
 import { ReportState } from './report';
+import { SleepState } from './sleep';
 
 export {
   GlobalModelState,
@@ -14,6 +15,7 @@ export {
   DashboardState,
   GroupState,
   ReportState,
+  SleepState,
 };
 
 export interface Loading {
@@ -30,6 +32,7 @@ export interface Loading {
     dashboard: boolean;
     group: boolean;
     report: boolean;
+    sleep: boolean;
   };
 }
 

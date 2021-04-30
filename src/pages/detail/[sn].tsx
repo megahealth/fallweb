@@ -1,10 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { message } from 'antd';
-import { connect, Dispatch, history } from 'umi';
+import { message, Empty } from 'antd';
+import { connect, Dispatch, history, Link } from 'umi';
 import mqtt, { MqttClient } from 'mqtt';
 import styles from './index.less';
 import Status from './status';
 import Report from '../report/[sn]';
+import BreifInfo from '../sleep/breifInfo';
+import IconTitle from '@/components/iconTitle';
+import 记录 from '@/assets/记录.png';
 
 export interface DetailProps {
   dispatch: Dispatch;
@@ -231,12 +234,19 @@ const Detail = props => {
       <div className={styles.warp}>
         <div className={styles.point}>
           <canvas ref={canvasRef} width={500} height={400} />
-          <div className={styles.fall}></div>
+          <div className={styles.fall}>
+            <IconTitle title="跌到处理记录" img={记录}></IconTitle>
+            <div className={styles.list}>
+              <Empty />
+            </div>
+          </div>
         </div>
         <div className={styles.report}>
-          {/* <Link to={`/report/${sn}`}>查看完整报告</Link> */}
           <Report></Report>
         </div>
+      </div>
+      <div>
+        <BreifInfo></BreifInfo>
       </div>
     </div>
   );
