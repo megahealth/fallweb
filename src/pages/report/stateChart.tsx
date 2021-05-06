@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import ReactECharts from 'echarts-for-react';
 import moment from 'moment';
 
@@ -44,8 +44,10 @@ const StateChart = props => {
       }
       return 0;
     });
-    // list.unshift([start, list[0][1]])
-    // list.push([end, list[list.length-1][1]])
+    if (list.length > 0) {
+      list.unshift([start, list[0][1]]);
+      list.push([end, list[list.length - 1][1]]);
+    }
 
     return {
       legend: {
@@ -71,7 +73,7 @@ const StateChart = props => {
               str = '站姿';
               break;
             case 2:
-              str = '坐姿';
+              str = ''; // 坐姿
               break;
             case 3:
               str = '在床';
@@ -80,6 +82,12 @@ const StateChart = props => {
               str = '低姿态';
               break;
             case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11:
               str = '跌倒';
               break;
             // case 5:
@@ -165,12 +173,18 @@ const StateChart = props => {
               case 1:
                 return '站姿';
               case 2:
-                return '坐姿';
+                return ''; // 坐姿
               case 3:
                 return '在床';
               case 4:
                 return '低姿态';
               case 5:
+              case 6:
+              case 7:
+              case 8:
+              case 9:
+              case 10:
+              case 11:
                 return '跌倒';
               // case 5:
               //   return '1级跌倒';

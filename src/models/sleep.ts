@@ -49,6 +49,19 @@ const GroupModel: SleepType = {
             data: response.msg,
           },
         });
+      } else {
+        yield put({
+          type: 'save',
+          payload: {
+            data: {
+              state: [],
+              breath: [],
+              move: [],
+              roll: [],
+              start: 0,
+            },
+          },
+        });
       }
     },
   },

@@ -89,7 +89,7 @@ const Detail = props => {
   const [client, setClient] = useState<MqttClient>();
   const [reconnectTimes, setReconnectTimes] = useState([]);
 
-  const data = localStorage.getItem('data');
+  const data = localStorage.getItem('data') || '';
   const {
     action_state,
     breath: localbreath,

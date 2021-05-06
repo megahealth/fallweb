@@ -1,5 +1,5 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
-import { DatePicker } from 'antd';
+import { DatePicker, Empty } from 'antd';
 import { connect, Dispatch, history } from 'umi';
 import { SleepState, Loading } from '@/models/connect';
 import SleepStage from './sleepStageChart';
@@ -28,7 +28,7 @@ const Sleep: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
     });
   }, [day]);
 
-  const onChange = e => {
+  const onChange = (e: any) => {
     setDay(e);
   };
 
@@ -41,11 +41,26 @@ const Sleep: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
         marginTop: '20px',
       }}
     >
-      <DatePicker defaultValue={day} onChange={onChange} />
-      <SleepStage start={start} state={state}></SleepStage>
-      <BreathTrend start={start} breath={breath}></BreathTrend>
-      <BodyMove start={start} move={move}></BodyMove>
-      <Roll start={start} roll={roll}></Roll>
+      <DatePicker allowClear={false} defaultValue={day} onChange={onChange} />
+      {start > 0 ? (
+        <>
+          <SleepStage start={start * 1000} state={state}></SleepStage>
+          <BreathTrend start={start * 1000} breath={breath}></BreathTrend>
+          <BodyMove start={start * 1000} move={move}></BodyMove>
+          <Roll start={start * 1000} roll={roll}></Roll>
+        </>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+          }}
+        >
+          <Empty></Empty>
+        </div>
+      )}
     </div>
   );
 };

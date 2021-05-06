@@ -91,7 +91,7 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
           format="YYYY-MM-DD HH:mm"
           onChange={onChange}
           onOk={onOk}
-          // bordered={false}
+          allowClear={false}
           defaultValue={[moment(start), moment(end)]}
         />
       </div>

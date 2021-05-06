@@ -63,9 +63,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
   // Offline      脱机
   // Disconnected 代理通知断开连接
   // Closed       连接已断开
-  // const [isSub, setIsSub] = useState<boolean>(false);
-  // true   已订阅
-  // false  取消订阅
   const [reconnectTimes, setReconnectTimes] = useState([]);
 
   const [messages, setMessages] = useState(new Map());
@@ -90,7 +87,7 @@ const Dashboard: FC<QueryDashboardProps> = ({
         clean: true,
         keepalive: 10,
         connectTimeout: 4000,
-        clientId: localStorage.getItem('user_id'),
+        clientId: localStorage.getItem('user_id') || '',
         username: 'user_' + localStorage.getItem('name'),
         reconnectPeriod: 1000,
         protocolVersion: 5,
@@ -244,8 +241,8 @@ const Dashboard: FC<QueryDashboardProps> = ({
       setInterval(1000);
     }
 
-    let ts: [] = [];
-    let nodes = [];
+    let ts: string[] = [];
+    let nodes: object[] = [];
     const search = (node, key) => {
       const len = node && node.children && node.children.length;
       if (node.key === key) {

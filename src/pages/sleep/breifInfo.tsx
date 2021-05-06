@@ -65,11 +65,20 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
   const sleepDuration = stages[1].value + stages[2].value + stages[3].value;
   const hours = moment.duration(sleepDuration, 'minutes').hours();
   const minutes = sleepDuration % 60;
+  const title =
+    '睡眠报告摘要' +
+    (start
+      ? '（' + moment(start * 1000).format('YYYY-MM-DD') + '）'
+      : '（--）');
+  const startTime = start ? moment(start * 1000).format('HH:mm') : '--';
+  const endTime = start
+    ? moment(start * 1000 + state.length * 60 * 1000).format('HH:mm')
+    : '--';
 
   return (
     <div className={styles.breif}>
       <div className={styles.head}>
-        <IconTitle title="睡眠报告摘要" img={睡眠摘要}></IconTitle>
+        <IconTitle title={title} img={睡眠摘要}></IconTitle>
         <Link to={`/sleep/${sn}`} className={styles.link}>
           <span>查看完整报告</span>
           <img src={二级页面} />
@@ -92,13 +101,11 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
             <div className={styles.group}>
               <div>
                 <span>睡眠分期开始</span>
-                <span>{moment(start).format('HH:mm')}</span>
+                <span>{startTime}</span>
               </div>
               <div>
                 <span>睡眠分期结束</span>
-                <span>
-                  {moment(start + state.length * 60 * 1000).format('HH:mm')}
-                </span>
+                <span>{endTime}</span>
               </div>
               <div>
                 <span>深睡时长</span>
