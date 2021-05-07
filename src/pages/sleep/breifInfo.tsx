@@ -74,6 +74,7 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
   const endTime = start
     ? moment(start * 1000 + state.length * 60 * 1000).format('HH:mm')
     : '--';
+  const deepDuration = stages[3].value;
 
   return (
     <div className={styles.breif}>
@@ -109,7 +110,7 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
               </div>
               <div>
                 <span>深睡时长</span>
-                <span>{stages[3].value}分钟</span>
+                <span>{deepDuration}分钟</span>
               </div>
             </div>
           </div>

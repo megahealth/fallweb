@@ -1,10 +1,6 @@
 import React, { useRef } from 'react';
-import ReactECharts from 'echarts-for-react';
 import moment from 'moment';
-// import echarts from 'echarts';
-// import ecStat from 'echarts-stat';
-
-// echarts.registerTransform(ecStat.transform.regression);
+import useEcharts from '@/components/useEcharts';
 
 const BreathChart = props => {
   const { start, end, data } = props;
@@ -126,7 +122,11 @@ const BreathChart = props => {
     };
   };
 
-  return <ReactECharts option={getOption()} style={{ height: '200px' }} />;
+  const chartRef = useRef(null);
+  const config = getOption();
+  useEcharts(chartRef, config);
+
+  return <div style={{ height: '200px' }} ref={chartRef} />;
 };
 
 export default BreathChart;
