@@ -222,6 +222,9 @@ const Detail = props => {
 
   return (
     <div>
+      <div className={styles.breadcrumb}>
+        监控页{ ' > ' + localStorage.getItem('localCurrentGroup') + ' > ' + JSON.parse(localStorage.getItem('data')).name }
+      </div>
       <Status
         breath={breath}
         state={state}
@@ -235,7 +238,7 @@ const Detail = props => {
         <div className={styles.point}>
           <canvas ref={canvasRef} width={500} height={400} />
           <div className={styles.fall}>
-            <IconTitle title="跌到处理记录" img={记录}></IconTitle>
+            <IconTitle title="跌倒处理记录" img={记录}></IconTitle>
             <div className={styles.list}>
               <Empty />
             </div>

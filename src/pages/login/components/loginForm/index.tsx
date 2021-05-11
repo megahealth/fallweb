@@ -86,7 +86,7 @@ const LoginForm: FC<LoginFormProps & ParentProps> = ({
           { max: 18, message: '密码最多18位数' },
         ]}
       >
-        <Input
+        <Input.Password
           prefix={<LockOutlined />}
           type="password"
           autoComplete="off"

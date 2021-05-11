@@ -99,7 +99,7 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
       <div className={styles.chart}>
         <StateChart start={start} end={end} data={fall} />
       </div>
-      <IconTitle title="呼吸" img={呼吸率报告}></IconTitle>
+      <IconTitle title="呼吸率" img={呼吸率报告}></IconTitle>
       <div className={styles.chart}>
         <BreathChart start={start} end={end} data={breath} />
       </div>
