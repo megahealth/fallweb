@@ -54,30 +54,6 @@ function draw(ctx, location) {
   ctx.fill();
   ctx.stroke();
   ctx.restore();
-
-  // ctx.save();
-  // ctx.rotate(-90 * Math.PI / 180);
-  // ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
-  // ctx.beginPath();
-  // ctx.strokeStyle = '#5dc394';
-  // ctx.moveTo(location.x, location.y);
-  // ctx.lineTo(location.x, location.y-50);
-  // ctx.stroke();
-  // ctx.restore();
-
-  // ctx.save();
-  // ctx.rotate(-90 * Math.PI / 180);
-  // ctx.transform(0.5,0.6,-0.3,0.5,-300,-50);
-  // ctx.fillStyle = '#5dc394';
-  // ctx.fillRect(location.x-40, location.y-50, 40, 20);
-  // ctx.restore();
-
-  // ctx.save();
-  // ctx.rotate(-90 * Math.PI / 180);
-  // ctx.transform(0.5,0,0,0.5,-300,-50);
-  // ctx.fillStyle = '#fff';
-  // ctx.fillText("目标",location.x-30,location.y-37);
-  // ctx.restore();
 }
 
 const Detail = props => {
@@ -118,7 +94,7 @@ const Detail = props => {
         clean: true,
         keepalive: 10,
         connectTimeout: 4000,
-        clientId: localStorage.getItem('user_id'),
+        clientId: localStorage.getItem('user_id') + '',
         username: 'user_' + localStorage.getItem('name'),
         reconnectPeriod: 1000,
         protocolVersion: 5,
@@ -134,7 +110,7 @@ const Detail = props => {
     if (client) {
       client.on('connect', () => {
         console.log('connect');
-        client.subscribe(`web/${group}/#`, error => {
+        client.subscribe(`web/${group}/#`, { qos: 1 }, error => {
           if (error) {
             console.log('Unsubscribe error', error);
             return;
@@ -223,7 +199,11 @@ const Detail = props => {
   return (
     <div>
       <div className={styles.breadcrumb}>
-        监控页{ ' > ' + localStorage.getItem('localCurrentGroup') + ' > ' + JSON.parse(localStorage.getItem('data')).name }
+        监控页
+        {' > ' +
+          localStorage.getItem('localCurrentGroup') +
+          ' > ' +
+          JSON.parse(localStorage.getItem('data')).name}
       </div>
       <Status
         breath={breath}

@@ -73,7 +73,7 @@ const StateChart = props => {
               str = '站姿';
               break;
             case 2:
-              str = ''; // 坐姿
+              str = '坐姿';
               break;
             case 3:
               str = '在床';
@@ -173,7 +173,7 @@ const StateChart = props => {
               case 1:
                 return '站姿';
               case 2:
-                return ''; // 坐姿
+                return '坐姿';
               case 3:
                 return '在床';
               case 4:

@@ -1,29 +1,13 @@
-import React, { FC, useMemo, useEffect, useState } from 'react';
-import { connect, Dispatch } from 'umi';
-import {
-  Empty,
-  Space,
-  Pagination,
-  Badge,
-  Button,
-  Divider,
-  Cascader,
-  message,
-} from 'antd';
-import {
-  Loading,
-  GroupState,
-  DashboardState,
-  GlobalModelState,
-  LoginModelState,
-  DeviceState,
-} from '@/models/connect';
+import React, { FC, useEffect, useState } from 'react';
+import { connect } from 'umi';
+import { Empty, Space, Pagination, Badge, Cascader, message } from 'antd';
+import { GroupState, DeviceState } from '@/models/connect';
 import mqtt, { MqttClient } from 'mqtt';
 import { useInterval } from 'ahooks';
-import styles from './index.less';
 import Room from './components/room';
-import { QueryDashboardProps } from './queryDashboard';
 import { createGroupTreeList } from '@/utils/utils';
+import { QueryDashboardProps } from './queryDashboard';
+import styles from './index.less';
 
 const msgs = new Map();
 
@@ -39,14 +23,15 @@ const msgs = new Map();
 // 简单点开始，获取所有分组所有设备，拼接成map放入内存
 // 订阅时也先订阅所有已选择的分组，直接动态更新上述map
 
-const Dashboard: FC<QueryDashboardProps> = ({
-  group,
-  global,
-  login,
-  device,
-  dispatch,
-  // loading,
-}) => {
+// UnConnected  未连接，初始状态
+// Connecting   连接中
+// Connected    已连接
+// Reconnecting 重连中
+// Offline      脱机
+// Disconnected 代理通知断开连接
+// Closed       连接已断开
+
+const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   const groupKeys = JSON.parse(localStorage.getItem('groupKeys') || '[]');
   const localTopics = JSON.parse(localStorage.getItem('topics') || '[]');
   const localSelectedGroups = JSON.parse(
@@ -56,44 +41,19 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   const [client, setClient] = useState<MqttClient>();
   const [connectStatus, setConnectStatus] = useState<string>('UnConnected');
-  // UnConnected  未连接，初始状态
-  // Connecting   连接中
-  // Connected    已连接
-  // Reconnecting 重连中
-  // Offline      脱机
-  // Disconnected 代理通知断开连接
-  // Closed       连接已断开
   const [reconnectTimes, setReconnectTimes] = useState([]);
-
   const [messages, setMessages] = useState(new Map());
   const [value, setValue] = useState(groupKeys);
   const [topics, setTopics] = useState(localTopics);
   const [selectedGroups, setSelectedGroups] = useState(localSelectedGroups);
   const [currentGroup, setCurrentGroup] = useState(localCurrentGroup);
-
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
   const [interval, setInterval] = useState(1000);
 
   const { groupList: groupData } = group;
   const { selectedDeviceList } = device;
   const groupList = createGroupTreeList(groupData);
-
-  const mqttConnect = () => {
-    setMqttStatus('Connecting');
-    setClient(
-      mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
-        clean: true,
-        keepalive: 10,
-        connectTimeout: 4000,
-        clientId: localStorage.getItem('user_id') || '',
-        username: 'user_' + localStorage.getItem('name'),
-        reconnectPeriod: 1000,
-        protocolVersion: 5,
-      }),
-    );
-  };
 
   useEffect(() => {
     mqttConnect();
@@ -193,6 +153,21 @@ const Dashboard: FC<QueryDashboardProps> = ({
     setMessages(m);
   }, interval);
 
+  const mqttConnect = () => {
+    setMqttStatus('Connecting');
+    setClient(
+      mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
+        clean: true,
+        keepalive: 10,
+        connectTimeout: 4000,
+        clientId: localStorage.getItem('user_id') || '',
+        username: 'user_' + localStorage.getItem('name'),
+        reconnectPeriod: 1000,
+        protocolVersion: 5,
+      }),
+    );
+  };
+
   const mqttDisconnect = () => {
     if (client) {
       client.end();
@@ -201,14 +176,13 @@ const Dashboard: FC<QueryDashboardProps> = ({
 
   const setMqttStatus = (status: string) => {
     console.log(status);
-    // message.success(status);
     setConnectStatus(status);
   };
 
   const mqttSub = topics => {
     if (client) {
       if (topics && topics.length > 0) {
-        client.subscribe(topics, error => {
+        client.subscribe(topics, { qos: 1 }, error => {
           if (error) {
             console.log('Unsubscribe error', error);
             return;
@@ -290,7 +264,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
     localStorage.setItem('topics', JSON.stringify(ts));
     setSelectedGroups(nodes);
     localStorage.setItem('localSelectedGroups', JSON.stringify(nodes));
-    // 以上逻辑放入订阅方法中
 
     if (ts.length > 0 && connectStatus === 'Connected') {
       mqttSub(ts);
@@ -379,7 +352,6 @@ const Dashboard: FC<QueryDashboardProps> = ({
         total={selectedDeviceList.length}
         current={current}
         pageSize={pageSize}
-        // showTotal={showTotal}
         showSizeChanger={true}
         onShowSizeChange={onShowSizeChange}
         showQuickJumper
@@ -389,10 +361,9 @@ const Dashboard: FC<QueryDashboardProps> = ({
   );
 };
 
-export default connect(({ // dashboard,
-  group, global, login, device }: { group: GroupState; global: GlobalModelState; login: LoginModelState; device: DeviceState }) => ({
-  group,
-  global,
-  login,
-  device,
-}))(Dashboard);
+export default connect(
+  ({ group, device }: { group: GroupState; device: DeviceState }) => ({
+    group,
+    device,
+  }),
+)(Dashboard);

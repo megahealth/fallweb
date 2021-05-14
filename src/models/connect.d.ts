@@ -6,6 +6,7 @@ import { DashboardState } from './dashboard';
 import { GroupState } from './group';
 import { ReportState } from './report';
 import { SleepState } from './sleep';
+import { DetailState } from './detail';
 
 export {
   GlobalModelState,
@@ -16,6 +17,7 @@ export {
   GroupState,
   ReportState,
   SleepState,
+  DetailState,
 };
 
 export interface Loading {
@@ -33,6 +35,7 @@ export interface Loading {
     group: boolean;
     report: boolean;
     sleep: boolean;
+    detail: boolean;
   };
 }
 

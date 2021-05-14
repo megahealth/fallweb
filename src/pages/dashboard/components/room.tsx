@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'umi';
+import React, { FC, useState, useEffect } from 'react';
+import { Link, connect, Dispatch } from 'umi';
 import Style from './room.less';
 import 离线 from '@/assets/离线.png';
 import 跌倒 from '@/assets/跌倒.png';
@@ -8,10 +8,34 @@ import 在床 from '@/assets/在床.png';
 import 无人 from '@/assets/无人.png';
 import 单人 from '@/assets/单人.png';
 import 多人 from '@/assets/多人.png';
+import { DetailState } from '@/models/connect';
 
-function Room(props: any) {
-  const { sn, online, count, action, breath, name, group, data } = props;
+export interface DetailProps {
+  dispatch: Dispatch;
+  detail: DetailState;
+  loading?: boolean;
+  sn: string;
+  online: number;
+  count: number;
+  breath: number;
+  action: number;
+  name: string;
+  group: number;
+  data: object;
+}
 
+const Room: FC<DetailProps> = ({
+  detail,
+  dispatch,
+  sn,
+  online,
+  count,
+  action,
+  breath,
+  name,
+  group,
+  data,
+}) => {
   let colors = {
     grey: '#999',
     green: '#51b988',
@@ -74,6 +98,18 @@ function Room(props: any) {
 
   const next = () => {
     localStorage.setItem('data', JSON.stringify(data));
+    dispatch({
+      type: 'detail/initDetail',
+      payload: {
+        sn,
+        group,
+        name,
+        online,
+        count,
+        action,
+        breath,
+      },
+    });
   };
 
   return (
@@ -99,6 +135,8 @@ function Room(props: any) {
       </div>
     </Link>
   );
-}
+};
 
-export default Room;
+export default connect(({ detail }: { detail: DetailState }) => ({
+  detail,
+}))(Room);
