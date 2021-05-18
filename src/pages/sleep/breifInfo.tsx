@@ -1,5 +1,4 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
-import { message } from 'antd';
 import { connect, Dispatch, history, Link } from 'umi';
 import { SleepState, Loading } from '@/models/connect';
 import styles from './index.less';
@@ -23,8 +22,8 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
     dispatch({
       type: 'sleep/getSleepReport',
       payload: {
-        sn: localStorage.getItem('sn'),
-        day: moment().format('YYYY-MM-DD'),
+        sn,
+        // day: moment().format('YYYY-MM-DD'),
       },
     });
   }, []);
@@ -65,11 +64,20 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
   const sleepDuration = stages[1].value + stages[2].value + stages[3].value;
   const hours = moment.duration(sleepDuration, 'minutes').hours();
   const minutes = sleepDuration % 60;
-  const title =
-    '睡眠报告摘要' +
-    (start
-      ? '（' + moment(start * 1000).format('YYYY-MM-DD') + '）'
-      : '（--）');
+  const hour = moment(start * 1000).hour();
+  let YYYYMMDD_0, YYYYMMDD_1;
+  if (hour > 9) {
+    YYYYMMDD_0 = moment(start * 1000).format('YYYY-MM-DD');
+    YYYYMMDD_1 = moment(start * 1000)
+      .add(1, 'days')
+      .format('YYYY-MM-DD');
+  } else {
+    YYYYMMDD_0 = moment(start * 1000)
+      .subtract(1, 'days')
+      .format('YYYY-MM-DD');
+    YYYYMMDD_1 = moment(start * 1000).format('YYYY-MM-DD');
+  }
+  const title = '睡眠报告摘要' + (start ? '（' + YYYYMMDD_0 + '）' : '（--）');
   const startTime = start ? moment(start * 1000).format('HH:mm') : '--';
   const endTime = start
     ? moment(start * 1000 + state.length * 60 * 1000).format('HH:mm')
@@ -79,8 +87,12 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
   return (
     <div className={styles.breif}>
       <div className={styles.head}>
-        <IconTitle title={title} img={睡眠摘要}></IconTitle>
-        <Link to={`/sleep/${sn}`} className={styles.link}>
+        <IconTitle
+          title={title}
+          tip={`统计时间：${YYYYMMDD_0} AM 9:00 - ${YYYYMMDD_1} AM 9:00`}
+          img={睡眠摘要}
+        ></IconTitle>
+        <Link to={`/sleep/${sn}?date=${YYYYMMDD_0}`} className={styles.link}>
           <span>查看完整报告</span>
           <img src={二级页面} />
         </Link>

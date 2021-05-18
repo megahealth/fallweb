@@ -7,14 +7,14 @@ export interface SleepReportParamsType {
 }
 
 export async function getSleepReport(params: SleepReportParamsType) {
+  console.log(params);
   let { day, sn } = params;
-  if (typeof day !== 'string') {
-    day = moment().format('YYYY-MM-DD');
-  }
 
-  let url = `/sleep_report/${sn}?day=${day}`;
+  let url = `/sleep_report/${sn}`;
+  if (day) {
+    url = url + `?day=${day}`;
+  }
   return request_logic(url, {
     method: 'GET',
-    data: params,
   });
 }

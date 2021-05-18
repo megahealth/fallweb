@@ -1,14 +1,17 @@
 import React from 'react';
+import { Tooltip } from 'antd';
 import styles from './index.less';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const IconTitle = props => {
-  const { title, img } = props;
+  const { title, tip, img } = props;
 
   return (
-    <div className={styles.title}>
+    <Tooltip title={tip} className={styles.title}>
       <img src={img}></img>
       <span>{title}</span>
-    </div>
+      {tip && <QuestionCircleOutlined />}
+    </Tooltip>
   );
 };
 

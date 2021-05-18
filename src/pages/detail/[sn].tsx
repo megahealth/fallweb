@@ -4,7 +4,7 @@ import { connect, Dispatch, history, Link } from 'umi';
 import mqtt, { MqttClient } from 'mqtt';
 import styles from './index.less';
 import Status from './status';
-import Report from '../report/[sn]';
+import BriefReport from '../report/briefReport';
 import BreifInfo from '../sleep/breifInfo';
 import IconTitle from '@/components/iconTitle';
 import 记录 from '@/assets/记录.png';
@@ -225,7 +225,7 @@ const Detail = props => {
           </div>
         </div>
         <div className={styles.report}>
-          <Report></Report>
+          <BriefReport state={state}></BriefReport>
         </div>
       </div>
       <div>
