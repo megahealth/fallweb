@@ -30,23 +30,7 @@ const DetailModel: DetailType = {
     action: 0,
     breath: 0,
   },
-  effects: {
-    *initDetail({ payload }, { call, put, select }) {
-      const { sn, group, name, online, count, action, breath } = payload;
-      yield put({
-        type: 'save',
-        payload: {
-          sn,
-          group,
-          name,
-          online,
-          count,
-          action,
-          breath,
-        },
-      });
-    },
-  },
+  effects: {},
   reducers: {
     save(state, action) {
       return {

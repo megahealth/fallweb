@@ -11,30 +11,23 @@ import 多人 from '@/assets/多人.png';
 import { DetailState } from '@/models/connect';
 
 export interface DetailProps {
-  dispatch: Dispatch;
-  detail: DetailState;
-  loading?: boolean;
   sn: string;
   online: number;
   count: number;
   breath: number;
   action: number;
   name: string;
-  group: number;
-  data: object;
+  id: number;
 }
 
 const Room: FC<DetailProps> = ({
-  detail,
-  dispatch,
   sn,
   online,
   count,
   action,
   breath,
   name,
-  group,
-  data,
+  id,
 }) => {
   let colors = {
     grey: '#999',
@@ -65,7 +58,6 @@ const Room: FC<DetailProps> = ({
         break;
       case 1:
       case 2:
-      case 4:
         text = '有人活动';
         img = 有人活动;
         color = colors.green;
@@ -74,6 +66,11 @@ const Room: FC<DetailProps> = ({
         text = '有人在床';
         img = 在床;
         color = colors.blue;
+        break;
+      case 4:
+        text = '低姿态';
+        img = 有人活动;
+        color = colors.green;
         break;
       case 5:
       case 6:
@@ -96,28 +93,28 @@ const Room: FC<DetailProps> = ({
     color = colors.grey;
   }
 
-  const next = () => {
-    localStorage.setItem('data', JSON.stringify(data));
-    dispatch({
-      type: 'detail/initDetail',
-      payload: {
-        sn,
-        group,
-        name,
-        online,
-        count,
-        action,
-        breath,
-      },
-    });
-  };
+  // const next = () => {
+  //   localStorage.setItem('data', JSON.stringify(data));
+  //   dispatch({
+  //     type: 'detail/initDetail',
+  //     payload: {
+  //       sn,
+  //       group,
+  //       name,
+  //       online,
+  //       count,
+  //       action,
+  //       breath,
+  //     },
+  //   });
+  // };
 
   return (
-    <Link to={`/detail/${sn}?group=${group}`}>
+    <Link to={`/detail/${id}`}>
       <div
         style={{ position: 'relative' }}
         className={`${Style.container}`}
-        onClick={next}
+        // onClick={next}
       >
         <div className={Style.head} style={{ background: color }}>
           {pImg && <img src={pImg}></img>}
@@ -137,6 +134,4 @@ const Room: FC<DetailProps> = ({
   );
 };
 
-export default connect(({ detail }: { detail: DetailState }) => ({
-  detail,
-}))(Room);
+export default Room;

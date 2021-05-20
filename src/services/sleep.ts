@@ -7,7 +7,6 @@ export interface SleepReportParamsType {
 }
 
 export async function getSleepReport(params: SleepReportParamsType) {
-  console.log(params);
   let { day, sn } = params;
 
   let url = `/sleep_report/${sn}`;

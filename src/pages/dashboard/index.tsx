@@ -317,6 +317,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           .slice((current - 1) * pageSize, current * pageSize)
           .map(data => {
             const {
+              device_id,
               action_state,
               breath,
               count,
@@ -328,15 +329,14 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
 
             return (
               <Room
-                key={sn}
+                key={device_id}
+                id={device_id}
                 sn={sn}
-                group={group_id}
                 name={name}
                 online={online}
                 count={count}
                 action={action_state}
                 breath={breath}
-                data={data[1]}
               />
             );
           })}

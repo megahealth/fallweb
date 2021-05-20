@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { connect, Dispatch, Link } from 'umi';
 import { ReportState, Loading } from '@/models/connect';
-import { DatePicker, Space } from 'antd';
 import moment from 'moment';
 import StateChart from './stateChart';
 import BreathChart from './breathChart';
@@ -13,67 +12,70 @@ import 有人无人报告 from '@/assets/有人无人报告.png';
 import 二级页面 from '@/assets/二级页面.png';
 import styles from './index.less';
 
-const { RangePicker } = DatePicker;
-
 export interface ReportProps {
   dispatch: Dispatch;
   report: ReportState;
   loading: boolean;
   state: number;
+  sn: string;
 }
 
-const BriefReport: FC<ReportProps> = ({ dispatch, report, loading, state }) => {
-  console.log(state);
-  const startNum = parseInt(
+const BriefReport: FC<ReportProps> = ({
+  dispatch,
+  report,
+  loading,
+  state,
+  sn,
+}) => {
+  // console.log(state);
+
+  const { fall, breath, running } = report;
+  const start = parseInt(
     moment()
       .startOf('day')
       .format('x'),
   );
-  const endNum = parseInt(moment().format('x'));
-
-  const [sn, setSn] = useState(localStorage.getItem('sn'));
-  const [start, setStart] = useState(startNum);
-  const [end, setEnd] = useState(endNum);
-
-  const { fall, breath, running } = report;
+  const end = parseInt(moment().format('x'));
 
   useEffect(() => {
-    dispatch({
-      type: 'report/getReportFallData',
-      payload: {
-        orderby: -1,
-        skip: 0,
-        limit: 100,
-        start,
-        end,
-        sn,
-      },
-    });
+    if (sn) {
+      dispatch({
+        type: 'report/getReportFallData',
+        payload: {
+          orderby: -1,
+          skip: 0,
+          limit: 100,
+          start,
+          end,
+          sn,
+        },
+      });
 
-    dispatch({
-      type: 'report/getReportBreathData',
-      payload: {
-        orderby: -1,
-        skip: 0,
-        limit: 100,
-        start,
-        end,
-        sn,
-      },
-    });
+      dispatch({
+        type: 'report/getReportBreathData',
+        payload: {
+          orderby: -1,
+          skip: 0,
+          limit: 100,
+          start,
+          end,
+          sn,
+        },
+      });
 
-    dispatch({
-      type: 'report/getReportRunningData',
-      payload: {
-        orderby: -1,
-        skip: 0,
-        limit: 100,
-        start,
-        end,
-        sn,
-      },
-    });
-  }, [start, end]);
+      dispatch({
+        type: 'report/getReportRunningData',
+        payload: {
+          orderby: -1,
+          skip: 0,
+          limit: 100,
+          start,
+          end,
+          sn,
+        },
+      });
+    }
+  }, [sn]);
 
   // const addFallData = fall.push(state)
   // state变化，数组自增即可

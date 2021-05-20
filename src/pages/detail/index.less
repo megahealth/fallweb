@@ -14,13 +14,29 @@
   .point {
     width: 500px;
     margin-right: 20px;
-    canvas {
+    .canvas {
+      position: relative;
       width: 500px;
       height: 400px;
-      background: #f2f3f5;
-      border: 5px solid #fff;
-      border-radius: 10px;
+      .info {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        color: #666;
+        p {
+          margin: 0;
+          line-height: 30px;
+        }
+      }
+      canvas {
+        width: 500px;
+        height: 400px;
+        background: #f2f3f5;
+        border: 5px solid #fff;
+        border-radius: 10px;
+      }
     }
+
     .fall {
       width: 100%;
       height: 400px;

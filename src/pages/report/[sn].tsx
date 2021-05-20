@@ -20,7 +20,7 @@ export interface ReportProps {
   loading: boolean;
 }
 
-const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
+const Report: FC<ReportProps> = ({ dispatch, report, loading, sn }) => {
   const startNum = parseInt(
     moment()
       .startOf('day')
@@ -28,49 +28,50 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading }) => {
   );
   const endNum = parseInt(moment().format('x'));
 
-  const [sn, setSn] = useState(localStorage.getItem('sn'));
   const [start, setStart] = useState(startNum);
   const [end, setEnd] = useState(endNum);
 
   const { fall, breath, running } = report;
 
   useEffect(() => {
-    dispatch({
-      type: 'report/getReportFallData',
-      payload: {
-        orderby: -1,
-        skip: 0,
-        limit: 100,
-        start,
-        end,
-        sn,
-      },
-    });
+    if (sn) {
+      dispatch({
+        type: 'report/getReportFallData',
+        payload: {
+          orderby: -1,
+          skip: 0,
+          limit: 100,
+          start,
+          end,
+          sn,
+        },
+      });
 
-    dispatch({
-      type: 'report/getReportBreathData',
-      payload: {
-        orderby: -1,
-        skip: 0,
-        limit: 100,
-        start,
-        end,
-        sn,
-      },
-    });
+      dispatch({
+        type: 'report/getReportBreathData',
+        payload: {
+          orderby: -1,
+          skip: 0,
+          limit: 100,
+          start,
+          end,
+          sn,
+        },
+      });
 
-    dispatch({
-      type: 'report/getReportRunningData',
-      payload: {
-        orderby: -1,
-        skip: 0,
-        limit: 100,
-        start,
-        end,
-        sn,
-      },
-    });
-  }, [start, end]);
+      dispatch({
+        type: 'report/getReportRunningData',
+        payload: {
+          orderby: -1,
+          skip: 0,
+          limit: 100,
+          start,
+          end,
+          sn,
+        },
+      });
+    }
+  }, [start, end, sn]);
 
   const onChange = (value, dateString) => {
     console.log('Selected Time: ', value);

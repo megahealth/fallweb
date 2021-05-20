@@ -40,7 +40,6 @@ export default (props: any) => {
             src={COLL}
             style={{ transform: collapse ? 'rotate(180deg)' : 'rotate(0)' }}
           ></img>
-          {/* {!collapse && <span>收起侧边栏</span>} */}
         </div>
       </Sider>
       <Layout style={{ padding: 0 }}>

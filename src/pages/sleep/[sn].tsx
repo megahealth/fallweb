@@ -16,7 +16,7 @@ export interface SleepProps {
   location: any;
 }
 
-const Sleep: FC<SleepProps> = ({ dispatch, sleep, loading, location }) => {
+const Sleep: FC<SleepProps> = ({ dispatch, sleep, loading, location, sn }) => {
   const { state, breath, move, roll, start } = sleep.data;
   const { date } = location.query;
   const [day, setDay] = useState(date);
@@ -25,8 +25,8 @@ const Sleep: FC<SleepProps> = ({ dispatch, sleep, loading, location }) => {
     dispatch({
       type: 'sleep/getSleepReport',
       payload: {
-        sn: localStorage.getItem('sn'),
-        day: day,
+        sn,
+        day,
       },
     });
   }, [day]);

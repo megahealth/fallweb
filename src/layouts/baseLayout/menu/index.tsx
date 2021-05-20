@@ -3,8 +3,6 @@ import { Link, connect, useLocation, Loading } from 'umi';
 import { Menu } from 'antd';
 import { GlobalModelState } from '@/models/connect';
 import { queryKeysByPath } from '@/utils/utils';
-import 监控 from '@/assets/监控.png';
-import 文件夹 from '@/assets/文件夹.png';
 import { createFromIconfontCN } from '@ant-design/icons';
 import styles from './index.less';
 

@@ -1,5 +1,5 @@
 import { Effect, Reducer } from 'umi';
-import { queryDeviceList } from '@/services/device';
+import { queryDeviceList, getDevice } from '@/services/device';
 import { queryGroupList } from '@/services/group';
 
 interface DeviceListProps {
@@ -14,11 +14,28 @@ interface Group {
   parent_name: string;
 }
 
+interface StatusProps {
+  sn: string;
+  group: number;
+  name: string;
+  online: number;
+  count: number;
+  action_state: number;
+  breath: number;
+  last_roll_time: number;
+  outdoor: number;
+  roll: number;
+  version: string;
+  wifi: string;
+  ip: string;
+}
+
 export interface DeviceState {
   searchContentVal: string;
   deviceList: DeviceListProps[];
   selectedDeviceList: DeviceListProps[];
   count: number;
+  status: StatusProps;
 }
 
 export interface DeviceType {
@@ -28,6 +45,9 @@ export interface DeviceType {
     queryDeviceList: Effect;
     queryDeviceCount: Effect;
     queryDevicesBySelectedGroup: Effect;
+    getDevice: Effect;
+    clearStatus: Effect;
+    updateStatus: Effect;
   };
   reducers: {
     save: Reducer<DeviceState>;
@@ -43,6 +63,21 @@ const DeviceModel: DeviceType = {
     deviceList: [],
     selectedDeviceList: [],
     count: 0,
+    status: {
+      sn: '',
+      group: 0,
+      name: '',
+      online: 0,
+      count: 0,
+      action_state: 0,
+      breath: 0,
+      last_roll_time: 0,
+      outdoor: 0,
+      roll: 0,
+      version: '',
+      wifi: '',
+      ip: '',
+    },
   },
   effects: {
     *queryDeviceList({ payload }, { call, put, select }) {
@@ -97,6 +132,36 @@ const DeviceModel: DeviceType = {
           },
         });
       }
+    },
+    *getDevice({ payload }, { call, put, select }) {
+      const response = yield call(getDevice, {
+        id: payload.id,
+      });
+      if (response.code === 0) {
+        yield put({
+          type: 'save',
+          payload: {
+            status: response.msg,
+          },
+        });
+      }
+    },
+    *clearStatus(_, { call, put, select }) {
+      yield put({
+        type: 'save',
+        payload: {
+          status: {
+            sn: '',
+          },
+        },
+      });
+    },
+    *updateStatus({ payload }, { call, put, select }) {
+      console.log(payload);
+      yield put({
+        type: 'save',
+        payload,
+      });
     },
   },
   reducers: {

@@ -1,6 +1,7 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { FC, useRef, useState, useEffect } from 'react';
 import { message, Empty } from 'antd';
-import { connect, Dispatch, history, Link } from 'umi';
+import { connect, Dispatch, history } from 'umi';
+import { DeviceState, ReportState, Loading } from '@/models/connect';
 import mqtt, { MqttClient } from 'mqtt';
 import styles from './index.less';
 import Status from './status';
@@ -10,8 +11,11 @@ import IconTitle from '@/components/iconTitle';
 import 记录 from '@/assets/记录.png';
 
 export interface DetailProps {
+  device: DeviceState;
   dispatch: Dispatch;
   loading: boolean;
+  match: object;
+  location: object;
 }
 
 function draw(ctx, location) {
@@ -56,37 +60,29 @@ function draw(ctx, location) {
   ctx.restore();
 }
 
-const Detail = props => {
-  const { sn } = props.match.params;
-  const { group } = props.location.query;
-  localStorage.setItem('sn', sn);
+const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
+  const { id } = match.params;
   const canvasRef = useRef(null);
-  const [location, setLocation] = React.useState({ x: 1350, y: 1400 });
   const [client, setClient] = useState<MqttClient>();
+  const [location, setLocation] = useState({ x: 1350, y: 1400 });
   const [reconnectTimes, setReconnectTimes] = useState([]);
+  const [connect, setConnect] = useState('no');
 
-  const data = localStorage.getItem('data') || '';
   const {
-    action_state,
-    breath: localbreath,
-    count: localcount,
-    device_id,
-    group_id,
-    group_name,
+    sn,
+    group,
     name,
-    online: localonline,
-    outdoor: localoutdoor,
-    roll: localroll,
+    version,
+    wifi,
+    ip,
+    online,
+    count,
+    action_state,
+    breath,
     last_roll_time,
-    update_at,
-  } = JSON.parse(data);
-  const [online, setOnline] = useState(localonline);
-  const [state, setState] = useState(action_state);
-  const [outdoor, setOutdoor] = useState(localoutdoor);
-  const [count, setCount] = useState(localcount);
-  const [roll, setRoll] = useState(localroll);
-  const [breath, setBreath] = useState(localbreath);
-  const [rollTime, setRollTime] = useState(last_roll_time);
+    outdoor,
+    roll,
+  } = device.status;
 
   const mqttConnect = () => {
     setClient(
@@ -104,56 +100,102 @@ const Detail = props => {
 
   useEffect(() => {
     mqttConnect();
+
+    dispatch({
+      type: 'device/getDevice',
+      payload: {
+        id,
+      },
+    });
   }, []);
 
   useEffect(() => {
-    if (client) {
-      client.on('connect', () => {
-        console.log('connect');
-        client.subscribe(`web/${group}/#`, { qos: 1 }, error => {
+    console.log(sn, connect);
+    if (sn && connect === 'yes') {
+      client.publish(`/todevice/point/${sn}`, 'hello');
+      client.subscribe(
+        [
+          `device/ota/${sn}`,
+          `device/state/${sn}`,
+          `device/point/${sn}`,
+          `device/breath/${sn}`,
+          `device/fall/${sn}`,
+        ],
+        { qos: 1 },
+        error => {
           if (error) {
             console.log('Unsubscribe error', error);
             return;
           }
-        });
+        },
+      );
+    }
+  }, [sn, connect]);
+
+  useEffect(() => {
+    if (client) {
+      client.on('connect', () => {
+        console.log('cccccccccccccc');
+        setConnect('yes');
+        console.log(connect);
       });
       client.on('error', err => {
         console.log(err);
       });
       client.on('message', (topic, payload) => {
-        const { sn: msgSn, point, fall, breath } = JSON.parse(
-          payload.toString(),
-        );
+        const { point, fall, breath } = JSON.parse(payload.toString());
 
-        if (msgSn === sn) {
-          if (topic.indexOf('downline') !== -1) {
-            setOnline(0);
-          }
-          if (topic.indexOf('upline') !== -1) {
-            setOnline(1);
-          }
-          if (fall) {
-            const { a, d, c, r } = fall;
-            setState(a);
-            setOutdoor(d);
-            setCount(c);
-            setRoll(r);
-            if (r === 1) {
-              setRollTime(new Date().getTime());
-            }
-          }
-          if (breath) setBreath(breath.b);
-
-          if (point) {
-            const { x, y } = point;
-            // x:-200,300
-            // y: 600
-
-            setLocation({
-              x: 100 * x + 200 + 100,
-              y: 100 * y + 100,
+        if (topic.indexOf('downline') !== -1) {
+          dispatch({
+            type: 'device/updateStatus',
+            payload: {
+              online: 0,
+            },
+          });
+        }
+        if (topic.indexOf('upline') !== -1) {
+          dispatch({
+            type: 'device/updateStatus',
+            payload: {
+              online: 1,
+            },
+          });
+        }
+        if (fall) {
+          const { a, d, c, r } = fall;
+          dispatch({
+            type: 'device/updateStatus',
+            payload: {
+              action_state: a,
+              outdoor: d,
+              count: c,
+              roll: r,
+            },
+          });
+          if (r === 1) {
+            dispatch({
+              type: 'device/updateStatus',
+              payload: {
+                last_roll_time: new Date().getTime(),
+              },
             });
           }
+        }
+        if (breath) {
+          dispatch({
+            type: 'device/updateStatus',
+            payload: {
+              breath: breath.b,
+            },
+          });
+        }
+
+        if (point) {
+          const { x, y } = point;
+          setLocation({
+            x: 100 * x + 200 + 100,
+            y: 100 * y + 100,
+          });
         }
       });
       client.on('close', () => {});
@@ -186,9 +228,6 @@ const Detail = props => {
     };
   }, [client]);
 
-  // 绘制矩形，绘制点，变形（斜拉）
-  // 清除矩形内容，绘制点
-
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -196,27 +235,44 @@ const Detail = props => {
     draw(ctx, location);
   });
 
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: 'device/clearStatus',
+      });
+      dispatch({
+        type: 'report/clearState',
+      });
+    };
+  }, []);
+
   return (
     <div>
       <div className={styles.breadcrumb}>
         监控页
-        {' > ' +
-          localStorage.getItem('localCurrentGroup') +
-          ' > ' +
-          JSON.parse(localStorage.getItem('data')).name}
+        {' > ' + localStorage.getItem('localCurrentGroup') + ' > ' + name}
       </div>
       <Status
         breath={breath}
-        state={state}
+        state={action_state}
         online={online}
         count={count}
         roll={roll}
-        rollTime={rollTime}
-        group={group}
+        rollTime={last_roll_time}
       ></Status>
       <div className={styles.warp}>
         <div className={styles.point}>
-          <canvas ref={canvasRef} width={500} height={400} />
+          <div className={styles.canvas}>
+            <div className={styles.info}>
+              <p>
+                {sn} / v{version}
+              </p>
+              <p>
+                {wifi} / {ip}
+              </p>
+            </div>
+            <canvas ref={canvasRef} width={500} height={400} />
+          </div>
           <div className={styles.fall}>
             <IconTitle title="跌倒处理记录" img={记录}></IconTitle>
             <div className={styles.list}>
@@ -225,14 +281,28 @@ const Detail = props => {
           </div>
         </div>
         <div className={styles.report}>
-          <BriefReport state={state}></BriefReport>
+          <BriefReport state={action_state} sn={sn}></BriefReport>
         </div>
       </div>
       <div>
-        <BreifInfo></BreifInfo>
+        <BreifInfo sn={sn}></BreifInfo>
       </div>
     </div>
   );
 };
 
-export default connect(({}) => ({}))(Detail);
+export default connect(
+  ({
+    device,
+    report,
+    loading,
+  }: {
+    device: DeviceState;
+    report: ReportState;
+    loading: Loading;
+  }) => ({
+    device,
+    report,
+    loading: loading.models.device,
+  }),
+)(Detail);

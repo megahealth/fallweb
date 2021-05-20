@@ -12,21 +12,22 @@ export interface SleepProps {
   sleep: SleepState;
   dispatch: Dispatch;
   loading: boolean;
+  sn: string;
 }
 
-const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading }) => {
+const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading, sn }) => {
   const { state, breath, move, roll, start } = sleep.data;
-  const sn = localStorage.getItem('sn');
 
   useEffect(() => {
-    dispatch({
-      type: 'sleep/getSleepReport',
-      payload: {
-        sn,
-        // day: moment().format('YYYY-MM-DD'),
-      },
-    });
-  }, []);
+    if (sn) {
+      dispatch({
+        type: 'sleep/getSleepReport',
+        payload: {
+          sn,
+        },
+      });
+    }
+  }, [sn]);
 
   const stages = (state => {
     let result = [

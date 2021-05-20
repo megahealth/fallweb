@@ -28,6 +28,7 @@ export interface ReportType {
     getReportBreathData: Effect;
     getReportRunningData: Effect;
     addStateList: Effect;
+    clearState: Effect;
   };
   reducers: {
     save: Reducer<ReportState>;
@@ -78,7 +79,6 @@ const ReportModel: ReportType = {
     },
     *addStateList({ payload }, { call, put, select }) {
       const { fall } = yield select((state: ConnectState) => state.report);
-      console.log(fall);
       const { actionState } = payload;
       if (fall.length > 0) {
         let fallSpinObj = fall[fall.length - 1];
@@ -86,17 +86,25 @@ const ReportModel: ReportType = {
         fallSpinObj.end = end;
         fallSpinObj.states.push([0, 0, actionState, 0, end]);
         console.log(fallSpinObj);
-        console.log(fall);
-        // fall[fall.length - 1] =
         let result = fall;
         result[result.length - 1] = fallSpinObj;
         yield put({
-          type: 'addToState',
+          type: 'save',
           payload: {
             fall: result,
           },
         });
       }
+    },
+    *clearState(_, { call, put, select }) {
+      yield put({
+        type: 'save',
+        payload: {
+          fall: [],
+          breath: [],
+          running: [],
+        },
+      });
     },
   },
   reducers: {
