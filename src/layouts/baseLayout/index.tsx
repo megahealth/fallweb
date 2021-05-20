@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout } from 'antd';
 import HeaderContent from './header';
 import MenuContent from './menu';
@@ -10,6 +10,8 @@ import COLL from '@/assets/收起.png';
 const { Header, Content, Sider } = Layout;
 
 export default (props: any) => {
+  const [collapse, setCollapse] = useState(false);
+
   return (
     <Layout className={styles.container}>
       <Sider
@@ -17,12 +19,28 @@ export default (props: any) => {
         trigger={null}
         width={200}
         style={{ background: '#5ec394' }}
+        collapsed={collapse}
       >
-        <img src={LOGO} className={styles.logo}></img>
+        <img
+          src={LOGO}
+          style={
+            collapse
+              ? { width: '40px', margin: '20px' }
+              : { width: '120px', margin: '20px 40px' }
+          }
+        ></img>
         <MenuContent />
-        <div className={styles.coll}>
-          <img src={COLL}></img>
-          <span>收起侧边栏</span>
+        <div
+          className={styles.coll}
+          onClick={() => {
+            setCollapse(!collapse);
+          }}
+        >
+          <img
+            src={COLL}
+            style={{ transform: collapse ? 'rotate(180deg)' : 'rotate(0)' }}
+          ></img>
+          {/* {!collapse && <span>收起侧边栏</span>} */}
         </div>
       </Sider>
       <Layout style={{ padding: 0 }}>

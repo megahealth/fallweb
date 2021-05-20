@@ -5,6 +5,8 @@ import { GlobalModelState } from '@/models/connect';
 import { queryKeysByPath } from '@/utils/utils';
 import 监控 from '@/assets/监控.png';
 import 文件夹 from '@/assets/文件夹.png';
+import { createFromIconfontCN } from '@ant-design/icons';
+import styles from './index.less';
 
 const { SubMenu, Item } = Menu;
 
@@ -12,6 +14,10 @@ export interface BasicLayoutProps {
   global: GlobalModelState;
   loading: boolean;
 }
+
+const MyIcon = createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_2558912_lbw95y32va.js', // 在 iconfont.cn 上生成
+});
 
 const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
   const { menusData } = global;
@@ -30,21 +36,15 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
           </SubMenu>
         );
       }
-      const img = icon => {
-        if (icon === '监控') {
-          return 监控;
-        } else {
-          return 文件夹;
-        }
-      };
+
       return (
-        <Item key={key} title={title}>
+        <Item
+          key={key}
+          title={title}
+          icon={<MyIcon className={styles.icon} type={'icon-' + icon} />}
+        >
           <Link to={{ pathname: link, state: { ...restState, key } }}>
-            <img
-              src={img(icon)}
-              style={{ width: '25px', marginRight: '10px' }}
-            ></img>
-            <span style={{ fontSize: '16px' }}>{title}</span>
+            {title}
           </Link>
         </Item>
       );
