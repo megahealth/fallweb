@@ -1,7 +1,13 @@
 import { Effect, Reducer } from 'umi';
-import { queryDeviceList, getDevice } from '@/services/device';
+import {
+  queryDeviceList,
+  getDevice,
+  createDevice,
+  deleteDevice,
+} from '@/services/device';
 import { queryGroupList } from '@/services/group';
 import { ConnectState } from './connect.d';
+import { message } from 'antd';
 
 interface DeviceListProps {
   [key: string]: any;
@@ -49,6 +55,8 @@ export interface DeviceType {
     getDevice: Effect;
     clearStatus: Effect;
     updateStatus: Effect;
+    createDevice: Effect;
+    deleteDevice: Effect;
   };
   reducers: {
     save: Reducer<DeviceState>;
@@ -147,6 +155,46 @@ const DeviceModel: DeviceType = {
         });
       }
     },
+    *createDevice({ payload }, { call, put, select }) {
+      const response = yield call(createDevice, payload);
+      if (response.code === 0) {
+        message.success('添加成功！');
+        yield put({
+          type: 'device/queryDeviceList',
+          payload: {
+            start: 0,
+            limit: 10,
+          },
+        });
+        yield put({
+          type: 'device/queryDeviceCount',
+          payload: {
+            start: 0,
+            limit: 10,
+          },
+        });
+      }
+    },
+    *deleteDevice({ payload }, { call, put, select }) {
+      const response = yield call(deleteDevice, payload);
+      if (response.code === 0) {
+        message.success('删除成功！');
+        yield put({
+          type: 'device/queryDeviceList',
+          payload: {
+            start: 0,
+            limit: 10,
+          },
+        });
+        yield put({
+          type: 'device/queryDeviceCount',
+          payload: {
+            start: 0,
+            limit: 10,
+          },
+        });
+      }
+    },
     *clearStatus(_, { call, put, select }) {
       yield put({
         type: 'save',
@@ -159,8 +207,6 @@ const DeviceModel: DeviceType = {
     },
     *updateStatus({ payload }, { call, put, select }) {
       const { status } = yield select((state: ConnectState) => state.device);
-      console.log(status);
-      console.log(payload);
 
       yield put({
         type: 'save',

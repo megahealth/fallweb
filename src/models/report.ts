@@ -90,10 +90,7 @@ const ReportModel: ReportType = {
           states: [[0, 0, actionState, 0, end]],
           SN: '',
         };
-        console.log(fallSpinObj);
-        console.log(fall);
         fall.push(fallSpinObj);
-        console.log(fall);
         yield put({
           type: 'save',
           payload: {
