@@ -110,7 +110,6 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
   }, []);
 
   useEffect(() => {
-    console.log(sn, connect);
     if (sn && connect === 'yes') {
       client.publish(`/todevice/point/${sn}`, 'hello');
       client.subscribe(
@@ -135,9 +134,7 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        console.log('cccccccccccccc');
         setConnect('yes');
-        console.log(connect);
       });
       client.on('error', err => {
         console.log(err);

@@ -14,11 +14,20 @@ export interface SleepProps {
   dispatch: Dispatch;
   loading: boolean;
   location: any;
+  match: any;
 }
 
-const Sleep: FC<SleepProps> = ({ dispatch, sleep, loading, location, sn }) => {
-  const { state, breath, move, roll, start } = sleep.data;
+const Sleep: FC<SleepProps> = ({
+  dispatch,
+  sleep,
+  loading,
+  location,
+  match,
+}) => {
+  const { sn } = match.params;
   const { date } = location.query;
+
+  const { state, breath, move, roll, start } = sleep.data;
   const [day, setDay] = useState(date);
 
   useEffect(() => {

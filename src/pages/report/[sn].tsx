@@ -18,9 +18,12 @@ export interface ReportProps {
   dispatch: Dispatch;
   report: ReportState;
   loading: boolean;
+  match: any;
 }
 
-const Report: FC<ReportProps> = ({ dispatch, report, loading, sn }) => {
+const Report: FC<ReportProps> = ({ dispatch, report, loading, match }) => {
+  const { sn } = match.params;
+
   const startNum = parseInt(
     moment()
       .startOf('day')
@@ -34,44 +37,42 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading, sn }) => {
   const { fall, breath, running } = report;
 
   useEffect(() => {
-    if (sn) {
-      dispatch({
-        type: 'report/getReportFallData',
-        payload: {
-          orderby: -1,
-          skip: 0,
-          limit: 100,
-          start,
-          end,
-          sn,
-        },
-      });
+    dispatch({
+      type: 'report/getReportFallData',
+      payload: {
+        orderby: -1,
+        skip: 0,
+        limit: 100,
+        start,
+        end,
+        sn,
+      },
+    });
 
-      dispatch({
-        type: 'report/getReportBreathData',
-        payload: {
-          orderby: -1,
-          skip: 0,
-          limit: 100,
-          start,
-          end,
-          sn,
-        },
-      });
+    dispatch({
+      type: 'report/getReportBreathData',
+      payload: {
+        orderby: -1,
+        skip: 0,
+        limit: 100,
+        start,
+        end,
+        sn,
+      },
+    });
 
-      dispatch({
-        type: 'report/getReportRunningData',
-        payload: {
-          orderby: -1,
-          skip: 0,
-          limit: 100,
-          start,
-          end,
-          sn,
-        },
-      });
-    }
-  }, [start, end, sn]);
+    dispatch({
+      type: 'report/getReportRunningData',
+      payload: {
+        orderby: -1,
+        skip: 0,
+        limit: 100,
+        start,
+        end,
+        sn,
+      },
+    });
+  }, [start, end]);
 
   const onChange = (value, dateString) => {
     console.log('Selected Time: ', value);
