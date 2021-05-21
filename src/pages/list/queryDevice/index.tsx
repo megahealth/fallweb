@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { connect } from 'umi';
-import { Divider, Button } from 'antd';
+import { Divider, Popconfirm, message } from 'antd';
 import TableComponent from '@/components/tableComponent';
 import { ColumnsType } from 'antd/es/table';
 import { DeviceState, Loading } from '@/models/connect';
@@ -104,23 +104,12 @@ const QueryDevice: FC<QueryDeviceProps> = ({
       dataIndex: 'option',
       render: (_, record) => (
         <>
-          <a
-            onClick={() => {
-              // setStepFormValues(record);
-              // dispatch({
-              //   type: 'device/deleteDevice',
-              //   payload: {
-              //     id: record.device_id,
-              //   },
-              // });
-            }}
-          >
-            编辑
-          </a>
+          <a onClick={() => {}}>编辑</a>
           <Divider type="vertical" />
-          <a
-            onClick={() => {
-              console.log(record.device_id);
+          <Popconfirm
+            title="确定要删除此项么?"
+            onConfirm={() => {
+              console.log(record);
               dispatch({
                 type: 'device/deleteDevice',
                 payload: {
@@ -128,9 +117,12 @@ const QueryDevice: FC<QueryDeviceProps> = ({
                 },
               });
             }}
+            // onCancel={cancel}
+            okText="确定"
+            cancelText="取消"
           >
-            删除
-          </a>
+            <a>删除</a>
+          </Popconfirm>
         </>
       ),
     },
