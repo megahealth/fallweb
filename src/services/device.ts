@@ -22,7 +22,7 @@ export interface createDeviceType {
 
 export async function queryDeviceList(params: tableParamsType) {
   const { start, limit, group } = params;
-  let url = '/devices?orderby=asc';
+  let url = '/devices?orderby=desc';
   if (typeof start === 'number') url += `&start=${start}`;
   if (typeof limit === 'number') url += `&limit=${limit}`;
   if (typeof group === 'number') url += `&group=${group}`;
