@@ -45,11 +45,7 @@ const Status = props => {
         <Card src={有人活动圆形} name={'状态'} value={'有人活动'}></Card>
       )}
       {online == 1 && state === 4 && (
-        <Card
-          src={有人活动圆形}
-          name={'状态'}
-          value={group == 2 ? '低姿态' : '有人活动'}
-        ></Card>
+        <Card src={有人活动圆形} name={'状态'} value={'低姿态'}></Card>
       )}
       {online == 1 && state === 2 && (
         <Card src={坐姿} name={'状态'} value={'坐姿'}></Card>
