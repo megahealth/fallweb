@@ -167,16 +167,9 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
               outdoor: d,
               count: c,
               roll: r,
+              last_roll_time: r === 1 ? new Date().getTime() : 0,
             },
           });
-          if (r === 1) {
-            dispatch({
-              type: 'device/updateStatus',
-              payload: {
-                last_roll_time: new Date().getTime(),
-              },
-            });
-          }
         }
         if (breath) {
           dispatch({
@@ -248,6 +241,18 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
       <div className={styles.breadcrumb}>
         监控页
         {' > ' + localStorage.getItem('localCurrentGroup') + ' > ' + name}
+        {/* <button
+          onClick={() => {
+            dispatch({
+              type: 'device/updateStatus',
+              payload: {
+                action_state: 0,
+              },
+            });
+          }}
+        >
+          变成无人
+        </button> */}
       </div>
       <Status
         breath={breath}

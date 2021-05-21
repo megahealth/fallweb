@@ -28,7 +28,7 @@ const Card = props => {
 };
 
 const Status = props => {
-  const { breath, state, online, count, rollTime, group } = props;
+  const { breath, state, online, count, rollTime } = props;
 
   return (
     <div className={styles.status}>

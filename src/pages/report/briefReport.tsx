@@ -79,15 +79,15 @@ const BriefReport: FC<ReportProps> = ({
 
   // const addFallData = fall.push(state)
   // state变化，数组自增即可
-  // useEffect(() => {
-  //   console.log('state', state);
-  //   dispatch({
-  //     type: 'report/addStateList',
-  //     payload: {
-  //       actionState: state,
-  //     },
-  //   });
-  // }, [state]);
+  useEffect(() => {
+    console.log('state', state);
+    dispatch({
+      type: 'report/addStateList',
+      payload: {
+        actionState: state,
+      },
+    });
+  }, [state]);
 
   return (
     <div className={styles.wrap}>

@@ -1,14 +1,6 @@
 import { Effect, Reducer } from 'umi';
 
-export interface DetailState {
-  sn: string;
-  group: number;
-  name: string;
-  online: number;
-  count: number;
-  action: number;
-  breath: number;
-}
+export interface DetailState {}
 
 export interface DetailType {
   namespace: 'detail';
@@ -21,15 +13,7 @@ export interface DetailType {
 
 const DetailModel: DetailType = {
   namespace: 'detail',
-  state: {
-    sn: '',
-    group: 0,
-    name: '',
-    online: 0,
-    count: 0,
-    action: 0,
-    breath: 0,
-  },
+  state: {},
   effects: {},
   reducers: {
     save(state, action) {

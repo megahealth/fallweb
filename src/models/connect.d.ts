@@ -42,6 +42,7 @@ export interface Loading {
 export interface ConnectState {
   global: GlobalModelState;
   report: ReportState;
+  device: DeviceState;
   login: LoginModelState;
   loading: Loading;
 }

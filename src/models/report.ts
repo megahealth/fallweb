@@ -81,17 +81,23 @@ const ReportModel: ReportType = {
       const { fall } = yield select((state: ConnectState) => state.report);
       const { actionState } = payload;
       if (fall.length > 0) {
-        let fallSpinObj = fall[fall.length - 1];
         let end = new Date().getTime();
-        fallSpinObj.end = end;
-        fallSpinObj.states.push([0, 0, actionState, 0, end]);
+
+        let fallSpinObj = {
+          _id: end.toString(),
+          start: end,
+          end: end,
+          states: [[0, 0, actionState, 0, end]],
+          SN: '',
+        };
         console.log(fallSpinObj);
-        let result = fall;
-        result[result.length - 1] = fallSpinObj;
+        console.log(fall);
+        fall.push(fallSpinObj);
+        console.log(fall);
         yield put({
           type: 'save',
           payload: {
-            fall: result,
+            fall,
           },
         });
       }
