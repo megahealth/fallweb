@@ -53,7 +53,7 @@ const AddDevice: FC<AddDeviceProps> = ({ dispatch, group }) => {
           <Form.Item
             label="设备SN"
             name="sn"
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: '请输入设备SN!' }]}
           >
             <Input />
           </Form.Item>
@@ -61,11 +61,7 @@ const AddDevice: FC<AddDeviceProps> = ({ dispatch, group }) => {
           <Form.Item label="群组" name="group" rules={[{ required: true }]}>
             <TreeSelect treeData={groupList} />
           </Form.Item>
-          <Form.Item
-            label="名称"
-            name="name"
-            rules={[{ message: 'Please input your username!' }]}
-          >
+          <Form.Item label="名称" name="name">
             <Input />
           </Form.Item>
         </Form>
