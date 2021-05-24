@@ -107,7 +107,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({
           <a onClick={() => {}}>编辑</a>
           <Divider type="vertical" />
           <Popconfirm
-            title="确定要删除此项么?"
+            title="确定要删除此设备么?"
             onConfirm={() => {
               console.log(record);
               dispatch({

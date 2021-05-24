@@ -119,6 +119,8 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
           `device/point/${sn}`,
           `device/breath/${sn}`,
           `device/fall/${sn}`,
+          `trans_device/upline/${sn}`,
+          `trans_device/downline/${sn}`,
         ],
         { qos: 1 },
         error => {
