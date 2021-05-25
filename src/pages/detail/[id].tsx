@@ -169,7 +169,7 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
               outdoor: d,
               count: c,
               roll: r,
-              last_roll_time: r === 1 ? new Date().getTime() : 0,
+              last_roll_time: r === 1 ? new Date().getTime() : last_roll_time,
             },
           });
         }
