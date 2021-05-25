@@ -179,6 +179,10 @@ const DeviceModel: DeviceType = {
             limit,
           },
         });
+      } else if (response.code === 4) {
+        message.error('设备已存在！');
+      } else {
+        message.error('添加失败！');
       }
     },
     *deleteDevice({ payload }, { call, put, select }) {
