@@ -25,26 +25,18 @@ const QueryDevice: FC<QueryDeviceProps> = ({
   loading,
 }) => {
   const [form] = Form.useForm();
-  // const [current, setCurrent] = useState(1);
-  // const [pageSize, setPageSize] = useState(10);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(0);
 
-  const { deviceList, count, current, pageSize } = device;
+  const { deviceList, count, limit, start } = device;
   const { groupList: groupData } = group;
   const groupList = createGroupTreeList(groupData);
 
   useEffect(() => {
     dispatch({
       type: 'device/queryDeviceList',
-      // payload: {
-      //   start: pageSize * (current - 1),
-      //   limit: pageSize,
-      // },
     });
-  }, [current, pageSize]);
 
-  useEffect(() => {
     dispatch({
       type: 'device/queryDeviceCount',
       payload: {},
@@ -163,8 +155,8 @@ const QueryDevice: FC<QueryDeviceProps> = ({
 
   const pagination = {
     total: count,
-    current,
-    pageSize,
+    current: Math.floor(start / limit) + 1,
+    pageSize: limit,
     size: 'small',
     onChange: onPageChange,
   };
