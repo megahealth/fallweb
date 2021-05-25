@@ -4,6 +4,7 @@ import {
   getDevice,
   createDevice,
   deleteDevice,
+  updateDevice,
 } from '@/services/device';
 import { queryGroupList } from '@/services/group';
 import { ConnectState } from './connect.d';
@@ -42,6 +43,8 @@ export interface DeviceState {
   deviceList: DeviceListProps[];
   selectedDeviceList: DeviceListProps[];
   count: number;
+  start: number;
+  limit: number;
   status: StatusProps;
 }
 
@@ -57,6 +60,8 @@ export interface DeviceType {
     updateStatus: Effect;
     createDevice: Effect;
     deleteDevice: Effect;
+    updateDevice: Effect;
+    pageChange: Effect;
   };
   reducers: {
     save: Reducer<DeviceState>;
@@ -72,6 +77,8 @@ const DeviceModel: DeviceType = {
     deviceList: [],
     selectedDeviceList: [],
     count: 0,
+    start: 0,
+    limit: 10,
     status: {
       sn: '',
       group: 0,
@@ -90,8 +97,10 @@ const DeviceModel: DeviceType = {
   },
   effects: {
     *queryDeviceList({ payload }, { call, put, select }) {
-      const { searchContentVal } = yield select((state: DeviceState) => state);
-      const response = yield call(queryDeviceList, { ...payload });
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.device,
+      );
+      const response = yield call(queryDeviceList, { start, limit });
       if (response.code === 0) {
         yield put({
           type: 'save',
@@ -156,41 +165,70 @@ const DeviceModel: DeviceType = {
       }
     },
     *createDevice({ payload }, { call, put, select }) {
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.device,
+      );
       const response = yield call(createDevice, payload);
       if (response.code === 0) {
         message.success('添加成功！');
         yield put({
-          type: 'device/queryDeviceList',
+          type: 'queryDeviceList',
           payload: {
-            start: 0,
-            limit: 10,
+            start,
+            limit,
           },
         });
         yield put({
-          type: 'device/queryDeviceCount',
+          type: 'queryDeviceCount',
           payload: {
-            start: 0,
-            limit: 10,
+            start,
+            limit,
           },
         });
       }
     },
     *deleteDevice({ payload }, { call, put, select }) {
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.device,
+      );
       const response = yield call(deleteDevice, payload);
       if (response.code === 0) {
         message.success('删除成功！');
         yield put({
-          type: 'device/queryDeviceList',
+          type: 'queryDeviceList',
           payload: {
-            start: 0,
-            limit: 10,
+            start,
+            limit,
           },
         });
         yield put({
-          type: 'device/queryDeviceCount',
+          type: 'queryDeviceCount',
           payload: {
-            start: 0,
-            limit: 10,
+            start,
+            limit,
+          },
+        });
+      }
+    },
+    *updateDevice({ payload }, { call, put, select }) {
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.device,
+      );
+      const response = yield call(updateDevice, payload);
+      if (response.code === 0) {
+        message.success('更新成功！');
+        yield put({
+          type: 'queryDeviceList',
+          payload: {
+            start,
+            limit,
+          },
+        });
+        yield put({
+          type: 'queryDeviceCount',
+          payload: {
+            start,
+            limit,
           },
         });
       }
@@ -212,6 +250,23 @@ const DeviceModel: DeviceType = {
         type: 'save',
         payload: {
           status: { ...status, ...payload },
+        },
+      });
+    },
+    *pageChange({ payload }, { call, put, select }) {
+      const { start, limit } = payload;
+      yield put({
+        type: 'save',
+        payload: {
+          start,
+          limit,
+        },
+      });
+      yield put({
+        type: 'queryDeviceList',
+        payload: {
+          start,
+          limit,
         },
       });
     },

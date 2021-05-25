@@ -1,16 +1,22 @@
 import React, { FC, useState, useEffect } from 'react';
 import { connect } from 'umi';
-import { Divider, Popconfirm, message } from 'antd';
+import { Divider, Popconfirm, Form, Modal, Input, TreeSelect } from 'antd';
 import TableComponent from '@/components/tableComponent';
 import { ColumnsType } from 'antd/es/table';
-import { DeviceState, Loading } from '@/models/connect';
+import { DeviceState, GroupState, Loading } from '@/models/connect';
 import FilterRegion from './components/filterRegion';
 import { QueryDeviceProps } from './queryDevice';
 import moment from 'moment';
 import styles from './index.less';
 import AddDevice from './components/addDevice';
+import { createGroupTreeList } from '@/utils/utils';
 
-type RecordType = {};
+type RecordType = {
+  device_id: number;
+  sn: string;
+  name: string;
+  group_id: number;
+};
 
 const QueryDevice: FC<QueryDeviceProps> = ({
   dispatch,
@@ -18,17 +24,23 @@ const QueryDevice: FC<QueryDeviceProps> = ({
   group,
   loading,
 }) => {
-  const { deviceList, count } = device;
-  const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [form] = Form.useForm();
+  // const [current, setCurrent] = useState(1);
+  // const [pageSize, setPageSize] = useState(10);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editId, setEditId] = useState(0);
+
+  const { deviceList, count, current, pageSize } = device;
+  const { groupList: groupData } = group;
+  const groupList = createGroupTreeList(groupData);
 
   useEffect(() => {
     dispatch({
       type: 'device/queryDeviceList',
-      payload: {
-        start: pageSize * (current - 1),
-        limit: pageSize,
-      },
+      // payload: {
+      //   start: pageSize * (current - 1),
+      //   limit: pageSize,
+      // },
     });
   }, [current, pageSize]);
 
@@ -59,29 +71,21 @@ const QueryDevice: FC<QueryDeviceProps> = ({
       key: 'sn',
       dataIndex: 'sn',
     },
-    // {
-    //   title: '在线状态',
-    //   dataIndex: 'online',
-    // },
     {
       title: '群组',
       dataIndex: 'group_name',
-      // ellipsis: true,
     },
     {
       title: 'WIFI',
       dataIndex: 'wifi',
-      // ellipsis: true,
     },
     {
       title: 'IP',
       dataIndex: 'ip',
-      // ellipsis: true,
     },
     {
       title: '版本',
       dataIndex: 'version',
-      // ellipsis: true,
     },
     {
       title: '添加时间',
@@ -89,27 +93,47 @@ const QueryDevice: FC<QueryDeviceProps> = ({
       render: (value, record) => {
         return moment(value).format('YYYY-MM-DD');
       },
-      // ellipsis: true,
     },
-    // {
-    //   title: '群组ID',
-    //   dataIndex: 'group_id',
-    // },
-    // {
-    //   title: '人数',
-    //   dataIndex: 'count',
-    // },
     {
       title: '操作',
       dataIndex: 'option',
       render: (_, record) => (
         <>
-          <a onClick={() => {}}>编辑</a>
+          <a
+            onClick={() => {
+              let parent_id;
+              const getParentIdBySubId = (root, subId) => {
+                if (root.sub_id == subId) {
+                  parent_id = root.parent_id;
+                } else {
+                  for (let i = 0; i < root.children.length; i++) {
+                    const element = root.children[i];
+                    getParentIdBySubId(element, subId);
+                  }
+                }
+              };
+
+              getParentIdBySubId(groupList[0], record.group_id);
+
+              // form.resetFields();
+              form.setFieldsValue({
+                sn: record.sn,
+                name: record.name,
+                group: parent_id + '-' + record.group_id,
+              });
+
+              setEditId(record.device_id);
+
+              setIsModalVisible(true);
+            }}
+          >
+            编辑
+          </a>
           <Divider type="vertical" />
           <Popconfirm
             title="确定要删除此设备么?"
             onConfirm={() => {
-              console.log(record);
+              // console.log(record);
               dispatch({
                 type: 'device/deleteDevice',
                 payload: {
@@ -117,7 +141,6 @@ const QueryDevice: FC<QueryDeviceProps> = ({
                 },
               });
             }}
-            // onCancel={cancel}
             okText="确定"
             cancelText="取消"
           >
@@ -129,8 +152,13 @@ const QueryDevice: FC<QueryDeviceProps> = ({
   ];
 
   const onPageChange = (current: number, pageSize: number) => {
-    setCurrent(current);
-    setPageSize(pageSize);
+    dispatch({
+      type: 'device/pageChange',
+      payload: {
+        start: pageSize * (current - 1),
+        limit: pageSize,
+      },
+    });
   };
 
   const pagination = {
@@ -139,6 +167,24 @@ const QueryDevice: FC<QueryDeviceProps> = ({
     pageSize,
     size: 'small',
     onChange: onPageChange,
+  };
+
+  const handleOk = () => {
+    form.validateFields().then(value => {
+      dispatch({
+        type: 'device/updateDevice',
+        payload: {
+          group: value.group.split('-')[1],
+          name: value.name,
+          id: editId,
+        },
+      });
+      setIsModalVisible(false);
+    });
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -155,6 +201,33 @@ const QueryDevice: FC<QueryDeviceProps> = ({
         bordered={true}
         pagination={pagination}
       />
+      <Modal
+        title="更新设备"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        destroyOnClose
+      >
+        <Form
+          preserve={false}
+          form={form}
+          initialValues={{ sn: '', name: '', group: '' }}
+        >
+          <Form.Item
+            label="设备SN"
+            name="sn"
+            rules={[{ required: true, message: '请输入设备SN!' }]}
+          >
+            <Input disabled />
+          </Form.Item>
+          <Form.Item label="群组" name="group" rules={[{ required: true }]}>
+            <TreeSelect treeData={groupList} />
+          </Form.Item>
+          <Form.Item label="名称" name="name">
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

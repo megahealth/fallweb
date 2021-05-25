@@ -8,7 +8,7 @@ import { QueryDeviceProps } from '../queryDevice';
 const { Option } = Select;
 
 const ListFilterRegion: FC<QueryDeviceProps> = ({ dispatch, device }) => {
-  const { searchContentVal, statusVal } = device;
+  const { searchContentVal } = device;
 
   const onInputChange = (e: any) => {
     dispatch({

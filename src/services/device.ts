@@ -20,6 +20,12 @@ export interface createDeviceType {
   name: string;
 }
 
+export interface updateDeviceType {
+  group: number;
+  name: string;
+  id: number;
+}
+
 export async function queryDeviceList(params: tableParamsType) {
   const { start, limit, group } = params;
   let url = '/devices?orderby=desc';
@@ -48,10 +54,21 @@ export async function createDevice(params: createDeviceType) {
 }
 
 export async function deleteDevice(params: deleteDeviceType) {
-  console.log(params);
   const { id } = params;
   let url = `/device/${id}`;
   return request(url, {
     method: 'DELETE',
+  });
+}
+
+export async function updateDevice(params: updateDeviceType) {
+  const { name, group, id } = params;
+  let url = `/device/${id}`;
+  return request(url, {
+    method: 'PUT',
+    data: {
+      name,
+      group,
+    },
   });
 }
