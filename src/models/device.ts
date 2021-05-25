@@ -5,8 +5,8 @@ import {
   createDevice,
   deleteDevice,
   updateDevice,
+  getDeviceCount,
 } from '@/services/device';
-import { queryGroupList } from '@/services/group';
 import { ConnectState } from './connect.d';
 import { message } from 'antd';
 
@@ -134,19 +134,13 @@ const DeviceModel: DeviceType = {
         },
       });
     },
-    *queryDeviceCount(_, { call, put, select }) {
-      const response = yield call(queryGroupList);
+    *queryDeviceCount({ payload }, { call, put, select }) {
+      const response = yield call(getDeviceCount, payload);
       if (response.code === 0) {
-        const child = response.msg.children;
-        let count = 0;
-        child.forEach((g: Group) => {
-          count += g.dev_cnt;
-        });
-
         yield put({
           type: 'save',
           payload: {
-            count,
+            count: response.msg[0].device_cnt,
           },
         });
       }

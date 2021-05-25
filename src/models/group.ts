@@ -1,5 +1,13 @@
 import { Effect, Reducer } from 'umi';
-import { queryGroupList } from '@/services/group';
+import {
+  queryGroupList,
+  getGroupCount,
+  createGroup,
+  updateGroup,
+  deleteGroup,
+} from '@/services/group';
+import { ConnectState } from './connect.d';
+import { message } from 'antd';
 
 interface GroupProps {
   dev_cnt: number;
@@ -14,7 +22,10 @@ export interface Groups {
   children: Array<GroupProps>;
 }
 export interface GroupState {
-  groupList: Groups; // groupTreeList
+  groupList: Groups;
+  count: number;
+  start: number;
+  limit: number;
 }
 
 export interface GroupType {
@@ -22,6 +33,11 @@ export interface GroupType {
   state: GroupState;
   effects: {
     queryGroupList: Effect;
+    getGroupCount: Effect;
+    createGroup: Effect;
+    updateGroup: Effect;
+    deleteGroup: Effect;
+    pageChange: Effect;
   };
   reducers: {
     save: Reducer<GroupState>;
@@ -35,10 +51,14 @@ const GroupModel: GroupType = {
       parents_self: [],
       children: [],
     },
+    count: 0,
+    start: 0,
+    limit: 10,
   },
   effects: {
     *queryGroupList(_, { call, put, select }) {
       const response = yield call(queryGroupList);
+      console.log(response);
       if (response.code === 0) {
         yield put({
           type: 'save',
@@ -47,6 +67,91 @@ const GroupModel: GroupType = {
           },
         });
       }
+    },
+    *getGroupCount({ payload }, { call, put, select }) {
+      const response = yield call(getGroupCount, payload);
+      if (response.code === 0) {
+        yield put({
+          type: 'save',
+          payload: {
+            count: response.msg[0].group_cnt,
+          },
+        });
+      }
+    },
+    *createGroup({ payload }, { call, put, select }) {
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.group,
+      );
+      const response = yield call(createGroup, payload);
+      if (response.code === 0) {
+        message.success('添加成功！');
+        yield put({
+          type: 'queryGroupList',
+          payload: {
+            start,
+            limit,
+          },
+        });
+        // yield put({
+        //   type: 'getGroupCount',
+        // });
+      }
+    },
+    *updateGroup({ payload }, { call, put, select }) {
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.group,
+      );
+      const response = yield call(updateGroup, payload);
+      if (response.code === 0) {
+        message.success('更新成功！');
+        yield put({
+          type: 'queryGroupList',
+          payload: {
+            start,
+            limit,
+          },
+        });
+        // yield put({
+        //   type: 'getGroupCount',
+        // });
+      }
+    },
+    *deleteGroup({ payload }, { call, put, select }) {
+      const { start, limit } = yield select(
+        (state: ConnectState) => state.group,
+      );
+      const response = yield call(deleteGroup, payload);
+      if (response.code === 0) {
+        message.success('删除成功！');
+        yield put({
+          type: 'queryGroupList',
+          payload: {
+            start,
+            limit,
+          },
+        });
+        // yield put({
+        //   type: 'getGroupCount',
+        // });
+      }
+    },
+    *pageChange({ payload }, { call, put, select }) {
+      const { start, limit } = payload;
+      yield put({
+        type: 'save',
+        payload: {
+          start,
+          limit,
+        },
+      });
+      yield put({
+        type: 'queryGroupList',
+        payload: {
+          start,
+          limit,
+        },
+      });
     },
   },
   reducers: {

@@ -1,8 +1,9 @@
 import { Dispatch } from 'umi';
-import { QueryUserState } from '@/models/connect';
+import { GroupState, UserState } from '@/models/connect';
 
-export interface QueryTableProps {
+export interface QueryUserProps {
   dispatch: Dispatch;
-  queryUser: QueryUserState;
+  user: UserState;
+  group: GroupState;
   loading?: boolean;
 }

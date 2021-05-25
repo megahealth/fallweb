@@ -2,17 +2,17 @@ import React, { FC } from 'react';
 import { Input, Select, Button } from 'antd';
 import { connect } from 'umi';
 import { SearchOutlined } from '@ant-design/icons';
-import { QueryTableState } from '@/models/connect';
-import { QueryTableProps } from '../userList';
+import { UserState } from '@/models/connect';
+import { QueryUserProps } from '../userList';
 
 const { Option } = Select;
 
-const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryUser }) => {
-  const { searchContentVal, statusVal } = queryUser;
+const ListFilterRegion: FC<QueryUserProps> = ({ dispatch, user }) => {
+  const { searchContentVal, statusVal } = user;
 
   const onInputChange = (e: any) => {
     dispatch({
-      type: 'queryUser/save',
+      type: 'user/save',
       payload: {
         searchContentVal: e.target.value,
       },
@@ -20,7 +20,7 @@ const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryUser }) => {
   };
   const onStatusChange = (val: string) => {
     dispatch({
-      type: 'queryUser/save',
+      type: 'user/save',
       payload: {
         statusVal: val,
       },
@@ -29,7 +29,7 @@ const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryUser }) => {
 
   const onSearchChange = () => {
     dispatch({
-      type: 'queryUser/queryTableList',
+      type: 'user/queryTableList',
       payload: {},
     });
   };
@@ -54,6 +54,6 @@ const ListFilterRegion: FC<QueryTableProps> = ({ dispatch, queryUser }) => {
   );
 };
 
-export default connect(({ queryUser }: { queryUser: QueryTableState }) => ({
-  queryUser,
+export default connect(({ user }: { user: UserState }) => ({
+  user,
 }))(ListFilterRegion);

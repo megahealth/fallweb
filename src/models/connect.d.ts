@@ -1,7 +1,7 @@
 import { GlobalModelState } from './global';
 import { LoginModelState } from './login';
 import { DeviceState } from './device';
-import { QueryUserState } from './user';
+import { UserState } from './user';
 import { DashboardState } from './dashboard';
 import { GroupState } from './group';
 import { ReportState } from './report';
@@ -12,7 +12,7 @@ export {
   GlobalModelState,
   LoginModelState,
   DeviceState,
-  QueryUserState,
+  UserState,
   DashboardState,
   GroupState,
   ReportState,
@@ -30,7 +30,6 @@ export interface Loading {
     user?: boolean;
     login: boolean;
     device: boolean;
-    queryUser: boolean;
     dashboard: boolean;
     group: boolean;
     report: boolean;
@@ -44,6 +43,8 @@ export interface ConnectState {
   report: ReportState;
   device: DeviceState;
   login: LoginModelState;
+  user: UserState;
+  group: GroupState;
   loading: Loading;
 }
 
