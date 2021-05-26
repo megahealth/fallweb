@@ -56,7 +56,7 @@ const AddGroup: FC<AddGroupProps> = ({ dispatch, group }) => {
           >
             <Input />
           </Form.Item>
-          <Form.Item label="父级群组" name="group" rules={[{ required: true }]}>
+          <Form.Item label="上级群组" name="group" rules={[{ required: true }]}>
             <TreeSelect treeData={groupList} />
           </Form.Item>
         </Form>

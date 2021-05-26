@@ -33,7 +33,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
   const columns: ColumnsType<RecordType> = [
     {
       title: 'ID',
-      key: 'sub_id',
+      // key: 'sub_id',
       dataIndex: 'sub_id',
     },
     {
@@ -142,7 +142,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
         dataSource={groupList.children}
         rowKey="sub_id"
         bordered={true}
-        // loading={loading}
+        loading={loading}
         pagination={pagination}
       />
       <Modal

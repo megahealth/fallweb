@@ -22,7 +22,7 @@ export default (props: any) => {
         collapsed={collapse}
       >
         <img
-          src={LOGO}
+          src={''}
           style={
             collapse
               ? { width: '40px', margin: '20px' }
