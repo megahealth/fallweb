@@ -9,22 +9,26 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
-    .title {
+    .left {
       display: flex;
-      align-items: center;
-      img {
-        width: 30px;
-        height: 30px;
-        margin-right: 10px;
+      .title {
+        display: flex;
+        align-items: center;
+        img {
+          width: 30px;
+          height: 30px;
+          margin-right: 10px;
+        }
+        span {
+          font-size: 20px;
+        }
       }
-      span {
-        font-size: 20px;
+      .invalid {
+        margin-left: 20px;
+        color: #f00;
+        font-size: 18px;
+        line-height: 30px;
       }
-    }
-    .invalid {
-      color: #f00;
-      font-size: 18px;
-      line-height: 30px;
     }
     .link {
       display: flex;

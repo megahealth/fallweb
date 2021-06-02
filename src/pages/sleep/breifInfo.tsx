@@ -126,10 +126,12 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading, sn }) => {
   return (
     <div className={styles.breif}>
       <div className={styles.head}>
-        <IconTitle title={title} tip={tip} img={睡眠摘要}></IconTitle>
-        {valid > 1 && (
-          <div className={styles.invalid}>无效报告 - {validMsg(valid)}</div>
-        )}
+        <div className={styles.left}>
+          <IconTitle title={title} tip={tip} img={睡眠摘要}></IconTitle>
+          {valid > 1 && (
+            <div className={styles.invalid}>无效报告 - {validMsg(valid)}</div>
+          )}
+        </div>
         <Link to={`/sleep/${sn}?date=${YYYYMMDD_0}`} className={styles.link}>
           <span>查看完整报告</span>
           <img src={二级页面} />
