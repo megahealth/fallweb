@@ -200,11 +200,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({
         onCancel={handleCancel}
         destroyOnClose
       >
-        <Form
-          preserve={false}
-          form={form}
-          initialValues={{ sn: '', name: '', group: '' }}
-        >
+        <Form preserve={false} form={form}>
           <Form.Item
             label="设备SN"
             name="sn"

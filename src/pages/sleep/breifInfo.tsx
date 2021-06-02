@@ -15,8 +15,43 @@ export interface SleepProps {
   sn: string;
 }
 
+const validMsg = (valid: number) => {
+  switch (valid) {
+    case 2:
+      return '内存不足';
+      break;
+    case 3:
+      return '无法解析';
+      break;
+    case 4:
+      return '文件过短';
+      break;
+    case 5:
+      return '文件过长';
+      break;
+    case 6:
+      return '地址为空';
+      break;
+    case 7:
+      return '有效时长过短';
+      break;
+    default:
+      return '有效时长过短';
+      break;
+  }
+};
+
 const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading, sn }) => {
-  const { state, breath, move, roll, start } = sleep.data;
+  const {
+    state,
+    breath,
+    move,
+    roll,
+    start,
+    valid,
+    create_data_time: create,
+  } = sleep.data;
+  const time = valid > 1 ? create : start * 1000;
 
   useEffect(() => {
     if (sn) {
@@ -65,34 +100,36 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading, sn }) => {
   const sleepDuration = stages[1].value + stages[2].value + stages[3].value;
   const hours = moment.duration(sleepDuration, 'minutes').hours();
   const minutes = sleepDuration % 60;
-  const hour = moment(start * 1000).hour();
+  const hour = moment(time).hour();
   let YYYYMMDD_0, YYYYMMDD_1;
   if (hour > 9) {
-    YYYYMMDD_0 = moment(start * 1000).format('YYYY-MM-DD');
-    YYYYMMDD_1 = moment(start * 1000)
+    YYYYMMDD_0 = moment(time).format('YYYY-MM-DD');
+    YYYYMMDD_1 = moment(time)
       .add(1, 'days')
       .format('YYYY-MM-DD');
   } else {
-    YYYYMMDD_0 = moment(start * 1000)
+    YYYYMMDD_0 = moment(time)
       .subtract(1, 'days')
       .format('YYYY-MM-DD');
-    YYYYMMDD_1 = moment(start * 1000).format('YYYY-MM-DD');
+    YYYYMMDD_1 = moment(time).format('YYYY-MM-DD');
   }
-  const title = '睡眠报告摘要' + (start ? '（' + YYYYMMDD_0 + '）' : '（--）');
-  const startTime = start ? moment(start * 1000).format('HH:mm') : '--';
-  const endTime = start
-    ? moment(start * 1000 + state.length * 60 * 1000).format('HH:mm')
+  const title = '睡眠报告摘要' + (time ? '（' + YYYYMMDD_0 + '）' : '（--）');
+  const startTime = time ? moment(time).format('HH:mm') : '--';
+  const endTime = time
+    ? moment(time + state.length * 60).format('HH:mm')
     : '--';
   const deepDuration = stages[3].value;
+  const tip = time
+    ? `统计时间：${YYYYMMDD_0} AM 9:00 - ${YYYYMMDD_1} AM 9:00`
+    : null;
 
   return (
     <div className={styles.breif}>
       <div className={styles.head}>
-        <IconTitle
-          title={title}
-          tip={`统计时间：${YYYYMMDD_0} AM 9:00 - ${YYYYMMDD_1} AM 9:00`}
-          img={睡眠摘要}
-        ></IconTitle>
+        <IconTitle title={title} tip={tip} img={睡眠摘要}></IconTitle>
+        {valid > 1 && (
+          <div className={styles.invalid}>无效报告 - {validMsg(valid)}</div>
+        )}
         <Link to={`/sleep/${sn}?date=${YYYYMMDD_0}`} className={styles.link}>
           <span>查看完整报告</span>
           <img src={二级页面} />

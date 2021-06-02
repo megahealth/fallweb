@@ -58,7 +58,6 @@ const GroupModel: GroupType = {
   effects: {
     *queryGroupList(_, { call, put, select }) {
       const response = yield call(queryGroupList);
-      console.log(response);
       if (response.code === 0) {
         yield put({
           type: 'save',
@@ -77,6 +76,8 @@ const GroupModel: GroupType = {
             count: response.msg[0].group_cnt,
           },
         });
+      } else {
+        message.error(response.msg);
       }
     },
     *createGroup({ payload }, { call, put, select }) {
@@ -93,9 +94,8 @@ const GroupModel: GroupType = {
             limit,
           },
         });
-        // yield put({
-        //   type: 'getGroupCount',
-        // });
+      } else {
+        message.error(response.msg);
       }
     },
     *updateGroup({ payload }, { call, put, select }) {

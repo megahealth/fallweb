@@ -45,6 +45,7 @@ type mapCode =
  */
 const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
+  console.log(response);
   if (response && response.status) {
     const errorText =
       codeMessage[response.status as mapCode] || response.statusText;

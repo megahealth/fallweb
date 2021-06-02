@@ -2,17 +2,17 @@ import { Effect, Reducer } from 'umi';
 import { getSleepReport } from '@/services/sleep';
 
 interface sleepProps {
-  // sleep: {
   state: number[];
   breath: number[];
   move: number[];
   roll: number[];
   start: number;
-  // };
+  valid: number;
+  create_data_time: number;
 }
 
 export interface SleepState {
-  data: sleepProps; // groupTreeList
+  data: sleepProps;
 }
 
 export interface SleepType {
@@ -30,13 +30,13 @@ const GroupModel: SleepType = {
   namespace: 'sleep',
   state: {
     data: {
-      // sleep: {
       state: [],
       breath: [],
       move: [],
       roll: [],
       start: 0,
-      // },
+      valid: 0,
+      create_data_time: 0,
     },
   },
   effects: {
@@ -59,6 +59,8 @@ const GroupModel: SleepType = {
               move: [],
               roll: [],
               start: 0,
+              valid: 0,
+              create_data_time: 0,
             },
           },
         });

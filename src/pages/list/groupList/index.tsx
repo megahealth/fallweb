@@ -17,7 +17,6 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
   const [editId, setEditId] = useState(0);
 
   const { groupList, count, limit, start } = group;
-  console.log(group);
   // const groupList = createGroupTreeList(groupData);
 
   useEffect(() => {
