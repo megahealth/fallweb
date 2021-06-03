@@ -102,7 +102,7 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading, sn }) => {
   const minutes = sleepDuration % 60;
   const hour = moment(time).hour();
   let YYYYMMDD_0, YYYYMMDD_1;
-  if (hour > 9) {
+  if (hour >= 9) {
     YYYYMMDD_0 = moment(time).format('YYYY-MM-DD');
     YYYYMMDD_1 = moment(time)
       .add(1, 'days')
