@@ -116,7 +116,9 @@ const BreifInfo: FC<SleepProps> = ({ dispatch, sleep, loading, sn }) => {
   const title = '睡眠报告摘要' + (time ? '（' + YYYYMMDD_0 + '）' : '（--）');
   const startTime = valid === 1 ? moment(time).format('HH:mm') : '--';
   const endTime =
-    valid === 1 ? moment(time + state.length * 60).format('HH:mm') : '--';
+    valid === 1
+      ? moment(time + state.length * 60 * 1000).format('HH:mm')
+      : '--';
   const deepDuration = valid === 1 ? stages[3].value + '分钟' : '--';
   const tip = time
     ? `统计时间：${YYYYMMDD_0} AM 9:00 - ${YYYYMMDD_1} AM 9:00`
