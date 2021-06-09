@@ -8,16 +8,18 @@ import {
   Cascader,
   message,
   Button,
+  Switch,
 } from 'antd';
 import { GroupState, DeviceState } from '@/models/connect';
 import mqtt, { MqttClient } from 'mqtt';
-import { useInterval } from 'ahooks';
+import { useInterval, useLocalStorageState } from 'ahooks';
 import useAudio from '@/components/useAudio/useAudio';
 import Room from './components/room';
 import { createGroupTreeList } from '@/utils/utils';
 import { QueryDashboardProps } from './queryDashboard';
 import styles from './index.less';
 import fallWarning from '@/assets/fall-warning.mp3';
+import { AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
 
 const msgs = new Map();
 
@@ -61,6 +63,10 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   const [pageSize, setPageSize] = useState(10);
   const [interval, setInterval] = useState(1000);
   const [playing, toggle] = useAudio(fallWarning);
+  const [audioSwitch, setAudioSwitch] = useLocalStorageState(
+    'audio-switch',
+    'OFF',
+  );
 
   const { groupList: groupData } = group;
   const { selectedDeviceList } = device;
@@ -138,7 +144,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           o.count = fall.c;
           o.roll = fall.r;
           // toggle
-          if (o.action_state >= 5) {
+          if (o.action_state >= 5 && audioSwitch === 'ON') {
             message.warning(`${username}跌倒，请注意查看！`);
             if (!playing) {
               toggle();
@@ -328,6 +334,21 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           <Badge
             status={connectStatus === 'Connected' ? 'success' : 'error'}
             text={connectStatus}
+          />
+          / 音频告警
+          <Switch
+            checkedChildren={<AudioOutlined />}
+            unCheckedChildren={<AudioMutedOutlined />}
+            checked={audioSwitch === 'ON' ? true : false}
+            onChange={checked => {
+              const flag = checked === true ? 'ON' : 'OFF';
+              setAudioSwitch(flag);
+              if (flag === 'ON') {
+                message.success('已打开音频告警');
+              } else {
+                message.error('已关闭音频告警');
+              }
+            }}
           />
         </Space>
       </div>
