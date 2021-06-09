@@ -7,6 +7,17 @@ import styles from './index.less';
 
 const StagePie = props => {
   const { stages } = props;
+  const duration =
+    stages[0].value + stages[1].value + stages[2].value + stages[3].value;
+  const remPercent = ((stages[1].value / duration) * 100).toFixed(1);
+  const lightPercent = ((stages[2].value / duration) * 100).toFixed(1);
+  const deepPercent = ((stages[3].value / duration) * 100).toFixed(1);
+  const wakePercent = (
+    100 -
+    parseFloat(remPercent) -
+    parseFloat(lightPercent) -
+    parseFloat(deepPercent)
+  ).toFixed(1);
 
   const getOption = () => {
     return {
@@ -27,37 +38,15 @@ const StagePie = props => {
         formatter: function(name) {
           switch (name) {
             case '清醒期':
-              return (
-                '清醒期: ' +
-                stages[0].value +
-                '分钟 ' +
-                (stages[0].value / stages.length).toFixed(0) +
-                '%'
-              );
+              return '清醒期: ' + stages[0].value + '分钟 ' + wakePercent + '%';
             case '眼动期':
-              return (
-                '眼动期: ' +
-                stages[1].value +
-                '分钟 ' +
-                (stages[1].value / stages.length).toFixed(0) +
-                '%'
-              );
+              return '眼动期: ' + stages[1].value + '分钟 ' + remPercent + '%';
             case '浅睡期':
               return (
-                '浅睡期: ' +
-                stages[2].value +
-                '分钟 ' +
-                (stages[2].value / stages.length).toFixed(0) +
-                '%'
+                '浅睡期: ' + stages[2].value + '分钟 ' + lightPercent + '%'
               );
             case '深睡期':
-              return (
-                '深睡期: ' +
-                stages[3].value +
-                '分钟 ' +
-                (stages[3].value / stages.length).toFixed(0) +
-                '%'
-              );
+              return '深睡期: ' + stages[3].value + '分钟 ' + deepPercent + '%';
           }
         },
         data: ['清醒期', '眼动期', '浅睡期', '深睡期'],

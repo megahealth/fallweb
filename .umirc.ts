@@ -25,6 +25,13 @@ export default defineConfig({
   // targets: {
   //   ie: 11,
   // },
+  chainWebpack(memo) {
+    memo.module
+      .rule('media')
+      .test(/.mp(3|4)$/)
+      .use('file-loader')
+      .loader(require.resolve('file-loader'));
+  },
   theme: {
     '@primary-color': '#5ec394',
     '@border-radius-base': '5px',

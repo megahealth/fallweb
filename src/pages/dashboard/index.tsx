@@ -1,13 +1,23 @@
 import React, { FC, useEffect, useState } from 'react';
 import { connect } from 'umi';
-import { Empty, Space, Pagination, Badge, Cascader, message } from 'antd';
+import {
+  Empty,
+  Space,
+  Pagination,
+  Badge,
+  Cascader,
+  message,
+  Button,
+} from 'antd';
 import { GroupState, DeviceState } from '@/models/connect';
 import mqtt, { MqttClient } from 'mqtt';
 import { useInterval } from 'ahooks';
+import useAudio from '@/components/useAudio/useAudio';
 import Room from './components/room';
 import { createGroupTreeList } from '@/utils/utils';
 import { QueryDashboardProps } from './queryDashboard';
 import styles from './index.less';
+import fallWarning from '@/assets/fall-warning.mp3';
 
 const msgs = new Map();
 
@@ -50,6 +60,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [interval, setInterval] = useState(1000);
+  const [playing, toggle] = useAudio(fallWarning);
 
   const { groupList: groupData } = group;
   const { selectedDeviceList } = device;
@@ -126,6 +137,13 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           o.outdoor = fall.d;
           o.count = fall.c;
           o.roll = fall.r;
+          // toggle
+          if (o.action_state >= 5) {
+            message.warning(`${username}跌倒，请注意查看！`);
+            if (!playing) {
+              toggle();
+            }
+          }
         }
         if (breath) o.breath = breath.b;
         msgs.set(sn, o);
@@ -306,6 +324,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           <a href="#">{currentGroup || '选择群组'}</a>
         </Cascader>
         <Space align="center">
+          {/* <Button onClick={toggle}>{playing ? "Pause" : "Play"}</Button> */}
           <Badge
             status={connectStatus === 'Connected' ? 'success' : 'error'}
             text={connectStatus}

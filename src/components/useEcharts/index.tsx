@@ -4,7 +4,7 @@ import * as echarts from 'echarts';
 const useECharts = (chartRef, config) => {
   let chartInstance = null;
 
-  function renderChart() {
+  const renderChart = () => {
     const renderedInstance = echarts.getInstanceByDom(chartRef.current);
     if (renderedInstance) {
       chartInstance = renderedInstance;
@@ -12,7 +12,7 @@ const useECharts = (chartRef, config) => {
       chartInstance = echarts.init(chartRef.current);
     }
     chartInstance.setOption(config);
-  }
+  };
 
   useEffect(() => {
     setTimeout(() => {
