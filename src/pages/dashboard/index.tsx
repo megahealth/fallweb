@@ -145,7 +145,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           o.roll = fall.r;
           // toggle
           if (o.action_state >= 5 && audioSwitch === 'ON') {
-            message.warning(`${username}跌倒，请注意查看！`);
+            message.warning(`${o.name}跌倒，请注意查看！`);
             if (!playing) {
               toggle();
             }
@@ -347,6 +347,9 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
                 message.success('已打开音频告警');
               } else {
                 message.error('已关闭音频告警');
+                if (playing) {
+                  toggle();
+                }
               }
             }}
           />
