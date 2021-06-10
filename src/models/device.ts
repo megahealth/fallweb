@@ -111,7 +111,10 @@ const DeviceModel: DeviceType = {
       }
     },
     *queryDevicesBySelectedGroup({ payload }, { call, put, select }) {
-      const { selectedGroups } = payload;
+      let { selectedGroups } = payload;
+      if (typeof selectedGroups === 'string') {
+        selectedGroups = JSON.parse(selectedGroups);
+      }
       var list = [];
       for (let i = 0; i < selectedGroups.length; i++) {
         const group = selectedGroups[i];

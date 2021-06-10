@@ -93,22 +93,6 @@ const Room: FC<DetailProps> = ({
     color = colors.grey;
   }
 
-  // const next = () => {
-  //   localStorage.setItem('data', JSON.stringify(data));
-  //   dispatch({
-  //     type: 'detail/initDetail',
-  //     payload: {
-  //       sn,
-  //       group,
-  //       name,
-  //       online,
-  //       count,
-  //       action,
-  //       breath,
-  //     },
-  //   });
-  // };
-
   return (
     <Link to={`/detail/${id}`}>
       <div

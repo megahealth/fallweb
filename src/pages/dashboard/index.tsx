@@ -44,29 +44,30 @@ const msgs = new Map();
 // Closed       连接已断开
 
 const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
-  const groupKeys = JSON.parse(localStorage.getItem('groupKeys') || '[]');
-  const localTopics = JSON.parse(localStorage.getItem('topics') || '[]');
-  const localSelectedGroups = JSON.parse(
-    localStorage.getItem('localSelectedGroups') || '[]',
-  );
-  const localCurrentGroup = localStorage.getItem('localCurrentGroup');
-
   const [client, setClient] = useState<MqttClient>();
   const [connectStatus, setConnectStatus] = useState<string>('UnConnected');
   const [reconnectTimes, setReconnectTimes] = useState([]);
   const [messages, setMessages] = useState(new Map());
-  const [value, setValue] = useState(groupKeys);
-  const [topics, setTopics] = useState(localTopics);
-  const [selectedGroups, setSelectedGroups] = useState(localSelectedGroups);
-  const [currentGroup, setCurrentGroup] = useState(localCurrentGroup);
+
+  const [value, setValue] = useLocalStorageState('groupKeys', '[]');
+  const [topics, setTopics] = useLocalStorageState('topics', '[]');
+  const [selectedGroups, setSelectedGroups] = useLocalStorageState(
+    'selectedGroups',
+    '[]',
+  );
+  const [currentGroup, setCurrentGroup] = useLocalStorageState(
+    'currentGroup',
+    '',
+  );
+  const [audioSwitch, setAudioSwitch] = useLocalStorageState(
+    'audioSwitch',
+    'OFF',
+  );
+
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [interval, setInterval] = useState(1000);
   const [playing, toggle] = useAudio(fallWarning);
-  const [audioSwitch, setAudioSwitch] = useLocalStorageState(
-    'audio-switch',
-    'OFF',
-  );
 
   const { groupList: groupData } = group;
   const { selectedDeviceList } = device;
@@ -283,11 +284,8 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
     console.log('keys:', keys);
 
     setValue(keys);
-    localStorage.setItem('groupKeys', JSON.stringify(keys));
     setTopics(ts);
-    localStorage.setItem('topics', JSON.stringify(ts));
     setSelectedGroups(nodes);
-    localStorage.setItem('localSelectedGroups', JSON.stringify(nodes));
 
     if (ts.length > 0 && connectStatus === 'Connected') {
       mqttSub(ts);
@@ -300,16 +298,12 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   };
 
   const onCascaderChange = (value, selectedOptions) => {
-    console.log(selectedOptions.map(o => o.label).join(' > '));
-    console.log(selectedOptions.map(o => o.value).join(', '));
     let groupStr = selectedOptions.map(o => o.label).join(' > ');
     setCurrentGroup(groupStr);
-    localStorage.setItem('localCurrentGroup', groupStr);
 
     let obj = selectedOptions.pop();
     let key = obj.value;
     let keys = [key];
-    localStorage.setItem('groupKeys', JSON.stringify(keys));
 
     onChange(keys);
   };
@@ -330,7 +324,6 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           <a href="#">{currentGroup || '选择群组'}</a>
         </Cascader>
         <Space align="center">
-          {/* <Button onClick={toggle}>{playing ? "Pause" : "Play"}</Button> */}
           <Badge
             status={connectStatus === 'Connected' ? 'success' : 'error'}
             text={connectStatus}

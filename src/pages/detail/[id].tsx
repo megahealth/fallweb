@@ -3,6 +3,7 @@ import { message, Empty } from 'antd';
 import { connect, Dispatch, history } from 'umi';
 import { DeviceState, ReportState, Loading } from '@/models/connect';
 import mqtt, { MqttClient } from 'mqtt';
+import { useLocalStorageState } from 'ahooks';
 import styles from './index.less';
 import Status from './status';
 import BriefReport from '../report/briefReport';
@@ -67,6 +68,10 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
   const [location, setLocation] = useState({ x: 1350, y: 1400 });
   const [reconnectTimes, setReconnectTimes] = useState([]);
   const [connect, setConnect] = useState('no');
+  const [currentGroup, setCurrentGroup] = useLocalStorageState(
+    'currentGroup',
+    '',
+  );
 
   const {
     sn,
@@ -242,19 +247,7 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
     <div>
       <div className={styles.breadcrumb}>
         监控页
-        {' > ' + localStorage.getItem('localCurrentGroup') + ' > ' + name}
-        {/* <button
-          onClick={() => {
-            dispatch({
-              type: 'device/updateStatus',
-              payload: {
-                action_state: 0,
-              },
-            });
-          }}
-        >
-          变成无人
-        </button> */}
+        {` > ${currentGroup} > ${name}`}
       </div>
       <Status
         breath={breath}
@@ -288,9 +281,11 @@ const Detail: FC<DetailProps> = ({ device, dispatch, loading, match }) => {
           <BriefReport state={action_state} sn={sn}></BriefReport>
         </div>
       </div>
-      <div>
-        <BreifInfo sn={sn}></BreifInfo>
-      </div>
+      {sn && sn.indexOf('J01MD') !== -1 && (
+        <div>
+          <BreifInfo sn={sn}></BreifInfo>
+        </div>
+      )}
     </div>
   );
 };

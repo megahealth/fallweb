@@ -9,15 +9,23 @@ const StagePie = props => {
   const { stages } = props;
   const duration =
     stages[0].value + stages[1].value + stages[2].value + stages[3].value;
-  const remPercent = ((stages[1].value / duration) * 100).toFixed(1);
-  const lightPercent = ((stages[2].value / duration) * 100).toFixed(1);
-  const deepPercent = ((stages[3].value / duration) * 100).toFixed(1);
-  const wakePercent = (
-    100 -
-    parseFloat(remPercent) -
-    parseFloat(lightPercent) -
-    parseFloat(deepPercent)
-  ).toFixed(1);
+  const remPercent = duration
+    ? ((stages[1].value / duration) * 100).toFixed(1)
+    : '0';
+  const lightPercent = duration
+    ? ((stages[2].value / duration) * 100).toFixed(1)
+    : '0';
+  const deepPercent = duration
+    ? ((stages[3].value / duration) * 100).toFixed(1)
+    : '0';
+  const wakePercent = duration
+    ? (
+        100 -
+        parseFloat(remPercent) -
+        parseFloat(lightPercent) -
+        parseFloat(deepPercent)
+      ).toFixed(1)
+    : '0';
 
   const getOption = () => {
     return {
