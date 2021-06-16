@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import React, { useEffect, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { useLocalStorageState } from 'ahooks';
 import styles from './index.less';
 import Status from './status';
@@ -7,9 +6,9 @@ import BriefReport from '../report/briefReport';
 import BreifInfo from '../sleep/breifInfo';
 import FallHandleLog from './fallHandleLog';
 import RealTimeLocation from './realTimeLocation';
-import { getDevice } from '@/services/device'
+import { getDevice } from '@/services/device';
 import { useRequest } from 'ahooks';
-import useMqtt from '@/hooks/useMqtt/useMqtt'
+import useMqtt from '@/hooks/useMqtt/useMqtt';
 
 export interface DetailProps {
   match: any;
@@ -18,13 +17,13 @@ export interface DetailProps {
 
 const Detail: FC<DetailProps> = (props) => {
   const { id } = props.match.params;
-  const { data: deviceInfo, loading } = useRequest(() => getDevice({id}));
+  const { data: deviceInfo, loading } = useRequest(() => getDevice({ id }));
   const { client, messages } = useMqtt();
   const [currentGroup] = useLocalStorageState('currentGroup');
 
   useEffect(() => {
     if (client && deviceInfo) {
-      const sn = deviceInfo.msg.sn;
+      const { sn } = deviceInfo.msg;
       client.publish(`/todevice/point/${sn}`, 'hello');
       client.subscribe(
         [
@@ -37,7 +36,7 @@ const Detail: FC<DetailProps> = (props) => {
           `trans_device/downline/${sn}`,
         ],
         { qos: 1 },
-        error => {
+        (error) => {
           if (error) {
             console.log('Unsubscribe error', error);
           }
@@ -48,7 +47,7 @@ const Detail: FC<DetailProps> = (props) => {
 
   const state = useMemo(() => {
     const data = deviceInfo && deviceInfo.msg;
-    if(messages) {
+    if (messages) {
       const { payload, topic } = messages;
       const { point, fall, breath } = JSON.parse(payload);
 
@@ -60,21 +59,22 @@ const Detail: FC<DetailProps> = (props) => {
         online = 1;
       }
 
-      if(online !== null && online !== undefined) data.online = online;
-      if(breath !== null && breath !== undefined) data.breath = breath.b;
-      if(fall !== null && fall !== undefined) {
+      if (online !== null && online !== undefined) data.online = online;
+      if (breath !== null && breath !== undefined) data.breath = breath.b;
+      if (fall !== null && fall !== undefined) {
         data.count = fall.c;
         data.action_state = fall.a;
         data.outdoor = fall.d;
         data.roll = fall.r;
-        if(fall.last_roll_time === 1) {
+        if (fall.last_roll_time === 1) {
           data.last_roll_time = new Date().getTime();
         }
       }
-      if(point) {
+      if (point) {
         data.location = {
-          x: 100 * point.x + 200 + 100, y: 100 * point.y + 100
-        }
+          x: 100 * point.x + 200 + 100,
+          y: 100 * point.y + 100,
+        };
       }
     }
     return data;
@@ -82,8 +82,9 @@ const Detail: FC<DetailProps> = (props) => {
 
   return (
     <div>
-      {
-        loading ? 'loading' : 
+      {loading ? (
+        'loading'
+      ) : (
         <div>
           <div className={styles.breadcrumb}>
             监控页
@@ -112,11 +113,9 @@ const Detail: FC<DetailProps> = (props) => {
               <BriefReport state={state.action_state} sn={state.sn}></BriefReport>
             </div>
           </div>
-          {state.sn.indexOf('J01MD') !== -1 && (
-            <BreifInfo sn={state.sn}></BreifInfo>
-          )}
+          {state.sn.indexOf('J01MD') !== -1 && <BreifInfo sn={state.sn}></BreifInfo>}
         </div>
-      }
+      )}
     </div>
   );
 };

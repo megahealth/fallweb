@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import type { MqttClient } from 'mqtt';
-import mqtt from 'mqtt';
+import { useState, useEffect } from 'react';
+import mqtt, { MqttClient } from 'mqtt';
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -15,38 +14,39 @@ const useMqtt = () => {
   const [reconnectTimes, setReconnectTimes] = useState([]);
 
   useEffect(() => {
-    setClient(mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
-      clean: true,
-      keepalive: 10,
-      connectTimeout: 4000,
-      clientId: `${localStorage.getItem('user_id')}`,
-      username: `user_${localStorage.getItem('name')}`,
-      reconnectPeriod: 1000,
-      protocolVersion: 5,
-    }));
+    setClient(
+      mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
+        clean: true,
+        keepalive: 10,
+        connectTimeout: 4000,
+        clientId: `${localStorage.getItem('user_id')}`,
+        username: `user_${localStorage.getItem('name')}`,
+        reconnectPeriod: 1000,
+        protocolVersion: 5,
+      }),
+    );
   }, []);
-
 
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        console.log('connect')
+        console.log('connect');
       });
-      client.on('error', err => {
+      client.on('error', (err) => {
         console.log(err);
       });
       client.on('message', (topic, payload) => {
         setMessages({
           payload: payload.toString(),
-          topic
+          topic,
         });
       });
       client.on('close', () => {
-        console.log('close')
+        console.log('close');
       });
       client.on('reconnect', () => {
         const now = new Date().getTime();
-        setReconnectTimes((times) => times.push(now));
+        setReconnectTimes((times: any) => times.push(now));
         const last3 = reconnectTimes[reconnectTimes.length - 3];
         if (last3 && now - last3 < 10 * 1000) {
           if (client) {
@@ -64,10 +64,10 @@ const useMqtt = () => {
         console.log('disconnect');
       });
       client.on('offline', () => {
-        console.log('offline')
+        console.log('offline');
       });
     }
-  }, [client]);
+  }, [client, reconnectTimes]);
 
   useEffect(() => {
     return () => {
@@ -75,12 +75,12 @@ const useMqtt = () => {
         client.end();
       }
     };
-  }, [client])
+  }, [client]);
 
   return {
     client,
     messages,
   };
-}
+};
 
 export default useMqtt;

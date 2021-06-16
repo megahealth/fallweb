@@ -1,24 +1,14 @@
-import type { FC} from 'react';
-import React, { useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { connect } from 'umi';
-import {
-  Empty,
-  Space,
-  Pagination,
-  Badge,
-  Cascader,
-  message,
-  Button,
-  Switch,
-} from 'antd';
-import type { GroupState, DeviceState } from '@/models/connect';
-import type { MqttClient } from 'mqtt';
+import { Empty, Space, Pagination, Badge, Cascader, message, Button, Switch } from 'antd';
+import { GroupState, DeviceState } from '@/models/connect';
+import { MqttClient } from 'mqtt';
 import mqtt from 'mqtt';
 import { useInterval, useLocalStorageState } from 'ahooks';
 import useAudio from '@/components/useAudio/useAudio';
 import Room from './components/room';
 import { createGroupTreeList } from '@/utils/utils';
-import type { QueryDashboardProps } from './queryDashboard';
+import { QueryDashboardProps } from './queryDashboard';
 import styles from './index.less';
 import fallWarning from '@/assets/fall-warning.mp3';
 import { AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
@@ -53,18 +43,9 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
 
   const [value, setValue] = useLocalStorageState('groupKeys', '[]');
   const [topics, setTopics] = useLocalStorageState('topics', '[]');
-  const [selectedGroups, setSelectedGroups] = useLocalStorageState(
-    'selectedGroups',
-    '[]',
-  );
-  const [currentGroup, setCurrentGroup] = useLocalStorageState(
-    'currentGroup',
-    '',
-  );
-  const [audioSwitch, setAudioSwitch] = useLocalStorageState(
-    'audioSwitch',
-    'OFF',
-  );
+  const [selectedGroups, setSelectedGroups] = useLocalStorageState('selectedGroups', '[]');
+  const [currentGroup, setCurrentGroup] = useLocalStorageState('currentGroup', '');
+  const [audioSwitch, setAudioSwitch] = useLocalStorageState('audioSwitch', 'OFF');
 
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -98,8 +79,8 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   useEffect(() => {
     msgs.clear();
 
-    selectedDeviceList.forEach(d => {
-      const {sn} = d;
+    selectedDeviceList.forEach((d) => {
+      const { sn } = d;
       const o = msgs.get(sn);
       msgs.set(sn, { ...d, ...o });
     });
@@ -113,7 +94,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           mqttSub(topics);
         }
       });
-      client.on('error', err => {
+      client.on('error', (err) => {
         console.log(err);
       });
       client.on('reconnect', () => {
@@ -160,7 +141,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
       client.on('close', () => {
         setMqttStatus('Closed');
       });
-      client.on('disconnect', packet => {
+      client.on('disconnect', (packet) => {
         console.log(packet);
         setMqttStatus('Disconnected');
       });
@@ -188,7 +169,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
         keepalive: 10,
         connectTimeout: 4000,
         clientId: localStorage.getItem('user_id') || '',
-        username: `user_${  localStorage.getItem('name')}`,
+        username: `user_${localStorage.getItem('name')}`,
         reconnectPeriod: 1000,
         protocolVersion: 5,
       }),
@@ -206,26 +187,24 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
     setConnectStatus(status);
   };
 
-  const mqttSub = topics => {
+  const mqttSub = (topics) => {
     if (client) {
       if (topics && topics.length > 0) {
-        client.subscribe(topics, { qos: 1 }, error => {
+        client.subscribe(topics, { qos: 1 }, (error) => {
           if (error) {
             console.log('Unsubscribe error', error);
-            
           }
         });
       }
     }
   };
 
-  const mqttUnSub = topics => {
+  const mqttUnSub = (topics) => {
     if (client) {
       if (topics && topics.length > 0) {
-        client.unsubscribe(topics, error => {
+        client.unsubscribe(topics, (error) => {
           if (error) {
             console.log('Unsubscribe error', error);
-            
           }
         });
       }
@@ -248,7 +227,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
       const len = node && node.children && node.children.length;
       if (node.key === key) {
         if (len > 0) {
-          node.children.forEach(n => {
+          node.children.forEach((n) => {
             search(n, n.key);
           });
         } else {
@@ -262,14 +241,14 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           nodes.push(node);
         }
       } else if (len > 0) {
-          node.children.forEach(n => {
-            if (n.key === key) {
-              search(n, n.key);
-            } else {
-              search(n, key);
-            }
-          });
-        }
+        node.children.forEach((n) => {
+          if (n.key === key) {
+            search(n, n.key);
+          } else {
+            search(n, key);
+          }
+        });
+      }
     };
     // 如果当前节点key等于要查找的key，全选叶节点(有子节点，向下遍历，没有子节点，添加)
     // 如果当前节点key不等于要查找的key，且有子节点，继续向下遍历；没有子节点，。
@@ -292,13 +271,13 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
     }
   };
 
-  const onCurrentChange = current => {
+  const onCurrentChange = (current) => {
     console.log(current);
     setCurrent(current);
   };
 
   const onCascaderChange = (value, selectedOptions) => {
-    const groupStr = selectedOptions.map(o => o.label).join(' > ');
+    const groupStr = selectedOptions.map((o) => o.label).join(' > ');
     setCurrentGroup(groupStr);
 
     const obj = selectedOptions.pop();
@@ -333,7 +312,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
             checkedChildren={<AudioOutlined />}
             unCheckedChildren={<AudioMutedOutlined />}
             checked={audioSwitch === 'ON'}
-            onChange={checked => {
+            onChange={(checked) => {
               const flag = checked === true ? 'ON' : 'OFF';
               setAudioSwitch(flag);
               if (flag === 'ON') {
@@ -349,33 +328,22 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
         </Space>
       </div>
       <div className={styles.devices}>
-        {[...messages]
-          .slice((current - 1) * pageSize, current * pageSize)
-          .map(data => {
-            const {
-              device_id,
-              action_state,
-              breath,
-              count,
-              online,
-              sn,
-              name,
-              group_id,
-            } = data[1];
+        {[...messages].slice((current - 1) * pageSize, current * pageSize).map((data) => {
+          const { device_id, action_state, breath, count, online, sn, name, group_id } = data[1];
 
-            return (
-              <Room
-                key={device_id}
-                id={device_id}
-                sn={sn}
-                name={name}
-                online={online}
-                count={count}
-                action={action_state}
-                breath={breath}
-              />
-            );
-          })}
+          return (
+            <Room
+              key={device_id}
+              id={device_id}
+              sn={sn}
+              name={name}
+              online={online}
+              count={count}
+              action={action_state}
+              breath={breath}
+            />
+          );
+        })}
       </div>
       {messages.size == 0 && (
         <div className={styles.emptyBox}>
@@ -397,9 +365,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   );
 };
 
-export default connect(
-  ({ group, device }: { group: GroupState; device: DeviceState }) => ({
-    group,
-    device,
-  }),
-)(Dashboard);
+export default connect(({ group, device }: { group: GroupState; device: DeviceState }) => ({
+  group,
+  device,
+}))(Dashboard);
