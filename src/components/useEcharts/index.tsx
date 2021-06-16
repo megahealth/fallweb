@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import * as echarts from 'echarts';
 
-const useECharts = (chartRef, config) => {
+const useECharts = (chartRef, config, loading) => {
   let chartInstance = null;
 
   const renderChart = () => {
@@ -10,6 +10,11 @@ const useECharts = (chartRef, config) => {
       chartInstance = renderedInstance;
     } else {
       chartInstance = echarts.init(chartRef.current);
+    }
+    if (loading) {
+      chartInstance.showLoading();
+    } else {
+      chartInstance.hideLoading();
     }
     chartInstance.setOption(config);
   };
@@ -26,8 +31,6 @@ const useECharts = (chartRef, config) => {
       chartInstance && chartInstance.dispose();
     };
   }, []);
-
-  return;
 };
 
 export default useECharts;

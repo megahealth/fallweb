@@ -52,14 +52,14 @@ export async function getDeviceCount(params: getCountType) {
 
 export async function getDevice(params: getDeviceType) {
   const { id } = params;
-  let url = `/device/${id}`;
+  const url = `/device/${id}`;
   return request(url, {
     method: 'GET',
   });
 }
 
 export async function createDevice(params: createDeviceType) {
-  let url = `/device`;
+  const url = `/device`;
   return request(url, {
     method: 'POST',
     data: params,
@@ -68,7 +68,7 @@ export async function createDevice(params: createDeviceType) {
 
 export async function deleteDevice(params: deleteDeviceType) {
   const { id } = params;
-  let url = `/device/${id}`;
+  const url = `/device/${id}`;
   return request(url, {
     method: 'DELETE',
   });
@@ -76,7 +76,7 @@ export async function deleteDevice(params: deleteDeviceType) {
 
 export async function updateDevice(params: updateDeviceType) {
   const { name, group, id } = params;
-  let url = `/device/${id}`;
+  const url = `/device/${id}`;
   return request(url, {
     method: 'PUT',
     data: {

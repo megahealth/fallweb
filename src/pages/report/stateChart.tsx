@@ -1,27 +1,25 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import moment from 'moment';
 import useEcharts from '@/components/useEcharts';
 
 const StateChart = props => {
-  const { start, end, data } = props;
+  const { start, end, data, loading } = props;
 
   const getOption = () => {
     let list = [];
     let listRoll = [];
     data.forEach(d => {
-      let n = d.states.map(a => {
+      const n = d.states.map(a => {
         if (a[2] >= 5) {
           return [a[4], 5];
-        } else {
-          return [a[4], a[2]];
         }
+        return [a[4], a[2]];
       });
-      let r = d.states.map(a => {
+      const r = d.states.map(a => {
         if (a[2] === 3 && a[3] === 1) {
           return [a[4], 3];
-        } else {
-          return [a[4], null];
         }
+        return [a[4], null];
       });
       list = list.concat(n);
       listRoll = listRoll.concat(r);
@@ -63,8 +61,8 @@ const StateChart = props => {
       },
       tooltip: {
         trigger: 'axis',
-        formatter: function(params) {
-          var str = '';
+        formatter(params) {
+          let str = '';
           switch (params[0].value[1]) {
             case 0:
               str = '无人';
@@ -115,9 +113,9 @@ const StateChart = props => {
               str = '无人';
               break;
           }
-          return (
-            str + '<br/>' + moment(params[0].value[0]).format('MM-DD HH:mm')
-          );
+          return `${str}<br/>${moment(params[0].value[0]).format(
+            'MM-DD HH:mm',
+          )}`;
         },
       },
       xAxis: {
@@ -136,7 +134,7 @@ const StateChart = props => {
         axisLabel: {
           showMinLabel: true,
           showMaxLabel: true,
-          formatter: function(value, index) {
+          formatter(value, index) {
             if (value === start || value === end) {
               return moment(value).format('MM-DD HH:mm');
             }
@@ -166,7 +164,7 @@ const StateChart = props => {
         },
         axisLabel: {
           color: '#666',
-          formatter: function(data) {
+          formatter(data) {
             switch (data) {
               case 0:
                 return '无人';
@@ -232,7 +230,8 @@ const StateChart = props => {
 
   const chartRef = useRef(null);
   const config = getOption();
-  useEcharts(chartRef, config);
+
+  useEcharts(chartRef, config, loading);
 
   return <div style={{ height: '200px' }} ref={chartRef} />;
 };

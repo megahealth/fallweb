@@ -3,7 +3,7 @@ import moment from 'moment';
 import useEcharts from '@/components/useEcharts';
 
 const BreathChart = props => {
-  const { start, end, data } = props;
+  const { start, end, data, loading } = props;
 
   const getOption = () => {
     let list = [];
@@ -104,7 +104,7 @@ const BreathChart = props => {
 
   const chartRef = useRef(null);
   const config = getOption();
-  useEcharts(chartRef, config);
+  useEcharts(chartRef, config, loading);
 
   return <div style={{ height: '200px' }} ref={chartRef} />;
 };

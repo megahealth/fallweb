@@ -1,6 +1,8 @@
-import React, { FC, useEffect, useState } from 'react';
-import { connect, Dispatch, Link } from 'umi';
-import { ReportState, Loading } from '@/models/connect';
+import type { FC} from 'react';
+import React, { useMemo, memo } from 'react';
+import { Link } from 'umi';
+import { getReportFallData, getReportBreathData, getReportRunningData } from '@/services/report'
+import { useRequest } from 'ahooks';
 import moment from 'moment';
 import StateChart from './stateChart';
 import BreathChart from './breathChart';
@@ -11,82 +13,59 @@ import 呼吸率报告 from '@/assets/呼吸率报告.png';
 import 有人无人报告 from '@/assets/有人无人报告.png';
 import 二级页面 from '@/assets/二级页面.png';
 import styles from './index.less';
-
 export interface ReportProps {
-  dispatch: Dispatch;
-  report: ReportState;
-  loading: boolean;
   state: number;
   sn: string;
 }
 
-const BriefReport: FC<ReportProps> = ({
-  dispatch,
-  report,
-  loading,
-  state,
-  sn,
-}) => {
-  // console.log(state);
+const isEqual = (prevProps: ReportProps, nextProps: ReportProps) => {
+  if (prevProps.sn !== nextProps.sn || prevProps.state !== nextProps.state) {
+    return false;
+  }
+  return true;
+}
 
-  const { fall, breath, running } = report;
-  const start = parseInt(
-    moment()
-      .startOf('day')
-      .format('x'),
-  );
-  const end = parseInt(moment().format('x'));
+const BriefReport: FC<ReportProps> = (props) => {
+  const { sn, state } = props;
+  const start = useMemo(() => {
+    return parseInt(
+      moment()
+        .startOf('day')
+        .format('x'),
+    );
+  }, [])
+  const end = useMemo(() => {
+    return parseInt(moment().format('x'));
+  }, [])
 
-  useEffect(() => {
-    if (sn) {
-      dispatch({
-        type: 'report/getReportFallData',
-        payload: {
-          orderby: -1,
-          skip: 0,
-          limit: 100,
-          start,
-          end,
-          sn,
-        },
-      });
+  const params = {
+    orderby: -1,
+    skip: 0,
+    limit: 100,
+    start,
+    end,
+    sn,
+  }
 
-      dispatch({
-        type: 'report/getReportBreathData',
-        payload: {
-          orderby: -1,
-          skip: 0,
-          limit: 100,
-          start,
-          end,
-          sn,
-        },
-      });
+  const { data: fallResult, loading: fallLoading } = useRequest(() => getReportFallData(params));
+  const { data: breathResult, loading: breathLoading } = useRequest(() => getReportBreathData(params));
+  const { data: runningResult, loading: runningLoading } = useRequest(() => getReportRunningData(params));
 
-      dispatch({
-        type: 'report/getReportRunningData',
-        payload: {
-          orderby: -1,
-          skip: 0,
-          limit: 100,
-          start,
-          end,
-          sn,
-        },
-      });
-    }
-  }, [sn]);
-
-  // const addFallData = fall.push(state)
-  // state变化，数组自增即可
-  useEffect(() => {
-    dispatch({
-      type: 'report/addStateList',
-      payload: {
-        actionState: state,
-      },
-    });
-  }, [state]);
+  const fall = useMemo(() => {
+    const arr = fallResult ? fallResult.msg : [];
+    const end = new Date().getTime();
+    const fallSpinObj = {
+      _id: end.toString(),
+      start: end,
+      end: end,
+      states: [[0, 0, state, 0, end]],
+      SN: '',
+    };
+    arr.push(fallSpinObj)
+    return arr;
+  }, [state])
+  const breath = breathResult ? breathResult.msg: [];
+  const running = runningResult ? runningResult.msg: [];
 
   return (
     <div className={styles.wrap}>
@@ -96,23 +75,18 @@ const BriefReport: FC<ReportProps> = ({
       </Link>
       <IconTitle title="目标状态" img={跌倒报告}></IconTitle>
       <div className={styles.chart}>
-        <StateChart start={start} end={end} data={fall} />
+        <StateChart className={styles.chart} start={start} end={end} data={fall} loading={fallLoading} />
       </div>
       <IconTitle title="呼吸率" img={呼吸率报告}></IconTitle>
       <div className={styles.chart}>
-        <BreathChart start={start} end={end} data={breath} />
+        <BreathChart className={styles.chart} start={start} end={end} data={breath} loading={breathLoading} />
       </div>
       <IconTitle title="设备工作状态" img={有人无人报告}></IconTitle>
       <div className={styles.chart}>
-        <RunningChart start={start} end={end} data={running} />
+        <RunningChart className={styles.chart} start={start} end={end} data={running} loading={runningLoading} />
       </div>
     </div>
   );
 };
 
-export default connect(
-  ({ report, loading }: { report: ReportState; loading: Loading }) => ({
-    report,
-    loading: loading.models.report,
-  }),
-)(BriefReport);
+export default memo(BriefReport, isEqual);

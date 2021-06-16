@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
+import type { FC} from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'umi';
 import {
   Empty,
@@ -10,13 +11,14 @@ import {
   Button,
   Switch,
 } from 'antd';
-import { GroupState, DeviceState } from '@/models/connect';
-import mqtt, { MqttClient } from 'mqtt';
+import type { GroupState, DeviceState } from '@/models/connect';
+import type { MqttClient } from 'mqtt';
+import mqtt from 'mqtt';
 import { useInterval, useLocalStorageState } from 'ahooks';
 import useAudio from '@/components/useAudio/useAudio';
 import Room from './components/room';
 import { createGroupTreeList } from '@/utils/utils';
-import { QueryDashboardProps } from './queryDashboard';
+import type { QueryDashboardProps } from './queryDashboard';
 import styles from './index.less';
 import fallWarning from '@/assets/fall-warning.mp3';
 import { AudioOutlined, AudioMutedOutlined } from '@ant-design/icons';
@@ -88,7 +90,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
     dispatch({
       type: 'device/queryDevicesBySelectedGroup',
       payload: {
-        selectedGroups: selectedGroups,
+        selectedGroups,
       },
     });
   }, [selectedGroups]);
@@ -97,7 +99,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
     msgs.clear();
 
     selectedDeviceList.forEach(d => {
-      const sn = d.sn;
+      const {sn} = d;
       const o = msgs.get(sn);
       msgs.set(sn, { ...d, ...o });
     });
@@ -117,10 +119,10 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
       client.on('reconnect', () => {
         setMqttStatus('Reconnecting');
 
-        let now = new Date().getTime();
+        const now = new Date().getTime();
         setReconnectTimes(reconnectTimes.push(now));
 
-        let last3 = reconnectTimes[reconnectTimes.length - 3];
+        const last3 = reconnectTimes[reconnectTimes.length - 3];
         if (last3 && now - last3 < 10 * 1000) {
           mqttDisconnect();
           dispatch({
@@ -186,7 +188,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
         keepalive: 10,
         connectTimeout: 4000,
         clientId: localStorage.getItem('user_id') || '',
-        username: 'user_' + localStorage.getItem('name'),
+        username: `user_${  localStorage.getItem('name')}`,
         reconnectPeriod: 1000,
         protocolVersion: 5,
       }),
@@ -210,7 +212,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
         client.subscribe(topics, { qos: 1 }, error => {
           if (error) {
             console.log('Unsubscribe error', error);
-            return;
+            
           }
         });
       }
@@ -223,7 +225,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
         client.unsubscribe(topics, error => {
           if (error) {
             console.log('Unsubscribe error', error);
-            return;
+            
           }
         });
       }
@@ -240,8 +242,8 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
       setInterval(1000);
     }
 
-    let ts: string[] = [];
-    let nodes: object[] = [];
+    const ts: string[] = [];
+    const nodes: object[] = [];
     const search = (node, key) => {
       const len = node && node.children && node.children.length;
       if (node.key === key) {
@@ -259,8 +261,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           ts.push(`web/${id}/downline`);
           nodes.push(node);
         }
-      } else {
-        if (len > 0) {
+      } else if (len > 0) {
           node.children.forEach(n => {
             if (n.key === key) {
               search(n, n.key);
@@ -269,7 +270,6 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
             }
           });
         }
-      }
     };
     // 如果当前节点key等于要查找的key，全选叶节点(有子节点，向下遍历，没有子节点，添加)
     // 如果当前节点key不等于要查找的key，且有子节点，继续向下遍历；没有子节点，。
@@ -298,12 +298,12 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
   };
 
   const onCascaderChange = (value, selectedOptions) => {
-    let groupStr = selectedOptions.map(o => o.label).join(' > ');
+    const groupStr = selectedOptions.map(o => o.label).join(' > ');
     setCurrentGroup(groupStr);
 
-    let obj = selectedOptions.pop();
-    let key = obj.value;
-    let keys = [key];
+    const obj = selectedOptions.pop();
+    const key = obj.value;
+    const keys = [key];
 
     onChange(keys);
   };
@@ -332,7 +332,7 @@ const Dashboard: FC<QueryDashboardProps> = ({ group, device, dispatch }) => {
           <Switch
             checkedChildren={<AudioOutlined />}
             unCheckedChildren={<AudioMutedOutlined />}
-            checked={audioSwitch === 'ON' ? true : false}
+            checked={audioSwitch === 'ON'}
             onChange={checked => {
               const flag = checked === true ? 'ON' : 'OFF';
               setAudioSwitch(flag);

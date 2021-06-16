@@ -1,5 +1,6 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Link, connect, Dispatch } from 'umi';
+import type { FC } from 'react';
+import React from 'react';
+import { Link } from 'umi';
 import Style from './room.less';
 import 离线 from '@/assets/离线.png';
 import 跌倒 from '@/assets/跌倒.png';
@@ -8,7 +9,6 @@ import 在床 from '@/assets/在床.png';
 import 无人 from '@/assets/无人.png';
 import 单人 from '@/assets/单人.png';
 import 多人 from '@/assets/多人.png';
-import { DetailState } from '@/models/connect';
 
 export interface DetailProps {
   sn: string;
@@ -29,7 +29,7 @@ const Room: FC<DetailProps> = ({
   name,
   id,
 }) => {
-  let colors = {
+  const colors = {
     grey: '#999',
     green: '#51b988',
     blue: '#4a7fdf',
@@ -95,18 +95,14 @@ const Room: FC<DetailProps> = ({
 
   return (
     <Link to={`/detail/${id}`}>
-      <div
-        style={{ position: 'relative' }}
-        className={`${Style.container}`}
-        // onClick={next}
-      >
+      <div className={Style.container}>
         <div className={Style.head} style={{ background: color }}>
           {pImg && <img src={pImg}></img>}
           {name}
         </div>
         <div className={Style.status}>
           <span className={Style.breath}>
-            {online == 1 && action == 3 && `呼吸率：${breath}`}
+            {online === 1 && action === 3 && `呼吸率：${breath}`}
           </span>
           <img src={img}></img>
           <span className={Style.title} style={{ color: textColor }}>
