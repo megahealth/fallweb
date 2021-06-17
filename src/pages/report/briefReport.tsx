@@ -1,7 +1,7 @@
-import type { FC} from 'react';
+import type { FC } from 'react';
 import React, { useMemo, memo } from 'react';
 import { Link } from 'umi';
-import { getReportFallData, getReportBreathData, getReportRunningData } from '@/services/report'
+import { getReportFallData, getReportBreathData, getReportRunningData } from '@/services/report';
 import { useRequest } from 'ahooks';
 import moment from 'moment';
 import StateChart from './stateChart';
@@ -23,20 +23,17 @@ const isEqual = (prevProps: ReportProps, nextProps: ReportProps) => {
     return false;
   }
   return true;
-}
+};
 
 const BriefReport: FC<ReportProps> = (props) => {
+  console.log('render');
   const { sn, state } = props;
   const start = useMemo(() => {
-    return parseInt(
-      moment()
-        .startOf('day')
-        .format('x'),
-    );
-  }, [])
+    return parseInt(moment().startOf('day').format('x'));
+  }, []);
   const end = useMemo(() => {
     return parseInt(moment().format('x'));
-  }, [])
+  }, []);
 
   const params = {
     orderby: -1,
@@ -45,11 +42,15 @@ const BriefReport: FC<ReportProps> = (props) => {
     start,
     end,
     sn,
-  }
+  };
 
   const { data: fallResult, loading: fallLoading } = useRequest(() => getReportFallData(params));
-  const { data: breathResult, loading: breathLoading } = useRequest(() => getReportBreathData(params));
-  const { data: runningResult, loading: runningLoading } = useRequest(() => getReportRunningData(params));
+  const { data: breathResult, loading: breathLoading } = useRequest(() =>
+    getReportBreathData(params),
+  );
+  const { data: runningResult, loading: runningLoading } = useRequest(() =>
+    getReportRunningData(params),
+  );
 
   const fall = useMemo(() => {
     const arr = fallResult ? fallResult.msg : [];
@@ -61,11 +62,11 @@ const BriefReport: FC<ReportProps> = (props) => {
       states: [[0, 0, state, 0, end]],
       SN: '',
     };
-    arr.push(fallSpinObj)
+    arr.push(fallSpinObj);
     return arr;
-  }, [state])
-  const breath = breathResult ? breathResult.msg: [];
-  const running = runningResult ? runningResult.msg: [];
+  }, [state, fallResult]);
+  const breath = breathResult ? breathResult.msg : [];
+  const running = runningResult ? runningResult.msg : [];
 
   return (
     <div className={styles.wrap}>
@@ -75,15 +76,33 @@ const BriefReport: FC<ReportProps> = (props) => {
       </Link>
       <IconTitle title="目标状态" img={跌倒报告}></IconTitle>
       <div className={styles.chart}>
-        <StateChart className={styles.chart} start={start} end={end} data={fall} loading={fallLoading} />
+        <StateChart
+          className={styles.chart}
+          start={start}
+          end={end}
+          data={fall}
+          loading={fallLoading}
+        />
       </div>
       <IconTitle title="呼吸率" img={呼吸率报告}></IconTitle>
       <div className={styles.chart}>
-        <BreathChart className={styles.chart} start={start} end={end} data={breath} loading={breathLoading} />
+        <BreathChart
+          className={styles.chart}
+          start={start}
+          end={end}
+          data={breath}
+          loading={breathLoading}
+        />
       </div>
       <IconTitle title="设备工作状态" img={有人无人报告}></IconTitle>
       <div className={styles.chart}>
-        <RunningChart className={styles.chart} start={start} end={end} data={running} loading={runningLoading} />
+        <RunningChart
+          className={styles.chart}
+          start={start}
+          end={end}
+          data={running}
+          loading={runningLoading}
+        />
       </div>
     </div>
   );

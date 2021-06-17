@@ -46,7 +46,7 @@ const useMqtt = () => {
       });
       client.on('reconnect', () => {
         const now = new Date().getTime();
-        setReconnectTimes((times: any) => times.push(now));
+        setReconnectTimes(reconnectTimes.push(now));
         const last3 = reconnectTimes[reconnectTimes.length - 3];
         if (last3 && now - last3 < 10 * 1000) {
           if (client) {

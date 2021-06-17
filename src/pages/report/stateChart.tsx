@@ -2,20 +2,21 @@ import React, { useRef, useEffect } from 'react';
 import moment from 'moment';
 import useEcharts from '@/components/useEcharts';
 
-const StateChart = props => {
+const StateChart = (props) => {
   const { start, end, data, loading } = props;
+  console.log(data);
 
   const getOption = () => {
     let list = [];
     let listRoll = [];
-    data.forEach(d => {
-      const n = d.states.map(a => {
+    data.forEach((d) => {
+      const n = d.states.map((a) => {
         if (a[2] >= 5) {
           return [a[4], 5];
         }
         return [a[4], a[2]];
       });
-      const r = d.states.map(a => {
+      const r = d.states.map((a) => {
         if (a[2] === 3 && a[3] === 1) {
           return [a[4], 3];
         }
@@ -42,10 +43,6 @@ const StateChart = props => {
       }
       return 0;
     });
-    if (list.length > 0) {
-      list.unshift([start, list[0][1]]);
-      list.push([end, list[list.length - 1][1]]);
-    }
 
     return {
       legend: {
@@ -113,9 +110,7 @@ const StateChart = props => {
               str = '无人';
               break;
           }
-          return `${str}<br/>${moment(params[0].value[0]).format(
-            'MM-DD HH:mm',
-          )}`;
+          return `${str}<br/>${moment(params[0].value[0]).format('MM-DD HH:mm')}`;
         },
       },
       xAxis: {
