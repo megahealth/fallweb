@@ -26,7 +26,6 @@ const isEqual = (prevProps: ReportProps, nextProps: ReportProps) => {
 };
 
 const BriefReport: FC<ReportProps> = (props) => {
-  console.log('render');
   const { sn, state } = props;
   const start = useMemo(() => {
     return parseInt(moment().startOf('day').format('x'));

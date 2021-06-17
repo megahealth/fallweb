@@ -11,7 +11,7 @@ interface Messages {
 const useMqtt = () => {
   const [client, setClient] = useState<MqttClient>();
   const [messages, setMessages] = useState<Messages>();
-  const [reconnectTimes, setReconnectTimes] = useState([]);
+  const [reconnectTimes, setReconnectTimes] = useState(0);
 
   useEffect(() => {
     setClient(
@@ -45,10 +45,8 @@ const useMqtt = () => {
         console.log('close');
       });
       client.on('reconnect', () => {
-        const now = new Date().getTime();
-        setReconnectTimes(reconnectTimes.push(now));
-        const last3 = reconnectTimes[reconnectTimes.length - 3];
-        if (last3 && now - last3 < 10 * 1000) {
+        setReconnectTimes((times) => times + 1);
+        if (reconnectTimes > 3) {
           if (client) {
             client.end();
           }

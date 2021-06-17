@@ -4,7 +4,6 @@ import useEcharts from '@/components/useEcharts';
 
 const StateChart = (props) => {
   const { start, end, data, loading } = props;
-  console.log(data);
 
   const getOption = () => {
     let list = [];
