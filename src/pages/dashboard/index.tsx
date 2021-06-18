@@ -28,7 +28,7 @@ const Dashboard: FC<QueryDashboardProps> = () => {
   const { data: group } = useRequest(queryGroupList);
 
   useInterval(() => {
-    setDate(new Date().getTime());
+    setDate(new Date().getTime()); // 控制刷新频率
   }, interval);
 
   useEffect(() => {
@@ -42,8 +42,8 @@ const Dashboard: FC<QueryDashboardProps> = () => {
 
   /*
   group变化
-  请求group设备
-  订阅group设备
+  请求新group设备
+  订阅新group设备
   */
   useEffect(() => {
     const getDevicesAndTopics = async () => {
@@ -51,8 +51,10 @@ const Dashboard: FC<QueryDashboardProps> = () => {
       let newTopics: any[] = [];
 
       if (selectedGroups) {
-        for (let i = 0; i < selectedGroups.length; i++) {
-          const { sub_id, dev_cnt } = selectedGroups[i];
+        const groups =
+          typeof selectedGroups === 'string' ? JSON.parse(selectedGroups) : selectedGroups;
+        for (let i = 0; i < groups.length; i++) {
+          const { sub_id, dev_cnt } = groups[i];
           if (dev_cnt === 0) continue;
           const response = await queryDeviceList({
             start: 0,
@@ -81,6 +83,9 @@ const Dashboard: FC<QueryDashboardProps> = () => {
     getDevicesAndTopics();
   }, [selectedGroups, client]);
 
+  /*
+  mqtt更新device map
+  */
   useEffect(() => {
     if (mqttMsg) {
       const { payload, topic } = mqttMsg;
