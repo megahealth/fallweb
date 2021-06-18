@@ -106,9 +106,6 @@ const Dashboard: FC<QueryDashboardProps> = () => {
         if (o.action_state >= 5 && audioSwitch === 'ON') {
           message.warning(`${o.name}跌倒，请注意查看！`);
         }
-        if (o.action_state >= 5) {
-          message.warning(`${o.name}跌倒，请注意查看！`);
-        }
       }
       if (breath) o.breath = breath.b;
 
