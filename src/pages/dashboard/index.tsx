@@ -23,7 +23,7 @@ const Dashboard: FC<QueryDashboardProps> = () => {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [date, setDate] = useState(0);
-  const [interval, setInterval] = useState(1000);
+  const [interval, setInterval] = useState<number | null>(1000);
 
   const { data: group } = useRequest(queryGroupList);
 
@@ -127,10 +127,12 @@ const Dashboard: FC<QueryDashboardProps> = () => {
       const groupChain = selectedOptions.map((o: any) => o.label).join(' > ');
       setSelectedGroupChain(groupChain);
 
-      const key = selectedOptions.pop().value; // 取 key， eg：1-2，可以支持多选，单选，默认单选，预留后续多选需求
-      const node = groupList[0]; // 需进一步计算子节点？需要的，订阅父节点获取不到数据(接口设定)
-      const leafs = getTreeLeaf(node, key);
-      setSelectedGroups(leafs); // [{key:'1-2',...}, ... ]
+      if (groupList) {
+        const key = selectedOptions.pop().value; // 取 key， eg：1-2，可以支持多选，单选，默认单选，预留后续多选需求
+        const node = groupList[0]; // 需进一步计算子节点？需要的，订阅父节点获取不到数据(接口设定)
+        const leafs = getTreeLeaf(node, key);
+        setSelectedGroups(JSON.stringify(leafs)); // [{key:'1-2',...}, ... ]
+      }
     },
     [setSelectedGroupChain, setSelectedGroups, groupList],
   );
