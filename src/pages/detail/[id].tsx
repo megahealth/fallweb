@@ -19,7 +19,7 @@ const Detail: FC<DetailProps> = (props) => {
   const { id } = props.match.params;
   const { data: deviceInfo, loading } = useRequest(() => getDevice({ id }));
   const { client, messages } = useMqtt();
-  const [currentGroup] = useLocalStorageState('currentGroup');
+  const [selectedGroupChain] = useLocalStorageState('selectedGroupChain');
 
   useEffect(() => {
     if (client && deviceInfo) {
@@ -88,7 +88,7 @@ const Detail: FC<DetailProps> = (props) => {
         <div>
           <div className={styles.breadcrumb}>
             监控页
-            {` > ${currentGroup} > ${state.name}`}
+            {` > ${selectedGroupChain} > ${state.name}`}
           </div>
           <Status
             breath={state.breath}

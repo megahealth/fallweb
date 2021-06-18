@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import mqtt, { MqttClient } from 'mqtt';
 import { message } from 'antd';
 import { history } from 'umi';
@@ -12,6 +12,11 @@ const useMqtt = () => {
   const [client, setClient] = useState<MqttClient>();
   const [messages, setMessages] = useState<Messages>();
   const [reconnectTimes, setReconnectTimes] = useState(0);
+  const [connectStatus, setConnectStatus] = useState<string>('UnConnected');
+
+  const setMqttStatus = useCallback((status: string) => {
+    setConnectStatus(status);
+  }, []);
 
   useEffect(() => {
     setClient(
@@ -30,7 +35,7 @@ const useMqtt = () => {
   useEffect(() => {
     if (client) {
       client.on('connect', () => {
-        console.log('connect');
+        setMqttStatus('Connected');
       });
       client.on('error', (err) => {
         console.log(err);
@@ -42,7 +47,7 @@ const useMqtt = () => {
         });
       });
       client.on('close', () => {
-        console.log('close');
+        setMqttStatus('Closed');
       });
       client.on('reconnect', () => {
         setReconnectTimes((times) => times + 1);
@@ -59,10 +64,10 @@ const useMqtt = () => {
         }
       });
       client.on('disconnect', () => {
-        console.log('disconnect');
+        setMqttStatus('Disconnected');
       });
       client.on('offline', () => {
-        console.log('offline');
+        setMqttStatus('Offline');
       });
     }
   }, [client, reconnectTimes]);
@@ -78,6 +83,7 @@ const useMqtt = () => {
   return {
     client,
     messages,
+    connectStatus,
   };
 };
 

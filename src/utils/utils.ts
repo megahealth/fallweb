@@ -3,9 +3,7 @@ import { Groups } from '@/models/group';
  * menu Highlight key
  * @param pathname string
  */
-export const queryKeysByPath = (
-  pathname: string,
-): { openKey: string; selectKey: string } => {
+export const queryKeysByPath = (pathname: string): { openKey: string; selectKey: string } => {
   const reg = /(^\/*)|(\/*$)/g; // 匹配字符串首尾斜杠
   const path = pathname.replace(reg, '');
   const routes = path.split('/');
@@ -58,4 +56,33 @@ export const createGroupTreeList = (groupList: Groups) => {
   } catch (error) {
     return [];
   }
+};
+
+export const getTreeLeaf = (node: any, key: any) => {
+  if (!node || !key) return [];
+  const nodes: any[] = [];
+  const search = (node: any, key: any) => {
+    const len = node?.children?.length;
+    if (node.key === key) {
+      // 遍历到叶节点
+      if (len > 0) {
+        node.children.forEach((n: any) => {
+          search(n, n.key);
+        });
+      } else {
+        nodes.push(node);
+      }
+    } else if (len > 0) {
+      // 未遍历到叶节点
+      node.children.forEach((n: any) => {
+        if (n.key === key) {
+          search(n, n.key);
+        } else {
+          search(n, key);
+        }
+      });
+    }
+  };
+  search(node, key);
+  return nodes;
 };

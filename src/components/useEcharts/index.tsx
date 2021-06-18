@@ -20,9 +20,7 @@ const useECharts = (chartRef, config, loading) => {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      renderChart();
-    });
+    renderChart();
   }, [config]);
 
   // 单独处理 return ？
