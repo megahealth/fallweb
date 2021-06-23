@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { Empty, Space, Pagination, Badge, Cascader, message } from 'antd';
 import { useInterval, useLocalStorageState, useRequest } from 'ahooks';
 import { createGroupTreeList, getTreeLeaf } from '@/utils/utils';
@@ -8,9 +8,9 @@ import useMqtt from '@/hooks/useMqtt/useMqtt';
 import AudioAlarm from '@/components/audioAlarm/AudioAlarm';
 import Room from './components/room';
 import styles from './index.less';
-import { QueryDashboardProps } from './queryDashboard';
+import type { QueryDashboardProps } from './queryDashboard';
 
-const Dashboard: FC<QueryDashboardProps> = () => {
+const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   const devices = useRef(new Map());
   const { client, messages: mqttMsg, connectStatus } = useMqtt();
   const [selectedGroups, setSelectedGroups] = useLocalStorageState('selectedGroups', '[]');
@@ -26,6 +26,30 @@ const Dashboard: FC<QueryDashboardProps> = () => {
   const [interval, setInterval] = useState<number | null>(1000);
 
   const { data: group } = useRequest(queryGroupList);
+
+  const mqttSub = useCallback((ts) => {
+    if (client) {
+      if (ts && ts.length > 0) {
+        client.subscribe(ts, { qos: 1 }, (error) => {
+          if (error) {
+            console.log('Subscribe error', error);
+          }
+        });
+      }
+    }
+  }, []);
+
+  const mqttUnSub = useCallback((ts) => {
+    if (client) {
+      if (ts && ts.length > 0) {
+        client.unsubscribe(ts, (error: any) => {
+          if (error) {
+            console.log('Unsubscribe error', error);
+          }
+        });
+      }
+    }
+  }, []);
 
   useInterval(() => {
     setDate(new Date().getTime()); // 控制刷新频率
@@ -48,34 +72,40 @@ const Dashboard: FC<QueryDashboardProps> = () => {
   useEffect(() => {
     const getDevicesAndTopics = async () => {
       let selectedDeviceList: any[] = [];
-      let newTopics: any[] = [];
+      const newTopics: any[] = [];
+      const promiseArr: any[] = [];
 
       if (selectedGroups) {
         const groups =
           typeof selectedGroups === 'string' ? JSON.parse(selectedGroups) : selectedGroups;
-        for (let i = 0; i < groups.length; i++) {
-          const { sub_id, dev_cnt } = groups[i];
-          if (dev_cnt === 0) continue;
-          const response = await queryDeviceList({
-            start: 0,
-            limit: dev_cnt,
-            group: sub_id,
-          });
-          selectedDeviceList = selectedDeviceList.concat(response.msg);
+        groups.forEach((item: any) => {
+          const { sub_id, dev_cnt } = item;
+          promiseArr.push(
+            queryDeviceList({
+              start: 0,
+              limit: dev_cnt,
+              group: sub_id,
+            }),
+          );
 
           newTopics.push(`web/${sub_id}/breath`);
           newTopics.push(`web/${sub_id}/fall`);
           newTopics.push(`web/${sub_id}/upline`);
           newTopics.push(`web/${sub_id}/downline`);
-        }
+        });
       }
+      selectedDeviceList = await Promise.all(promiseArr);
 
       devices.current.clear();
       mqttUnSub(topics);
 
-      selectedDeviceList.forEach((d) => {
-        devices.current.set(d.sn, d);
-      });
+      selectedDeviceList
+        .map((item) => item.msg)
+        .flat()
+        .forEach((d) => {
+          devices.current.set(d.sn, d);
+        });
+
       mqttSub(newTopics);
       setTopics(newTopics);
     };
@@ -114,9 +144,11 @@ const Dashboard: FC<QueryDashboardProps> = () => {
   }, [mqttMsg]);
 
   const groupList = useMemo(() => {
+    let data = [];
     if (group) {
-      return createGroupTreeList(group.msg);
+      data = createGroupTreeList(group.msg);
     }
+    return data;
   }, [group]);
 
   const onGroupChange = useCallback(
@@ -134,45 +166,15 @@ const Dashboard: FC<QueryDashboardProps> = () => {
     [setSelectedGroupChain, setSelectedGroups, groupList],
   );
 
-  const mqttSub = useCallback(
-    (topics) => {
-      if (client) {
-        if (topics && topics.length > 0) {
-          client.subscribe(topics, { qos: 1 }, (error) => {
-            if (error) {
-              console.log('Subscribe error', error);
-            }
-          });
-        }
-      }
-    },
-    [client, topics],
-  );
-
-  const mqttUnSub = useCallback(
-    (topics) => {
-      if (client) {
-        if (topics && topics.length > 0) {
-          client.unsubscribe(topics, (error: any) => {
-            if (error) {
-              console.log('Unsubscribe error', error);
-            }
-          });
-        }
-      }
-    },
-    [client, topics],
-  );
-
   const onCurrentChange = useCallback(
-    (current) => {
-      setCurrent(current);
+    (c) => {
+      setCurrent(c);
     },
     [setCurrent],
   );
 
   const onShowSizeChange = useCallback(
-    (current, size) => {
+    (c, size) => {
       setPageSize(size);
     },
     [setPageSize],
@@ -210,7 +212,7 @@ const Dashboard: FC<QueryDashboardProps> = () => {
           );
         })}
       </div>
-      {devices.current.size == 0 && (
+      {devices.current.size === 0 && (
         <div className={styles.emptyBox}>
           <Empty />
         </div>
