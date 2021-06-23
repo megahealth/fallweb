@@ -27,29 +27,35 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
 
   const { data: group } = useRequest(queryGroupList);
 
-  const mqttSub = useCallback((ts) => {
-    if (client) {
-      if (ts && ts.length > 0) {
-        client.subscribe(ts, { qos: 1 }, (error) => {
-          if (error) {
-            console.log('Subscribe error', error);
-          }
-        });
+  const mqttSub = useCallback(
+    (ts) => {
+      if (client) {
+        if (ts && ts.length > 0) {
+          client.subscribe(ts, { qos: 1 }, (error) => {
+            if (error) {
+              console.log('Subscribe error', error);
+            }
+          });
+        }
       }
-    }
-  }, []);
+    },
+    [client],
+  );
 
-  const mqttUnSub = useCallback((ts) => {
-    if (client) {
-      if (ts && ts.length > 0) {
-        client.unsubscribe(ts, (error: any) => {
-          if (error) {
-            console.log('Unsubscribe error', error);
-          }
-        });
+  const mqttUnSub = useCallback(
+    (ts) => {
+      if (client) {
+        if (ts && ts.length > 0) {
+          client.unsubscribe(ts, (error: any) => {
+            if (error) {
+              console.log('Unsubscribe error', error);
+            }
+          });
+        }
       }
-    }
-  }, []);
+    },
+    [client],
+  );
 
   useInterval(() => {
     setDate(new Date().getTime()); // 控制刷新频率
