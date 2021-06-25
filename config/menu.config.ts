@@ -27,4 +27,11 @@ export default [
     icon: 'wenjianjia',
     children: [],
   },
+  {
+    title: '产测列表',
+    link: '/list/factoryList',
+    key: 'factoryList',
+    icon: 'wenjianjia',
+    children: [],
+  },
 ];

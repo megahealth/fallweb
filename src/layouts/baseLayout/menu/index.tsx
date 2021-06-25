@@ -1,7 +1,9 @@
-import React, { FC } from 'react';
-import { Link, connect, useLocation, Loading } from 'umi';
+import type { FC } from 'react';
+import React from 'react';
+import type { Loading } from 'umi';
+import { Link, connect, useLocation } from 'umi';
 import { Menu } from 'antd';
-import { GlobalModelState } from '@/models/connect';
+import type { GlobalModelState } from '@/models/connect';
 import { queryKeysByPath } from '@/utils/utils';
 import { createFromIconfontCN } from '@ant-design/icons';
 import styles from './index.less';
@@ -23,9 +25,12 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
 
   function renderMenu(data: any = []) {
     const rows = Array.isArray(data) ? data : [];
-    return rows.map(row => {
+    return rows.map((row) => {
       if (row === undefined) return false;
       const { title, icon, link = '', key, children, ...restState } = row;
+      if (title === '产测列表') {
+        if (localStorage.getItem('group_id') !== '1') return false;
+      }
       if (children && children.length > 0) {
         const subMenu = renderMenu(children);
         return (
@@ -39,11 +44,9 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
         <Item
           key={key}
           title={title}
-          icon={<MyIcon className={styles.icon} type={'icon-' + icon} />}
+          icon={<MyIcon className={styles.icon} type={`icon-${icon}`} />}
         >
-          <Link to={{ pathname: link, state: { ...restState, key } }}>
-            {title}
-          </Link>
+          <Link to={{ pathname: link, state: { ...restState, key } }}>{title}</Link>
         </Item>
       );
     });
@@ -66,9 +69,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
   );
 };
 
-export default connect(
-  ({ global, loading }: { global: GlobalModelState; loading: Loading }) => ({
-    global,
-    loading: loading.models.index,
-  }),
-)(MenuContent);
+export default connect(({ global, loading }: { global: GlobalModelState; loading: Loading }) => ({
+  global,
+  loading: loading.models.index,
+}))(MenuContent);

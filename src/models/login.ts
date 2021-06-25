@@ -1,8 +1,9 @@
-import { Effect, Reducer, history } from 'umi';
+import type { Effect, Reducer } from 'umi';
+import { history } from 'umi';
 import { message } from 'antd';
 import { queryLogin, logout } from '@/services/login';
 
-import { ConnectState, LoginUserInfoState } from './connect.d';
+import type { ConnectState, LoginUserInfoState } from './connect.d';
 
 export interface LoginModelState {
   userInfo: LoginUserInfoState;
@@ -46,6 +47,7 @@ const LoginModel: LoginModelType = {
         localStorage.setItem('user_id', response.msg.user_id);
         localStorage.setItem('token', response.msg.token);
         localStorage.setItem('name', response.msg.name);
+        localStorage.setItem('group_id', response.msg.group_id);
         message.success('登录成功！');
         history.replace('/');
       } else {
