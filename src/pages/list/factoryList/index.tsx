@@ -3,26 +3,38 @@ import React, { useState, useEffect } from 'react';
 import TableComponent from '@/components/tableComponent';
 import styles from './index.less';
 import { useRequest } from 'ahooks';
-import { getFactoryTests } from '@/services/factory';
+import { getFactoryTests, getFactoryTestsSn } from '@/services/factory';
 import moment from 'moment';
-import { DatePicker, Tag } from 'antd';
+import { Button, DatePicker, Input, Tag } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 const { RangePicker } = DatePicker;
 
 const FactoryList: FC = () => {
+  const [sn, setSn] = useState('');
   const [start, setStart] = useState(0);
   const [limit, setLimit] = useState(10);
   const [startTime, setStartTime] = useState(() => moment().startOf('day').valueOf());
   const [endTime, setEndTime] = useState(() => moment().valueOf());
 
   const { data, loading, run } = useRequest(
-    () =>
-      getFactoryTests({
+    () => {
+      if (sn) {
+        return getFactoryTestsSn({
+          sn,
+          skip: 0,
+          limit: 1000,
+          start: startTime,
+          end: endTime,
+        });
+      }
+      return getFactoryTests({
         skip: 0,
         limit: 1000,
         start: startTime,
         end: endTime,
-      }),
+      });
+    },
     {
       manual: true,
     },
@@ -269,15 +281,36 @@ const FactoryList: FC = () => {
 
   return (
     <div className={styles.wrap}>
-      <RangePicker
-        style={{ marginBottom: '10px' }}
-        showTime={{ format: 'HH:mm' }}
-        format="YYYY-MM-DD HH:mm"
-        // onChange={onChange}
-        onOk={onOk}
-        allowClear={false}
-        defaultValue={[moment(startTime), moment(endTime)]}
-      />
+      <div className={styles.head}>
+        <div style={{ marginBottom: 24 }}>
+          <RangePicker
+            showTime={{ format: 'HH:mm' }}
+            format="YYYY-MM-DD HH:mm"
+            // onChange={onChange}
+            onOk={onOk}
+            allowClear={false}
+            defaultValue={[moment(startTime), moment(endTime)]}
+          />
+          <Input
+            value={sn}
+            onChange={(v) => {
+              setSn(v.target.value);
+            }}
+            placeholder="请输入 SN 搜索"
+            style={{ width: 200, marginLeft: 20 }}
+            suffix={<SearchOutlined />}
+          />
+        </div>
+        <Button
+          type="primary"
+          onClick={() => {
+            run();
+          }}
+        >
+          查询
+        </Button>
+      </div>
+
       <TableComponent
         scroll={{ x: 1500 }}
         columns={columns}
