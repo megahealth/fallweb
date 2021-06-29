@@ -36,9 +36,10 @@ const FactoryList: FC = () => {
 
   const columns = [
     {
-      title: 'sn',
+      title: 'SN',
       dataIndex: 'sn',
-      width: 160,
+      key: 'sn',
+      width: 200,
       fixed: 'left',
     },
     {
@@ -237,12 +238,14 @@ const FactoryList: FC = () => {
         );
       },
     },
-    { title: 'device_version', dataIndex: 'device_version', width: 150 },
+    { title: '版本号', dataIndex: 'device_version', width: 150 },
     {
-      title: 'ID',
-      key: '_id',
-      dataIndex: '_id',
-      width: 300,
+      title: '创建时间',
+      dataIndex: 'create_time',
+      width: 150,
+      render: (_, record) => {
+        return moment(record.create_time).format('YYYY-MM-DD HH:mm');
+      },
     },
   ];
 
@@ -267,6 +270,7 @@ const FactoryList: FC = () => {
   return (
     <div className={styles.wrap}>
       <RangePicker
+        style={{ marginBottom: '10px' }}
         showTime={{ format: 'HH:mm' }}
         format="YYYY-MM-DD HH:mm"
         // onChange={onChange}
