@@ -18,7 +18,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
     'selectedGroupChain',
     '',
   );
-  const [audioSwitch] = useLocalStorageState('audioSwitch', 'OFF');
+  const [audioSwitch, setAudioSwitch] = useLocalStorageState('audioSwitch', 'OFF');
   const [topics, setTopics] = useState<string[] | []>([]);
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -198,7 +198,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
             text={connectStatus}
           />{' '}
           /
-          <AudioAlarm />
+          <AudioAlarm audioSwitch={audioSwitch} setAudioSwitch={setAudioSwitch} />
         </Space>
       </div>
       <div className={styles.devices}>

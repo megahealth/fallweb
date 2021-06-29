@@ -1,12 +1,18 @@
 import React, { memo } from 'react';
 import { AudioMutedOutlined, AudioOutlined } from '@ant-design/icons';
 import { Switch, message } from 'antd';
-import { useLocalStorageState } from 'ahooks';
 import fallWarning from '@/assets/fall-warning.mp3';
 import useAudio from '@/components/useAudio/useAudio';
 
-const AudioAlarm = () => {
-  const [audioSwitch, setAudioSwitch] = useLocalStorageState('audioSwitch', 'OFF');
+const isEqual = (prevProps, nextProps) => {
+  if (prevProps.audioSwitch !== nextProps.audioSwitch) {
+    return false;
+  }
+  return true;
+};
+
+const AudioAlarm = (props) => {
+  const { audioSwitch, setAudioSwitch } = props;
   const [playing, toggle] = useAudio(fallWarning);
 
   return (
@@ -33,4 +39,4 @@ const AudioAlarm = () => {
   );
 };
 
-export default memo(AudioAlarm);
+export default memo(AudioAlarm, isEqual);

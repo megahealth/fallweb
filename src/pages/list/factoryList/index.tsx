@@ -298,7 +298,6 @@ const FactoryList: FC = () => {
             }}
             placeholder="请输入 SN 搜索"
             style={{ width: 200, marginLeft: 20 }}
-            suffix={<SearchOutlined />}
           />
         </div>
         <Button
