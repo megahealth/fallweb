@@ -123,29 +123,33 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   mqtt更新device map
   */
   useEffect(() => {
-    if (mqttMsg) {
-      const { payload, topic } = mqttMsg;
-      const { sn, fall, breath } = JSON.parse(payload);
-      const o = devices.current.get(sn) || {};
+    try {
+      if (mqttMsg) {
+        const { payload, topic } = mqttMsg;
+        const { sn, fall, breath } = JSON.parse(payload);
+        const o = devices.current.get(sn) || {};
 
-      if (topic.indexOf('downline') !== -1) {
-        o.online = 0;
-      }
-      if (topic.indexOf('upline') !== -1) {
-        o.online = 1;
-      }
-      if (fall) {
-        o.action_state = fall.a;
-        o.outdoor = fall.d;
-        o.count = fall.c;
-        o.roll = fall.r;
-        if (o.action_state >= 5 && audioSwitch === 'ON') {
-          message.warning(`${o.name}跌倒，请注意查看！`);
+        if (topic.indexOf('downline') !== -1) {
+          o.online = 0;
         }
-      }
-      if (breath) o.breath = breath.b;
+        if (topic.indexOf('upline') !== -1) {
+          o.online = 1;
+        }
+        if (fall) {
+          o.action_state = fall.a;
+          o.outdoor = fall.d;
+          o.count = fall.c;
+          o.roll = fall.r;
+          if (o.action_state >= 5 && audioSwitch === 'ON') {
+            message.warning(`${o.name}跌倒，请注意查看！`);
+          }
+        }
+        if (breath) o.breath = breath.b;
 
-      devices.current.set(sn, o);
+        devices.current.set(sn, o);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }, [mqttMsg]);
 
