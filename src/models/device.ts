@@ -1,4 +1,4 @@
-import { Effect, Reducer } from 'umi';
+import type { Effect, Reducer } from 'umi';
 import {
   queryDeviceList,
   getDevice,
@@ -6,13 +6,12 @@ import {
   deleteDevice,
   updateDevice,
   getDeviceCount,
+  queryDeviceListSn,
 } from '@/services/device';
-import { ConnectState } from './connect.d';
+import type { ConnectState } from './connect.d';
 import { message } from 'antd';
 
-interface DeviceListProps {
-  [key: string]: any;
-}
+type DeviceListProps = Record<string, any>;
 
 interface Group {
   sub_id: number;
@@ -97,17 +96,37 @@ const DeviceModel: DeviceType = {
   },
   effects: {
     *queryDeviceList({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.device,
-      );
-      const response = yield call(queryDeviceList, { start, limit });
-      if (response.code === 0) {
-        yield put({
-          type: 'save',
-          payload: {
-            deviceList: response.msg,
-          },
-        });
+      const { start, limit } = yield select((state: ConnectState) => state.device);
+      const { sn } = payload;
+      let response;
+      try {
+        if (sn) {
+          response = yield call(queryDeviceListSn, { start, limit, sn });
+          response.msg = [response.msg];
+          if (response.code === 0) {
+            console.log(response.msg);
+            yield put({
+              type: 'save',
+              payload: {
+                deviceList: response.msg,
+                count: 1,
+              },
+            });
+          }
+        } else {
+          response = yield call(queryDeviceList, { start, limit });
+          if (response.code === 0) {
+            console.log(response.msg);
+            yield put({
+              type: 'save',
+              payload: {
+                deviceList: response.msg,
+              },
+            });
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
     *queryDevicesBySelectedGroup({ payload }, { call, put, select }) {
@@ -115,7 +134,7 @@ const DeviceModel: DeviceType = {
       if (typeof selectedGroups === 'string') {
         selectedGroups = JSON.parse(selectedGroups);
       }
-      var list = [];
+      let list = [];
       for (let i = 0; i < selectedGroups.length; i++) {
         const group = selectedGroups[i];
         const { sub_id, dev_cnt } = group;
@@ -162,9 +181,7 @@ const DeviceModel: DeviceType = {
       }
     },
     *createDevice({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.device,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.device);
       const response = yield call(createDevice, payload);
       if (response.code === 0) {
         message.success('添加成功！');
@@ -189,9 +206,7 @@ const DeviceModel: DeviceType = {
       }
     },
     *deleteDevice({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.device,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.device);
       const response = yield call(deleteDevice, payload);
       if (response.code === 0) {
         message.success('删除成功！');
@@ -212,9 +227,7 @@ const DeviceModel: DeviceType = {
       }
     },
     *updateDevice({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.device,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.device);
       const response = yield call(updateDevice, payload);
       if (response.code === 0) {
         message.success('更新成功！');
@@ -255,7 +268,7 @@ const DeviceModel: DeviceType = {
       });
     },
     *pageChange({ payload }, { call, put, select }) {
-      const { start, limit } = payload;
+      const { start, limit, sn } = payload;
       yield put({
         type: 'save',
         payload: {
@@ -268,6 +281,7 @@ const DeviceModel: DeviceType = {
         payload: {
           start,
           limit,
+          sn,
         },
       });
     },

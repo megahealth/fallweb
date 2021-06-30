@@ -1,11 +1,12 @@
-import React, { FC, useState, useEffect } from 'react';
+import type { FC } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'umi';
-import { Divider, Popconfirm, Form, Modal, Input, TreeSelect } from 'antd';
+import { Divider, Popconfirm, Form, Modal, Input, TreeSelect, Button } from 'antd';
 import TableComponent from '@/components/tableComponent';
-import { ColumnsType } from 'antd/es/table';
-import { DeviceState, GroupState, Loading } from '@/models/connect';
+import type { ColumnsType } from 'antd/es/table';
+import type { DeviceState, GroupState, Loading } from '@/models/connect';
 import FilterRegion from './components/filterRegion';
-import { QueryDeviceProps } from './queryDevice';
+import type { QueryDeviceProps } from './queryDevice';
 import moment from 'moment';
 import styles from './index.less';
 import AddDevice from './components/addDevice';
@@ -18,13 +19,9 @@ type RecordType = {
   group_id: number;
 };
 
-const QueryDevice: FC<QueryDeviceProps> = ({
-  dispatch,
-  device,
-  group,
-  loading,
-}) => {
+const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading }) => {
   const [form] = Form.useForm();
+  const [sn, setSn] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(0);
 
@@ -35,6 +32,9 @@ const QueryDevice: FC<QueryDeviceProps> = ({
   useEffect(() => {
     dispatch({
       type: 'device/queryDeviceList',
+      payload: {
+        sn,
+      },
     });
 
     dispatch({
@@ -111,7 +111,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({
               form.setFieldsValue({
                 sn: record.sn,
                 name: record.name,
-                group: parent_id + '-' + record.group_id,
+                group: `${parent_id}-${record.group_id}`,
               });
 
               setEditId(record.device_id);
@@ -149,6 +149,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({
       payload: {
         start: pageSize * (current - 1),
         limit: pageSize,
+        sn,
       },
     });
   };
@@ -162,7 +163,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({
   };
 
   const handleOk = () => {
-    form.validateFields().then(value => {
+    form.validateFields().then((value) => {
       dispatch({
         type: 'device/updateDevice',
         payload: {
@@ -182,8 +183,32 @@ const QueryDevice: FC<QueryDeviceProps> = ({
   return (
     <div className={styles.wrap}>
       <div className={styles.head}>
-        <FilterRegion />
-        <AddDevice />
+        <Input
+          value={sn}
+          onChange={(v) => {
+            setSn(v.target.value);
+          }}
+          placeholder="请输入 SN 搜索"
+          style={{ width: 200 }}
+        />
+        <div>
+          <Button
+            type="primary"
+            style={{ marginRight: '10px' }}
+            onClick={() => {
+              dispatch({
+                type: 'device/queryDeviceList',
+                payload: {
+                  sn,
+                },
+              });
+            }}
+          >
+            查询
+          </Button>
+
+          <AddDevice />
+        </div>
       </div>
       <TableComponent
         columns={columns}
@@ -221,15 +246,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({
 };
 
 export default connect(
-  ({
-    device,
-    group,
-    loading,
-  }: {
-    device: DeviceState;
-    group: GroupState;
-    loading: Loading;
-  }) => ({
+  ({ device, group, loading }: { device: DeviceState; group: GroupState; loading: Loading }) => ({
     device,
     group,
     loading: loading.models.device,
