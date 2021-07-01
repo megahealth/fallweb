@@ -34,4 +34,11 @@ export default [
     icon: 'wenjianjia',
     children: [],
   },
+  {
+    title: '半成品产测',
+    link: '/list/semiTestList',
+    key: 'semiTestList',
+    icon: 'wenjianjia',
+    children: [],
+  },
 ];

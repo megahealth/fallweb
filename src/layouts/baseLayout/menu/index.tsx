@@ -28,7 +28,7 @@ const MenuContent: FC<BasicLayoutProps> = ({ global }) => {
     return rows.map((row) => {
       if (row === undefined) return false;
       const { title, icon, link = '', key, children, ...restState } = row;
-      if (title === '产测列表') {
+      if (title === '产测列表' || title === '半成品产测') {
         if (localStorage.getItem('group_id') !== '1') return false;
       }
       if (children && children.length > 0) {

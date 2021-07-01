@@ -50,7 +50,6 @@ const FactoryList: FC = () => {
     {
       title: 'SN',
       dataIndex: 'sn',
-      key: 'sn',
       width: 200,
       fixed: 'left',
     },
@@ -254,6 +253,7 @@ const FactoryList: FC = () => {
     {
       title: '创建时间',
       dataIndex: 'create_time',
+      key: 'create_time',
       width: 150,
       render: (_, record) => {
         return moment(record.create_time).format('YYYY-MM-DD HH:mm');
