@@ -49,13 +49,11 @@ const SemiTestList: FC = () => {
     {
       title: 'SN',
       dataIndex: 'sn',
-      width: 200,
       fixed: 'left',
     },
     {
       title: 'total_result',
       dataIndex: 'total_result',
-      width: 100,
       render: (_, record) => {
         return record.total_result === 0 ? (
           <Tag color="green">成功</Tag>
@@ -64,12 +62,11 @@ const SemiTestList: FC = () => {
         );
       },
     },
-    { title: '版本号', dataIndex: 'device_version', width: 150 },
+    { title: '版本号', dataIndex: 'device_version' },
     {
       title: '创建时间',
       dataIndex: 'create_time',
       key: 'create_time',
-      width: 150,
       render: (_, record) => {
         return moment(record.create_time).format('YYYY-MM-DD HH:mm');
       },
@@ -125,7 +122,6 @@ const SemiTestList: FC = () => {
       </div>
 
       <TableComponent
-        scroll={{ x: 1500 }}
         columns={columns}
         dataSource={list}
         rowKey="user_id"
