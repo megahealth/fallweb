@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import type { FC } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useLocalStorageState } from 'ahooks';
 import styles from './index.less';
 import Status from './status';
@@ -71,10 +72,14 @@ const Detail: FC<DetailProps> = (props) => {
         }
       }
       if (point) {
-        data.location = {
-          x: 100 * point.x + 200 + 100,
-          y: 100 * point.y + 100,
-        };
+        if (point.y === -1 || point.y === 26) {
+          data.location = null;
+        } else {
+          data.location = {
+            x: 100 * point.x + 200 + 100,
+            y: 100 * point.y + 100,
+          };
+        }
       }
     }
     return data;
