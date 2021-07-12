@@ -17,27 +17,27 @@ const RealTimeLocation = (props: any) => {
     ctx.shadowOffsetY = 3;
     ctx.shadowBlur = 3;
     ctx.rotate((-90 * Math.PI) / 180);
-    ctx.transform(0.25, 0.6, -0.3, 0.25, -150, -60);
-    ctx.fillRect(100, 100, 500, 600);
+    ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
+    ctx.fillRect(100, 100, 600, 600);
     ctx.restore();
 
     ctx.save();
     ctx.rotate((-90 * Math.PI) / 180);
-    ctx.transform(0.25, 0.6, -0.3, 0.25, -150, -60);
+    ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
     ctx.shadowColor = '#ccc';
     ctx.shadowOffsetX = 3;
     ctx.shadowOffsetY = 3;
     ctx.shadowBlur = 5;
     ctx.fillStyle = '#aaa';
-    ctx.fillRect(280, 100, 40, 40);
+    ctx.fillRect(380, 100, 40, 40);
     ctx.fillStyle = '#fff';
     ctx.font = '18px sans-serif';
-    ctx.fillText('设备', 283, 123);
+    ctx.fillText('设备', 383, 123);
     ctx.restore();
 
     ctx.save();
     ctx.rotate((-90 * Math.PI) / 180);
-    ctx.transform(0.25, 0.6, -0.3, 0.25, -150, -60);
+    ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
     ctx.beginPath();
     if (location) {
       ctx.arc(location.x, location.y, 8, 0, Math.PI * 2, true); // 绘制
