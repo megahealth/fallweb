@@ -72,11 +72,11 @@ const Detail: FC<DetailProps> = (props) => {
         }
       }
       if (point) {
-        if (point.y === -1 || point.y === 26) {
+        if (point.y > 6 || point.y < 0 || point.x > 3 || point.x < -3) {
           data.location = null;
         } else {
           data.location = {
-            x: 100 * point.x + 200 + 100,
+            x: 100 * point.x + 300 + 100,
             y: 100 * point.y + 100,
           };
         }
