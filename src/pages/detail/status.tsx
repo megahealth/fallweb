@@ -42,7 +42,10 @@ const Status = (props) => {
         <Card src={有人活动圆形} name={'状态'} value={'低姿态'}></Card>
       )}
       {online === 1 && state === 2 && <Card src={坐姿} name={'状态'} value={'坐姿'}></Card>}
-      {online === 1 && count > 1 && <Card src={多人圆形} name={'人数'} value={'多人'}></Card>}
+      {online === 1 && count >= 2 && count <= 4 && (
+        <Card src={多人圆形} name={'人数'} value={`${count}人`}></Card>
+      )}
+      {online === 1 && count > 4 && <Card src={多人圆形} name={'人数'} value={'多人'}></Card>}
       {
         // temp
         online === 1 && count === 1 && <Card src={有人无人} name={'人数'} value={'单人'}></Card>
