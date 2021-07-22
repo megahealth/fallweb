@@ -35,6 +35,13 @@ export default [
     children: [],
   },
   {
+    title: '固件列表',
+    link: '/list/sdksList',
+    key: 'sdksList',
+    icon: 'wenjianjia',
+    children: [],
+  },
+  {
     title: '半成品产测',
     link: '/list/semiTestList',
     key: 'semiTestList',
