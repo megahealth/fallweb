@@ -4,7 +4,7 @@ import TableComponent from '@/components/tableComponent';
 import styles from './index.less';
 import { getSDKs, getSDKsCount, deleteSDK, uploadSDK } from '@/services/sdks';
 import moment from 'moment';
-import { Button, Input, Popconfirm, message, Modal, Form, Upload, Divider } from 'antd';
+import { Button, Input, Popconfirm, message, Modal, Form, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 const SdkList: FC = () => {
@@ -63,8 +63,6 @@ const SdkList: FC = () => {
       with: 100,
       render: (_: any, record: any) => (
         <>
-          <a href={record.url}>下载</a>
-          <Divider type="vertical" />
           <Popconfirm
             title="确定要删除此固件么?"
             onConfirm={() => {
