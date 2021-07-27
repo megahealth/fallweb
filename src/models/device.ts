@@ -8,6 +8,7 @@ import {
   getDeviceCount,
   queryDeviceListSn,
 } from '@/services/device';
+import { getGroup } from '@/services/group';
 import type { ConnectState } from './connect.d';
 import { message } from 'antd';
 
@@ -104,11 +105,20 @@ const DeviceModel: DeviceType = {
           response = yield call(queryDeviceListSn, { start, limit, sn });
           response.msg = [response.msg];
           if (response.code === 0) {
+            const groupRes = yield call(getGroup, { id: response.msg[0].group_id });
             console.log(response.msg);
+            console.log(groupRes);
+            console.log({
+              device_id: groupRes.msg.id,
+              group_name: groupRes.msg.name,
+              ...response.msg,
+            });
             yield put({
               type: 'save',
               payload: {
-                deviceList: response.msg,
+                deviceList: [
+                  { device_id: groupRes.msg.id, group_name: groupRes.msg.name, ...response.msg[0] },
+                ],
                 count: 1,
               },
             });

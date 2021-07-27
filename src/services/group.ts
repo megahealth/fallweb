@@ -73,3 +73,11 @@ export async function deleteGroup(params: deleteGroupType) {
     method: 'DELETE',
   });
 }
+
+export async function getGroup(params: deleteGroupType) {
+  console.log(params);
+  const { id } = params;
+  return request(`/group/${id}`, {
+    method: 'GET',
+  });
+}

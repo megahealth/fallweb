@@ -1,4 +1,4 @@
-import { Effect, Reducer } from 'umi';
+import type { Effect, Reducer } from 'umi';
 import {
   queryGroupList,
   getGroupCount,
@@ -6,7 +6,7 @@ import {
   updateGroup,
   deleteGroup,
 } from '@/services/group';
-import { ConnectState } from './connect.d';
+import type { ConnectState } from './connect.d';
 import { message } from 'antd';
 
 interface GroupProps {
@@ -18,8 +18,8 @@ interface GroupProps {
 }
 
 export interface Groups {
-  parents_self: Array<GroupProps>;
-  children: Array<GroupProps>;
+  parents_self: GroupProps[];
+  children: GroupProps[];
 }
 export interface GroupState {
   groupList: Groups;
@@ -81,9 +81,7 @@ const GroupModel: GroupType = {
       }
     },
     *createGroup({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.group,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.group);
       const response = yield call(createGroup, payload);
       if (response.code === 0) {
         message.success('添加成功！');
@@ -99,9 +97,7 @@ const GroupModel: GroupType = {
       }
     },
     *updateGroup({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.group,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.group);
       const response = yield call(updateGroup, payload);
       if (response.code === 0) {
         message.success('更新成功！');
@@ -118,9 +114,7 @@ const GroupModel: GroupType = {
       }
     },
     *deleteGroup({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.group,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.group);
       const response = yield call(deleteGroup, payload);
       if (response.code === 0) {
         message.success('删除成功！');
