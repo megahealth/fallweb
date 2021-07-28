@@ -92,13 +92,7 @@ const useMqtt = () => {
       if (visible) {
         message.error('有人登陆您的账号，已被迫下线！', 5);
       } else {
-        message.error({
-          content: '页面长时间处于无活动状态，已主动下线！',
-          duration: 0,
-          onClick: () => {
-            message.destroy();
-          },
-        });
+        message.error('页面长时间处于无活动状态，已主动下线！', 5);
       }
     }
   }, [visible, client, reconnectTimes]);

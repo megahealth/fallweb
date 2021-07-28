@@ -106,13 +106,6 @@ const DeviceModel: DeviceType = {
           response.msg = [response.msg];
           if (response.code === 0) {
             const groupRes = yield call(getGroup, { id: response.msg[0].group_id });
-            console.log(response.msg);
-            console.log(groupRes);
-            console.log({
-              device_id: groupRes.msg.id,
-              group_name: groupRes.msg.name,
-              ...response.msg,
-            });
             yield put({
               type: 'save',
               payload: {
