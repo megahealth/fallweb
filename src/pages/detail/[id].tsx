@@ -50,7 +50,7 @@ const Detail: FC<DetailProps> = (props) => {
     const data = deviceInfo && deviceInfo.msg;
     if (messages) {
       const { payload, topic } = messages;
-      const { point, fall, breath } = JSON.parse(payload);
+      const { point, fall, breath, state } = JSON.parse(payload);
       let online;
       if (topic.indexOf('downline') !== -1) {
         online = 0;
@@ -79,9 +79,18 @@ const Detail: FC<DetailProps> = (props) => {
           };
         }
       }
+      if (state) {
+        data.version = state.v;
+        data.wifi = state.w;
+        data.ip = state.i;
+      }
     }
     return data;
   }, [deviceInfo, messages]);
+
+  const changeOnline = (value: number) => {
+    state.online = value;
+  };
 
   return (
     <div>
@@ -99,6 +108,7 @@ const Detail: FC<DetailProps> = (props) => {
                 client={client}
                 messages={messages}
                 sn={deviceInfo.msg ? deviceInfo.msg.sn || '' : ''}
+                changeOnline={changeOnline}
               />
             ) : null}
           </div>

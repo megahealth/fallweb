@@ -4,7 +4,7 @@ import { getSDKs } from '@/services/sdks';
 
 const { Option } = Select;
 const UpgradeAndRestart = (props: any) => {
-  const { messages, client, sn } = props;
+  const { messages, client, sn, changeOnline } = props;
   const [restartVisible, setRestartVisible] = useState(false);
   const [restartLoading, setRestartLoading] = useState(false);
   const [restartResult, setRestartResult] = useState(false);
@@ -81,6 +81,7 @@ const UpgradeAndRestart = (props: any) => {
         }
       });
       client.publish(`/todevice/restart/${sn}`, '');
+      changeOnline(0);
     } else {
       message.error('没有发现连接，重启失败！');
       setRestartVisible(false);
