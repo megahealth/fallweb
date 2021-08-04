@@ -63,12 +63,12 @@ const useMqtt = () => {
         setMqttStatus('Closed');
       });
       client.on('reconnect', () => {
-        // if (visible) {
-        //   setReconnectTimes(reconnectTimes + 1);
-        // } else {
-        //   setReconnectTimes(0);
-        // }
-        setReconnectTimes((times) => times + 1);
+        if (visible) {
+          setReconnectTimes(reconnectTimes + 1);
+        } else {
+          setReconnectTimes(0);
+        }
+        // setReconnectTimes(reconnectTimes + 1);
       });
       client.on('disconnect', () => {
         setMqttStatus('Disconnected');
@@ -80,8 +80,8 @@ const useMqtt = () => {
   }, [visible, client, reconnectTimes, setMqttStatus]);
 
   useEffect(() => {
-    if (reconnectTimes > 1) {
-      if (visible) {
+    if (visible) {
+      if (reconnectTimes > 1) {
         message.error('有人登陆您的账号，已被迫下线！', 5);
         if (client) {
           client.end();
@@ -90,8 +90,6 @@ const useMqtt = () => {
         history.replace({
           pathname: '/login',
         });
-      } else {
-        // message.error('页面长时间处于无活动状态，已主动下线！', 5);
       }
     }
   }, [visible, client, reconnectTimes]);

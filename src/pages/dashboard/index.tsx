@@ -109,7 +109,9 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
         .map((item) => item.msg)
         .flat()
         .forEach((d) => {
-          devices.current.set(d.sn, d);
+          if (d) {
+            devices.current.set(d.sn, d);
+          }
         });
 
       mqttSub(newTopics);
