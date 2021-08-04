@@ -149,7 +149,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
           o.roll = fall.r;
           if (o.action_state >= 5 && audioSwitch === 'ON') {
             message.warning(`${o.name}跌倒，请注意查看！`);
-            toggle();
+            if (!playing) toggle();
           }
         }
         if (breath) o.breath = breath.b;
@@ -211,7 +211,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
           />{' '}
           /{/* <AudioAlarm audioSwitch={audioSwitch} setAudioSwitch={setAudioSwitch} /> */}
           {/* <Button onClick={() => toggle()}>test</Button> */}
-          音频告警
+          <span onClick={() => toggle()}>音频告警</span>
           <Switch
             checkedChildren={<AudioOutlined />}
             unCheckedChildren={<AudioMutedOutlined />}
