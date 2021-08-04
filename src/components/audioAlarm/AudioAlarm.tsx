@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { AudioMutedOutlined, AudioOutlined } from '@ant-design/icons';
 import { Switch, message } from 'antd';
-import fallWarning from '@/assets/fall-warning.mp3';
+// import fallWarning from '@/assets/fall-warning.mp3';
 import useAudio from '@/components/useAudio/useAudio';
 
 const isEqual = (prevProps, nextProps) => {
@@ -13,7 +13,9 @@ const isEqual = (prevProps, nextProps) => {
 
 const AudioAlarm = (props) => {
   const { audioSwitch, setAudioSwitch } = props;
-  const [playing, toggle] = useAudio(fallWarning);
+  const [playing, toggle] = useAudio(
+    'https://file-shc.megahealth.cn/TFba0jnAkHgtXGeMl6UxF5pF9oXC7MgA/fall-warning.mp3',
+  );
 
   return (
     <>
