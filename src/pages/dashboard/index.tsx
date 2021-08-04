@@ -1,14 +1,16 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
-import { Empty, Space, Pagination, Badge, Cascader, message } from 'antd';
+import { Empty, Space, Pagination, Badge, Cascader, message, Switch } from 'antd';
 import { useInterval, useLocalStorageState, useRequest } from 'ahooks';
 import { createGroupTreeList, getTreeLeaf } from '@/utils/utils';
 import { queryGroupList } from '@/services/group';
 import { queryDeviceList } from '@/services/device';
 import useMqtt from '@/hooks/useMqtt/useMqtt';
-import AudioAlarm from '@/components/audioAlarm/AudioAlarm';
+// import AudioAlarm from '@/components/audioAlarm/AudioAlarm';
+import useAudio from '@/components/useAudio/useAudio';
 import Room from './components/room';
 import styles from './index.less';
 import type { QueryDashboardProps } from './queryDashboard';
+import { AudioMutedOutlined, AudioOutlined } from '@ant-design/icons';
 
 const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   const devices = useRef(new Map());
@@ -24,6 +26,9 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   const [pageSize, setPageSize] = useState(10);
   const [date, setDate] = useState(0);
   const [interval, setInterval] = useState<number | null>(1000);
+  const [playing, toggle] = useAudio(
+    'https://file-shc.megahealth.cn/TFba0jnAkHgtXGeMl6UxF5pF9oXC7MgA/fall-warning.mp3',
+  );
 
   const { data: group } = useRequest(queryGroupList);
 
@@ -144,6 +149,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
           o.roll = fall.r;
           if (o.action_state >= 5 && audioSwitch === 'ON') {
             message.warning(`${o.name}跌倒，请注意查看！`);
+            toggle();
           }
         }
         if (breath) o.breath = breath.b;
@@ -203,8 +209,26 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
             status={connectStatus === 'Connected' ? 'success' : 'error'}
             text={connectStatus}
           />{' '}
-          /
-          <AudioAlarm audioSwitch={audioSwitch} setAudioSwitch={setAudioSwitch} />
+          /{/* <AudioAlarm audioSwitch={audioSwitch} setAudioSwitch={setAudioSwitch} /> */}
+          {/* <Button onClick={() => toggle()}>test</Button> */}
+          音频告警
+          <Switch
+            checkedChildren={<AudioOutlined />}
+            unCheckedChildren={<AudioMutedOutlined />}
+            checked={audioSwitch === 'ON'}
+            onChange={(checked) => {
+              const flag = checked === true ? 'ON' : 'OFF';
+              setAudioSwitch(flag);
+              if (flag === 'ON') {
+                message.success('已打开音频告警');
+              } else {
+                message.error('已关闭音频告警');
+                if (playing) {
+                  toggle();
+                }
+              }
+            }}
+          />
         </Space>
       </div>
       <div className={styles.devices}>
