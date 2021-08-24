@@ -5,6 +5,7 @@ import {
   createGroup,
   updateGroup,
   deleteGroup,
+  queryGroupName,
 } from '@/services/group';
 import type { ConnectState } from './connect.d';
 import { message } from 'antd';
@@ -20,12 +21,14 @@ interface GroupProps {
 export interface Groups {
   parents_self: GroupProps[];
   children: GroupProps[];
+  searchGroup: GroupProps[];
 }
 export interface GroupState {
   groupList: Groups;
   count: number;
   start: number;
   limit: number;
+  queryGroup: string;
 }
 
 export interface GroupType {
@@ -50,21 +53,51 @@ const GroupModel: GroupType = {
     groupList: {
       parents_self: [],
       children: [],
+      searchGroup: [],
     },
     count: 0,
     start: 0,
     limit: 10,
+    queryGroup: '',
   },
   effects: {
-    *queryGroupList(_, { call, put, select }) {
-      const response = yield call(queryGroupList);
-      if (response.code === 0) {
-        yield put({
-          type: 'save',
-          payload: {
-            groupList: response.msg,
-          },
-        });
+    *queryGroupList({ payload }, { call, put, select }) {
+      let { start, limit, queryGroup, groupList } = yield select(
+        (state: ConnectState) => state.group,
+      );
+      if (payload && payload.queryGroup) queryGroup = payload.queryGroup;
+      if (queryGroup) {
+        const response = yield call(queryGroupName, queryGroup);
+        console.log('sdfasdf', response);
+        if (response.code === 0) {
+          yield put({
+            type: 'save',
+            payload: {
+              queryGroup: queryGroup,
+              groupList: {
+                ...groupList,
+                searchGroup: [...response.msg],
+              },
+            },
+          });
+        } else if (response.code === 2) {
+          message.error('找不到该分组');
+        } else {
+          message.error('查询失败！');
+        }
+      } else {
+        const response = yield call(queryGroupList);
+        if (response.code === 0) {
+          yield put({
+            type: 'save',
+            payload: {
+              groupList: {
+                ...response.msg,
+                searchGroup: [],
+              },
+            },
+          });
+        }
       }
     },
     *getGroupCount({ payload }, { call, put, select }) {
@@ -106,6 +139,7 @@ const GroupModel: GroupType = {
           payload: {
             start,
             limit,
+            queryGroup: payload.name,
           },
         });
         // yield put({

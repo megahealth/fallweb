@@ -16,7 +16,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(0);
 
-  const { groupList, count, limit, start } = group;
+  const { groupList, count, limit, start, queryGroup } = group;
   // const groupList = createGroupTreeList(groupData);
 
   useEffect(() => {
@@ -104,7 +104,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
   };
 
   const handleOk = () => {
-    form.validateFields().then(value => {
+    form.validateFields().then((value) => {
       dispatch({
         type: 'group/updateGroup',
         payload: {
@@ -120,6 +120,21 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
     setIsModalVisible(false);
   };
 
+  const onInputChange = (e: any) => {
+    dispatch({
+      type: 'group/save',
+      payload: {
+        queryGroup: e.target.value,
+      },
+    });
+  };
+
+  const onSearchChange = () => {
+    dispatch({
+      type: 'group/queryGroupList',
+    });
+  };
+
   return (
     <div className={styles.wrap}>
       <div className={styles.head}>
@@ -127,10 +142,12 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
         <div style={{ marginBottom: 24 }}>
           <Input
             placeholder="请输入搜索内容"
+            value={queryGroup}
             style={{ width: 200 }}
             suffix={<SearchOutlined />}
+            onChange={onInputChange}
           />
-          <Button type="primary" style={{ marginLeft: 24 }}>
+          <Button type="primary" style={{ marginLeft: 24 }} onClick={onSearchChange}>
             查询
           </Button>
         </div>
@@ -138,7 +155,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
       </div>
       <TableComponent
         columns={columns}
-        dataSource={groupList.children}
+        dataSource={groupList.searchGroup.length > 0 ? groupList.searchGroup : groupList.children}
         rowKey="sub_id"
         bordered={true}
         loading={loading}
@@ -165,9 +182,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
   );
 };
 
-export default connect(
-  ({ group, loading }: { group: GroupState; loading: Loading }) => ({
-    group,
-    loading: loading.models.group,
-  }),
-)(QueryGroup);
+export default connect(({ group, loading }: { group: GroupState; loading: Loading }) => ({
+  group,
+  loading: loading.models.group,
+}))(QueryGroup);

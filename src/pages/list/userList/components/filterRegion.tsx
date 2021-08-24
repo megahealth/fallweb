@@ -29,7 +29,7 @@ const ListFilterRegion: FC<QueryUserProps> = ({ dispatch, user }) => {
 
   const onSearchChange = () => {
     dispatch({
-      type: 'user/queryTableList',
+      type: 'user/queryUserList',
       payload: {},
     });
   };
@@ -43,11 +43,7 @@ const ListFilterRegion: FC<QueryUserProps> = ({ dispatch, user }) => {
         suffix={<SearchOutlined />}
         onChange={onInputChange}
       />
-      <Button
-        type="primary"
-        style={{ marginLeft: 24 }}
-        onClick={onSearchChange}
-      >
+      <Button type="primary" style={{ marginLeft: 24 }} onClick={onSearchChange}>
         查询
       </Button>
     </div>

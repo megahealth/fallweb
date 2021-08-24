@@ -68,6 +68,10 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
       dataIndex: 'group_name',
     },
     {
+      title: '群组ID',
+      dataIndex: 'group_id',
+    },
+    {
       title: 'WIFI',
       dataIndex: 'wifi',
     },

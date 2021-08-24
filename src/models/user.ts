@@ -1,6 +1,7 @@
 import { Effect, Reducer } from 'umi';
 import {
   queryUserList,
+  queryUserListUser,
   createUser,
   updateUser,
   deleteUser,
@@ -52,20 +53,45 @@ const UserModel: UserType = {
   },
   effects: {
     *queryUserList(_, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.user,
-      );
-      const response = yield call(queryUserList, {
-        start,
-        limit,
-      });
-      if (response.code === 0) {
-        yield put({
-          type: 'save',
-          payload: {
-            userSource: response.msg.children,
-          },
+      const { start, limit, searchContentVal } = yield select((state: ConnectState) => state.user);
+      if (searchContentVal) {
+        const response = yield call(queryUserListUser, {
+          start,
+          limit,
+          searchContentVal,
         });
+        console.log(response);
+        if (response.code === 0) {
+          yield put({
+            type: 'save',
+            payload: {
+              userSource: [
+                {
+                  ...response.msg.user,
+                  user_id: response.msg.user.id,
+                  group_name: response.msg.group_name,
+                },
+              ],
+            },
+          });
+        } else if (response.code === 2) {
+          message.error('找不到该用户');
+        } else {
+          message.error('查询失败！');
+        }
+      } else {
+        const response = yield call(queryUserList, {
+          start,
+          limit,
+        });
+        if (response.code === 0) {
+          yield put({
+            type: 'save',
+            payload: {
+              userSource: response.msg.children,
+            },
+          });
+        }
       }
     },
     *queryUserCount({ payload }, { call, put, select }) {
@@ -80,9 +106,7 @@ const UserModel: UserType = {
       }
     },
     *createUser({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.user,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.user);
       const response = yield call(createUser, payload);
       if (response.code === 0) {
         message.success('添加成功！');
@@ -103,9 +127,9 @@ const UserModel: UserType = {
       }
     },
     *updateUser({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.user,
-      );
+      const obj = yield select((state: ConnectState) => state.user);
+      obj.searchContentVal = payload.name;
+      const { start, limit } = obj;
       const response = yield call(updateUser, payload);
       if (response.code === 0) {
         message.success('更新成功！');
@@ -126,9 +150,7 @@ const UserModel: UserType = {
       }
     },
     *deleteUser({ payload }, { call, put, select }) {
-      const { start, limit } = yield select(
-        (state: ConnectState) => state.user,
-      );
+      const { start, limit } = yield select((state: ConnectState) => state.user);
       const response = yield call(deleteUser, payload);
       if (response.code === 0) {
         message.success('删除成功！');

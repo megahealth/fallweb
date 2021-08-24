@@ -4,6 +4,7 @@ export interface getUserParamsType {
   start: number;
   limit: number;
   group: number;
+  searchContentVal: string;
 }
 
 export interface createUserType {
@@ -26,6 +27,17 @@ export interface updateUserType {
 export async function queryUserList(params: getUserParamsType) {
   const { start, limit, group } = params;
   let url = '/users?orderby=desc';
+  if (typeof start === 'number') url += `&start=${start}`;
+  if (typeof limit === 'number') url += `&limit=${limit}`;
+  if (typeof group === 'number') url += `&group=${group}`;
+  return request(url, {
+    method: 'GET',
+  });
+}
+
+export async function queryUserListUser(params: getUserParamsType) {
+  const { start, limit, group, searchContentVal } = params;
+  let url = `/user_name/${searchContentVal}?orderby=desc`;
   if (typeof start === 'number') url += `&start=${start}`;
   if (typeof limit === 'number') url += `&limit=${limit}`;
   if (typeof group === 'number') url += `&group=${group}`;

@@ -30,6 +30,12 @@ export async function queryGroupList() {
   });
 }
 
+export async function queryGroupName(queryGroup: string) {
+  return request('/group_name/' + queryGroup, {
+    method: 'GET',
+  });
+}
+
 // export async function queryGroupList(params: queryGroupListParamsType) {
 //   const { start, limit, group } = params;
 //   let url = '/groups?orderby=desc';

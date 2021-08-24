@@ -110,20 +110,30 @@ const DeviceModel: DeviceType = {
               type: 'save',
               payload: {
                 deviceList: [
-                  { device_id: groupRes.msg.id, group_name: groupRes.msg.name, ...response.msg[0] },
+                  {
+                    ...response.msg[0],
+                    device_id: response.msg[0].id,
+                    group_name: groupRes.msg.sub_name,
+                  },
                 ],
                 count: 1,
               },
             });
+          } else if (response.code === 2) {
+            message.error('找不到该设备！');
+          } else {
+            message.error('查询失败！');
           }
         } else {
           response = yield call(queryDeviceList, { start, limit });
+          const response1 = yield call(getDeviceCount, payload);
           if (response.code === 0) {
             console.log(response.msg);
             yield put({
               type: 'save',
               payload: {
                 deviceList: response.msg,
+                count: response1.msg[0].device_cnt,
               },
             });
           }
