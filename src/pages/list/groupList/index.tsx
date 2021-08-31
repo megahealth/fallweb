@@ -141,7 +141,7 @@ const QueryGroup: FC<QueryGroupProps> = ({ dispatch, group, loading }) => {
         {/* <FilterRegion /> */}
         <div style={{ marginBottom: 24 }}>
           <Input
-            placeholder="请输入搜索内容"
+            placeholder="请输入群组名称搜索"
             value={queryGroup}
             style={{ width: 200 }}
             suffix={<SearchOutlined />}

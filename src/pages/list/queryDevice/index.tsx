@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import React, { useState, useEffect } from 'react';
 import { connect } from 'umi';
-import { Divider, Popconfirm, Form, Modal, Input, TreeSelect, Button } from 'antd';
+import { Divider, Popconfirm, Form, Modal, Input, TreeSelect, Button, Switch } from 'antd';
 import TableComponent from '@/components/tableComponent';
 import type { ColumnsType } from 'antd/es/table';
 import type { DeviceState, GroupState, Loading } from '@/models/connect';
@@ -17,6 +17,7 @@ type RecordType = {
   sn: string;
   name: string;
   group_id: number;
+  sleep_on: number;
 };
 
 const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading }) => {
@@ -24,6 +25,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
   const [sn, setSn] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editId, setEditId] = useState(0);
+  const [isShowSleepOnSwitch, setIsShowSleepOnSwitch] = useState(false);
 
   const { deviceList, count, limit, start } = device;
   const { groupList: groupData } = group;
@@ -72,6 +74,13 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
       dataIndex: 'group_id',
     },
     {
+      title: '睡眠监测',
+      dataIndex: 'sleep_on',
+      render: (value, record) => {
+        return value == 1 ? '已开启' : '未开启';
+      },
+    },
+    {
       title: 'WIFI',
       dataIndex: 'wifi',
     },
@@ -116,10 +125,14 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
                 sn: record.sn,
                 name: record.name,
                 group: `${parent_id}-${record.group_id}`,
+                sleep_on: record.sleep_on,
               });
-
               setEditId(record.device_id);
-
+              if (record.sn.indexOf('J01MD') != -1) {
+                setIsShowSleepOnSwitch(true);
+              } else {
+                setIsShowSleepOnSwitch(false);
+              }
               setIsModalVisible(true);
             }}
           >
@@ -173,6 +186,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
         payload: {
           group: value.group.split('-')[1],
           name: value.name,
+          sleep_on: value.sleep_on ? true : false,
           id: editId,
         },
       });
@@ -243,6 +257,11 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
           <Form.Item label="名称" name="name">
             <Input />
           </Form.Item>
+          {isShowSleepOnSwitch ? (
+            <Form.Item label="睡眠监测" name="sleep_on" valuePropName="checked">
+              <Switch />
+            </Form.Item>
+          ) : null}
         </Form>
       </Modal>
     </div>

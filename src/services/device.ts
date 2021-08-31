@@ -25,6 +25,7 @@ export interface updateDeviceType {
   group: number;
   name: string;
   id: number;
+  sleep_on: boolean;
 }
 
 export interface getCountType {
@@ -87,13 +88,14 @@ export async function deleteDevice(params: deleteDeviceType) {
 }
 
 export async function updateDevice(params: updateDeviceType) {
-  const { name, group, id } = params;
+  const { name, group, id, sleep_on } = params;
   const url = `/device/${id}`;
   return request(url, {
     method: 'PUT',
     data: {
       name,
       group,
+      sleep_on: sleep_on ? '1' : '0',
     },
   });
 }

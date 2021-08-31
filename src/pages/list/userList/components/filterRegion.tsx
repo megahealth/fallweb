@@ -37,7 +37,7 @@ const ListFilterRegion: FC<QueryUserProps> = ({ dispatch, user }) => {
   return (
     <div style={{ marginBottom: 24 }}>
       <Input
-        placeholder="请输入搜索内容"
+        placeholder="请输入用户名搜索"
         value={searchContentVal}
         style={{ width: 200 }}
         suffix={<SearchOutlined />}

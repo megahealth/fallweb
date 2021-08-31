@@ -15,6 +15,7 @@ import {
   List,
   Progress,
   Space,
+  Switch,
 } from 'antd';
 import type { GroupState } from '@/models/connect';
 import { createGroupTreeList } from '@/utils/utils';
@@ -34,7 +35,6 @@ const BatchAdd = (props) => {
   const [list, setList] = useState([]);
   const [progress, setProgress] = useState(0);
   const [value, setValue] = useState(undefined);
-
   const uploadprops = {
     // 这里我们只接受excel2007以后版本的文件，accept就是指定文件选择框的文件类型
     accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -85,11 +85,20 @@ const BatchAdd = (props) => {
     }
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
-      await createDevice({
-        group: value,
-        sn: item[0],
-        name: item[1],
-      });
+      if ((item[0] && item[0].indexOf('J01MD')) != -1) {
+        await createDevice({
+          group: value,
+          sn: item[0],
+          name: item[1],
+          sleep_on: item[2] && item[2] == '1' ? '1' : '0',
+        });
+      } else {
+        await createDevice({
+          group: value,
+          sn: item[0],
+          name: item[1],
+        });
+      }
       // await sleep(200);
       const p = ((i + 1) / list.length) * 100;
       setProgress(p);
@@ -121,7 +130,7 @@ const BatchAdd = (props) => {
         </Upload>
         <Button type="link">
           <a
-            href="https://file-shc.megahealth.cn/DoOf7CyxjCHd6GAwKse449VeCCXmpChh/device_upload_template.xlsx"
+            href="https://file-shc.megahealth.cn/Wwqi1mr9FjLK3UKvk3CkHSMETLi0WuQs/device_upload_template.xlsx"
             download="device_upload_template.xlsx"
           >
             下载模板
@@ -154,7 +163,7 @@ const AddDevice: FC<AddDeviceProps> = ({ dispatch, group }) => {
   const groupList = createGroupTreeList(groupData);
   const [form] = Form.useForm();
   const [tab, setTab] = useState('single');
-
+  const [isSleepOn, setIsSleepOn] = useState(false);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -172,6 +181,7 @@ const AddDevice: FC<AddDeviceProps> = ({ dispatch, group }) => {
           group: value.group.split('-')[1],
           sn: value.sn,
           name: value.name,
+          sleep_on: value.sleep_on ? '1' : '0',
         },
       });
       setIsModalVisible(false);
@@ -194,7 +204,19 @@ const AddDevice: FC<AddDeviceProps> = ({ dispatch, group }) => {
       <Modal title="添加设备" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
         <Tabs defaultActiveKey="single" onChange={callback}>
           <TabPane tab="单个添加" key="single">
-            <Form form={form} name="control-ref">
+            <Form
+              form={form}
+              name="control-ref"
+              onValuesChange={(changedValues, allValues) => {
+                if (changedValues.sn) {
+                  if (changedValues.sn.indexOf('J01MD') !== -1) {
+                    setIsSleepOn(true);
+                  } else {
+                    setIsSleepOn(false);
+                  }
+                }
+              }}
+            >
               <Form.Item
                 label="设备SN"
                 name="sn"
@@ -209,6 +231,11 @@ const AddDevice: FC<AddDeviceProps> = ({ dispatch, group }) => {
               <Form.Item label="名称" name="name">
                 <Input />
               </Form.Item>
+              {isSleepOn ? (
+                <Form.Item label="睡眠监测" name="sleep_on" valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+              ) : null}
             </Form>
           </TabPane>
           <TabPane tab="批量导入" key="multi">
