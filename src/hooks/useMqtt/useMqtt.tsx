@@ -22,7 +22,7 @@ const useMqtt = () => {
     if (document.visibilityState === 'visible') {
       setVisible(true);
     } else {
-      setVisible(false);
+      setVisible(true); // 取消隐藏保护（即取消最小化时保持登录状态，不被挤掉）
     }
   });
 
