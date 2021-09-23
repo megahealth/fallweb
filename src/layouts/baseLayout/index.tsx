@@ -6,7 +6,7 @@ import MenuContent from './menu';
 import styles from './index.less';
 import LOGO from '@/assets/logo.png';
 import COLL from '@/assets/收起.png';
-
+import beisheng_logo from '../../assets/logo1.png';
 const { Header, Content, Sider } = Layout;
 
 export default (props: any) => {
@@ -22,11 +22,9 @@ export default (props: any) => {
         collapsed={collapse}
       >
         <img
-          src={''}
+          src={localStorage.getItem('group_id') == '122' ? beisheng_logo : ''}
           style={
-            collapse
-              ? { width: '40px', margin: '20px' }
-              : { width: '120px', margin: '20px 40px' }
+            collapse ? { width: '50px', margin: '20px' } : { width: '140px', margin: '20px 20px' }
           }
         ></img>
         <MenuContent />
@@ -36,10 +34,7 @@ export default (props: any) => {
             setCollapse(!collapse);
           }}
         >
-          <img
-            src={COLL}
-            style={{ transform: collapse ? 'rotate(180deg)' : 'rotate(0)' }}
-          ></img>
+          <img src={COLL} style={{ transform: collapse ? 'rotate(180deg)' : 'rotate(0)' }}></img>
         </div>
       </Sider>
       <Layout style={{ padding: 0 }}>
