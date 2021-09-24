@@ -7,11 +7,21 @@ import styles from './index.less';
 import LOGO from '@/assets/logo.png';
 import COLL from '@/assets/收起.png';
 import beisheng_logo from '../../assets/logo1.png';
+import zedao_logo from '../../assets/zedao.png';
 const { Header, Content, Sider } = Layout;
 
 export default (props: any) => {
   const [collapse, setCollapse] = useState(false);
-
+  function getLogo(group_id: string) {
+    switch (group_id) {
+      case '122':
+        return beisheng_logo;
+      case '125':
+        return zedao_logo;
+      default:
+        return '';
+    }
+  }
   return (
     <Layout className={styles.container}>
       <Sider
@@ -22,7 +32,7 @@ export default (props: any) => {
         collapsed={collapse}
       >
         <img
-          src={localStorage.getItem('group_id') == '122' ? beisheng_logo : ''}
+          src={getLogo(localStorage.getItem('group_id') || '')}
           style={
             collapse ? { width: '50px', margin: '20px' } : { width: '140px', margin: '20px 20px' }
           }
