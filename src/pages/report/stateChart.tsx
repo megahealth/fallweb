@@ -2,20 +2,20 @@ import React, { useRef, useEffect } from 'react';
 import moment from 'moment';
 import useEcharts from '@/components/useEcharts';
 
-const StateChart = (props) => {
+const StateChart = (props: any) => {
   const { start, end, data, loading } = props;
 
   const getOption = () => {
-    let list = [];
-    let listRoll = [];
-    data.forEach((d) => {
-      const n = d.states.map((a) => {
+    let list: Array<any> = [];
+    let listRoll: Array<any> = [];
+    data.forEach((d: any) => {
+      const n = d.states.map((a: any) => {
         if (a[2] >= 5) {
           return [a[4], 5];
         }
         return [a[4], a[2]];
       });
-      const r = d.states.map((a) => {
+      const r = d.states.map((a: any) => {
         if (a[2] === 3 && a[3] === 1) {
           return [a[4], 3];
         }
@@ -57,7 +57,7 @@ const StateChart = (props) => {
       },
       tooltip: {
         trigger: 'axis',
-        formatter(params) {
+        formatter(params: any) {
           let str = '';
           switch (params[0].value[1]) {
             case 0:
@@ -128,7 +128,7 @@ const StateChart = (props) => {
         axisLabel: {
           showMinLabel: true,
           showMaxLabel: true,
-          formatter(value, index) {
+          formatter(value: any, index: number) {
             if (value === start || value === end) {
               return moment(value).format('MM-DD HH:mm');
             }
@@ -158,7 +158,7 @@ const StateChart = (props) => {
         },
         axisLabel: {
           color: '#666',
-          formatter(data) {
+          formatter(data: number) {
             switch (data) {
               case 0:
                 return '无人';

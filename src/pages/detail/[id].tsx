@@ -33,6 +33,7 @@ const Detail: FC<DetailProps> = (props) => {
           `device/point/${sn}`,
           `device/breath/${sn}`,
           `device/fall/${sn}`,
+          `device/alert/${sn}`,
           `trans_device/upline/${sn}`,
           `trans_device/downline/${sn}`,
         ],
@@ -50,7 +51,7 @@ const Detail: FC<DetailProps> = (props) => {
     const data = deviceInfo && deviceInfo.msg;
     if (messages) {
       const { payload, topic } = messages;
-      const { point, fall, breath, state } = JSON.parse(payload);
+      const { point, fall, breath, state, alert } = JSON.parse(payload);
       let online;
       if (topic.indexOf('downline') !== -1) {
         online = 0;
@@ -83,6 +84,9 @@ const Detail: FC<DetailProps> = (props) => {
         data.version = state.v;
         data.wifi = state.w;
         data.ip = state.i;
+      }
+      if (alert === 0 || alert) {
+        data.alert = alert;
       }
     }
     return data;
@@ -119,6 +123,7 @@ const Detail: FC<DetailProps> = (props) => {
             count={state.count}
             roll={state.roll}
             rollTime={state.last_roll_time}
+            alert={state.alert}
           ></Status>
           <div className={styles.warp}>
             <div className={styles.point}>

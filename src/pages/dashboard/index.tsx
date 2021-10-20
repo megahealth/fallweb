@@ -103,6 +103,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
           newTopics.push(`web/${sub_id}/fall`);
           newTopics.push(`web/${sub_id}/upline`);
           newTopics.push(`web/${sub_id}/downline`);
+          newTopics.push(`web/${sub_id}/alert`);
         });
       }
       selectedDeviceList = await Promise.all(promiseArr);
@@ -133,7 +134,8 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
     try {
       if (mqttMsg) {
         const { payload, topic } = mqttMsg;
-        const { sn, fall, breath } = JSON.parse(payload);
+        if (payload === 'close') return;
+        const { sn, fall, breath, alert } = JSON.parse(payload);
         const o = devices.current.get(sn) || {};
 
         if (topic.indexOf('downline') !== -1) {
@@ -153,7 +155,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
           }
         }
         if (breath) o.breath = breath.b;
-
+        o.alert = alert || 0;
         devices.current.set(sn, o);
       }
     } catch (error) {
@@ -233,7 +235,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
       </div>
       <div className={styles.devices}>
         {[...devices.current].slice((current - 1) * pageSize, current * pageSize).map((data) => {
-          const { device_id, action_state, breath, count, online, sn, name } = data[1];
+          const { device_id, action_state, breath, count, online, sn, name, alert } = data[1];
           return (
             <Room
               key={device_id}
@@ -244,6 +246,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
               count={count}
               action={action_state}
               breath={breath}
+              alert={alert || 0}
             />
           );
         })}

@@ -9,6 +9,7 @@ import 翻身时间 from '@/assets/翻身时间.png';
 import 坐姿 from '@/assets/坐姿.png';
 import 多人圆形 from '@/assets/多人圆形.png';
 import 有人无人 from '@/assets/有人无人.png';
+import 警告 from '@/assets/告警实心.png';
 
 import styles from './index.less';
 import moment from 'moment';
@@ -28,8 +29,22 @@ const Card = (props) => {
 };
 
 const Status = (props) => {
-  const { breath, state, online, count, rollTime } = props;
+  const { breath, state, online, count, rollTime, alert } = props;
 
+  function alertText(alert: number) {
+    switch (alert) {
+      case 0:
+        return '--';
+      case 1:
+        return '长时未活动';
+      case 2:
+        return '长时无呼吸';
+      case 3:
+        return '长时无目标';
+      default:
+        return '--';
+    }
+  }
   return (
     <div className={styles.status}>
       {online === 0 && <Card src={离线圆形} name={'状态'} value={'设备离线'}></Card>}
@@ -85,6 +100,9 @@ const Status = (props) => {
           <Card src={翻身时间} name={'最后翻身时间'} value={'--'}></Card>
         )
       }
+      {online === 1 && alert > 0 && (
+        <Card src={警告} name={'警告'} value={<span>{alertText(alert)}</span>}></Card>
+      )}
     </div>
   );
 };

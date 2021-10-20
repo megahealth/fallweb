@@ -3,6 +3,7 @@ import {
   getReportFallData,
   getReportBreathData,
   getReportRunningData,
+  getReportAlterData,
 } from '@/services/report';
 import { ConnectState } from './connect.d';
 
@@ -18,6 +19,7 @@ export interface ReportState {
   fall: Array<reportSnipProps>; // groupTreeList
   breath: Array<reportSnipProps>;
   running: Array<reportSnipProps>;
+  alter: Array<reportSnipProps>;
 }
 
 export interface ReportType {
@@ -27,6 +29,7 @@ export interface ReportType {
     getReportFallData: Effect;
     getReportBreathData: Effect;
     getReportRunningData: Effect;
+    getReportAlterData: Effect;
     addStateList: Effect;
     clearState: Effect;
   };
@@ -42,6 +45,7 @@ const ReportModel: ReportType = {
     fall: [],
     breath: [],
     running: [],
+    alter: [],
   },
   effects: {
     *getReportFallData({ payload }, { call, put, select }) {
@@ -73,6 +77,17 @@ const ReportModel: ReportType = {
           type: 'save',
           payload: {
             running: response.msg,
+          },
+        });
+      }
+    },
+    *getReportAlterData({ payload }, { call, put, select }) {
+      const response = yield call(getReportAlterData, { ...payload });
+      if (response.code === 0) {
+        yield put({
+          type: 'save',
+          payload: {
+            alter: response.msg,
           },
         });
       }

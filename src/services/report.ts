@@ -47,3 +47,16 @@ export async function getReportRunningData(params: ReportParamsType) {
     data: params,
   });
 }
+
+export async function getReportAlterData(params: ReportParamsType) {
+  const { orderby, skip, limit, start, end, sn } = params;
+  let url = `/device_alert_rep/${sn}?orderby=-1`;
+  if (typeof skip === 'number') url += `&skip=${skip}`;
+  if (typeof limit === 'number') url += `&limit=${limit}`;
+  if (typeof start === 'number') url += `&start=${start}`;
+  if (typeof end === 'number') url += `&end=${end}`;
+  return request_logic(url, {
+    method: 'GET',
+    data: params,
+  });
+}

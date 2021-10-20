@@ -4,12 +4,14 @@ import { ReportState, Loading } from '@/models/connect';
 import { DatePicker, Space } from 'antd';
 import moment from 'moment';
 import StateChart from './stateChart';
+import AlterChart from './alterChart';
 import BreathChart from './breathChart';
 import RunningChart from './runningChart';
 import IconTitle from '@/components/iconTitle';
 import 跌倒报告 from '@/assets/跌倒报告.png';
 import 呼吸率报告 from '@/assets/呼吸率报告.png';
 import 有人无人报告 from '@/assets/有人无人报告.png';
+import 告警报告 from '@/assets/告警报告.png';
 import styles from './index.less';
 
 const { RangePicker } = DatePicker;
@@ -24,18 +26,13 @@ export interface ReportProps {
 const Report: FC<ReportProps> = ({ dispatch, report, loading, match }) => {
   const { sn } = match.params;
 
-  const startNum = parseInt(
-    moment()
-      .startOf('day')
-      .format('x'),
-  );
+  const startNum = parseInt(moment().startOf('day').format('x'));
   const endNum = parseInt(moment().format('x'));
 
   const [start, setStart] = useState(startNum);
   const [end, setEnd] = useState(endNum);
 
-  const { fall, breath, running } = report;
-
+  const { fall, breath, running, alter } = report;
   useEffect(() => {
     dispatch({
       type: 'report/getReportFallData',
@@ -72,14 +69,26 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading, match }) => {
         sn,
       },
     });
+
+    dispatch({
+      type: 'report/getReportAlterData',
+      payload: {
+        orderby: -1,
+        skip: 0,
+        limit: 100,
+        start,
+        end,
+        sn,
+      },
+    });
   }, [start, end]);
 
-  const onChange = (value, dateString) => {
+  const onChange = (value: any, dateString: any) => {
     console.log('Selected Time: ', value);
     console.log('Formatted Selected Time: ', dateString);
   };
 
-  const onOk = value => {
+  const onOk = (value: any) => {
     console.log('onOk: ', value);
     setStart(parseInt(value[0].format('x')));
     setEnd(parseInt(value[1].format('x')));
@@ -109,13 +118,15 @@ const Report: FC<ReportProps> = ({ dispatch, report, loading, match }) => {
       <div className={styles.chart}>
         <RunningChart start={start} end={end} data={running} />
       </div>
+      <IconTitle title="告警记录" img={告警报告}></IconTitle>
+      <div className={styles.chart}>
+        <AlterChart start={start} end={end} data={alter} />
+      </div>
     </div>
   );
 };
 
-export default connect(
-  ({ report, loading }: { report: ReportState; loading: Loading }) => ({
-    report,
-    loading: loading.models.report,
-  }),
-)(Report);
+export default connect(({ report, loading }: { report: ReportState; loading: Loading }) => ({
+  report,
+  loading: loading.models.report,
+}))(Report);
