@@ -32,12 +32,8 @@ const Login: FC<LoginLayoutProps> = ({ dispatch }) => {
         <div className={styles.loginRight}>
           <div className={styles.loginContent}>
             <Row>
-              <Col
-                span={24}
-                className={styles.logo}
-                style={{ textAlign: 'center' }}
-              >
-                <span className={styles.title}>毫米波雷达监测系统</span>
+              <Col span={24} className={styles.logo} style={{ textAlign: 'center' }}>
+                <span className={styles.title}>兆观无线智能监护系统</span>
               </Col>
             </Row>
             <LoginForm onSubmit={handleSubmit} />
@@ -48,6 +44,4 @@ const Login: FC<LoginLayoutProps> = ({ dispatch }) => {
   );
 };
 
-export default connect(({ login }: { login: ConnectState }) => ({ login }))(
-  Login,
-);
+export default connect(({ login }: { login: ConnectState }) => ({ login }))(Login);

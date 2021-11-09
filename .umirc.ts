@@ -2,7 +2,7 @@ import { defineConfig } from 'umi';
 import { resolve } from 'path';
 
 export default defineConfig({
-  title: '毫米波雷达监测系统',
+  title: '兆观无线智能监护系统',
   hash: true,
   history: { type: 'hash' },
   antd: {},
