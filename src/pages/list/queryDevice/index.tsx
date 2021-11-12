@@ -224,8 +224,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
           >
             查询
           </Button>
-
-          <AddDevice />
+          {localStorage.getItem('group_id') === '1' ? <AddDevice /> : null}
         </div>
       </div>
       <TableComponent
