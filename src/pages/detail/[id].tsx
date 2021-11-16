@@ -51,6 +51,7 @@ const Detail: FC<DetailProps> = (props) => {
     const data = deviceInfo && deviceInfo.msg;
     if (messages) {
       const { payload, topic } = messages;
+      if (topic.indexOf('device/environment/') != -1) return data;
       const { point, fall, breath, state, alert } = JSON.parse(payload);
       let online;
       if (topic.indexOf('downline') !== -1) {

@@ -86,3 +86,35 @@ export const getTreeLeaf = (node: any, key: any) => {
   search(node, key);
   return nodes;
 };
+
+// 大端位
+export const intToBytesBig = (value: any) => {
+  let value1 = value;
+  const bytes = [];
+  bytes[1] = (value1 >> 8) & 0xff;
+  bytes[0] = value1 & 0xff;
+  return bytes;
+};
+
+// 小端位
+export const intToBytes = (value: any) => {
+  let value1 = value;
+  const bytes = [];
+  bytes[0] = (value1 >> 8) & 0xff;
+  bytes[1] = value1 & 0xff;
+  return bytes;
+};
+
+//计算CRC值
+export const caluCRC = (bytes: any, len: any) => {
+  let crc = 0xffff;
+  for (let j = 0; j < len; j++) {
+    crc = ((crc >>> 8) | (crc << 8)) & 0xffff;
+    crc ^= bytes[j] & 0xff;
+    crc ^= (crc & 0xff) >> 4;
+    crc ^= (crc << 12) & 0xffff;
+    crc ^= ((crc & 0xff) << 5) & 0xffff;
+  }
+  crc &= 0xffff;
+  return crc;
+};

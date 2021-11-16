@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Select, Popconfirm, message, Modal, Progress } from 'antd';
 import { getSDKs } from '@/services/sdks';
+import ConfigDataModal from './configDataModal';
 
 const { Option } = Select;
 const UpgradeAndRestart = (props: any) => {
@@ -16,16 +17,18 @@ const UpgradeAndRestart = (props: any) => {
   useEffect(() => {});
   useMemo(() => {
     if (messages) {
-      const { payload } = messages;
-      const { restart, ota } = JSON.parse(payload);
-      if (restart == 0) {
-        setRestartVisible(false);
-        setRestartLoading(false);
-        setRestartResult(true);
-      }
-      if (ota) {
-        setUpgradeProgress(ota.p || 0);
-        setUpgradeStatus(ota.s || 0);
+      const { payload, topic } = messages;
+      if (topic.indexOf('device/environment/') === -1) {
+        const { restart, ota } = JSON.parse(payload);
+        if (restart == 0) {
+          setRestartVisible(false);
+          setRestartLoading(false);
+          setRestartResult(true);
+        }
+        if (ota) {
+          setUpgradeProgress(ota.p || 0);
+          setUpgradeStatus(ota.s || 0);
+        }
       }
     }
   }, [messages, sn]);
@@ -91,6 +94,7 @@ const UpgradeAndRestart = (props: any) => {
 
   return (
     <div style={{ float: 'right' }}>
+      <ConfigDataModal client={client} messages={messages} sn={sn}></ConfigDataModal>
       <Button type="primary" style={{ marginRight: '20px' }} onClick={openModal}>
         升级
       </Button>

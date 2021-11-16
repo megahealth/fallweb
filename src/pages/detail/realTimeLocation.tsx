@@ -7,50 +7,50 @@ const RealTimeLocation = (props: any) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 500, 400);
-    ctx.save();
-    ctx.fillStyle = 'white';
-    ctx.shadowColor = '#ccc';
-    ctx.shadowOffsetX = 3;
-    ctx.shadowOffsetY = 3;
-    ctx.shadowBlur = 3;
-    ctx.rotate((-90 * Math.PI) / 180);
-    ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
-    ctx.fillRect(100, 100, 600, 600);
-    ctx.restore();
-
-    ctx.save();
-    ctx.rotate((-90 * Math.PI) / 180);
-    ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
-    ctx.shadowColor = '#ccc';
-    ctx.shadowOffsetX = 3;
-    ctx.shadowOffsetY = 3;
-    ctx.shadowBlur = 5;
-    ctx.fillStyle = '#aaa';
-    ctx.fillRect(380, 100, 40, 40);
-    ctx.fillStyle = '#fff';
-    ctx.font = '18px sans-serif';
-    ctx.fillText('设备', 383, 123);
-    ctx.restore();
-
-    ctx.save();
-    ctx.rotate((-90 * Math.PI) / 180);
-    ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
-    ctx.beginPath();
-    if (location) {
-      ctx.arc(location.x, location.y, 8, 0, Math.PI * 2, true); // 绘制
+    const canvas: any = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, 500, 400);
+      ctx.save();
+      ctx.fillStyle = 'white';
+      ctx.shadowColor = '#ccc';
+      ctx.shadowOffsetX = 3;
+      ctx.shadowOffsetY = 3;
+      ctx.shadowBlur = 3;
+      ctx.rotate((-90 * Math.PI) / 180);
+      ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
+      ctx.fillRect(100, 100, 600, 600);
+      ctx.restore();
+      ctx.save();
+      ctx.rotate((-90 * Math.PI) / 180);
+      ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
+      ctx.shadowColor = '#ccc';
+      ctx.shadowOffsetX = 3;
+      ctx.shadowOffsetY = 3;
+      ctx.shadowBlur = 5;
+      ctx.fillStyle = '#aaa';
+      ctx.fillRect(380, 100, 40, 40);
+      ctx.fillStyle = '#fff';
+      ctx.font = '18px sans-serif';
+      ctx.fillText('设备', 383, 123);
+      ctx.restore();
+      ctx.save();
+      ctx.rotate((-90 * Math.PI) / 180);
+      ctx.transform(0.25, 0.5, -0.3, 0.25, -180, -60);
+      ctx.beginPath();
+      if (location) {
+        ctx.arc(location.x, location.y, 8, 0, Math.PI * 2, true); // 绘制
+      }
+      ctx.fillStyle = '#5dc394';
+      ctx.strokeStyle = '#5dc394';
+      ctx.shadowColor = '#5dc394';
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.shadowBlur = 20;
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
     }
-    ctx.fillStyle = '#5dc394';
-    ctx.strokeStyle = '#5dc394';
-    ctx.shadowColor = '#5dc394';
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.shadowBlur = 20;
-    ctx.fill();
-    ctx.stroke();
-    ctx.restore();
   }, [location]);
 
   return (

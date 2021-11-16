@@ -7,7 +7,7 @@ import { useEventListener } from 'ahooks';
 
 interface Messages {
   topic: string;
-  payload: string;
+  payload: any;
 }
 
 const useMqtt = () => {
@@ -55,7 +55,7 @@ const useMqtt = () => {
       });
       client.on('message', (topic, payload) => {
         setMessages({
-          payload: payload.toString(),
+          payload: payload,
           topic,
         });
       });
