@@ -137,8 +137,13 @@ const ConfigDataModal = (props: PropsType) => {
       if (i < 32) {
         const low2Bit = payload[i]; // 默认值（无效值：55）
         const height2Bit = payload[i + 1]; // 默认值（无效值：aa）
-        const number = height2Bit * 256 + low2Bit; // 默认值（无效值：43605）
-        arr.push(number);
+        if (height2Bit >= 240) {
+          const number = low2Bit - 256; // 默认值（无效值：43605）
+          arr.push(number);
+        } else {
+          const number = height2Bit * 256 + low2Bit; // 默认值（无效值：43605）
+          arr.push(number);
+        }
       }
     }
     if (arr[0] !== 43605 && arr[1] !== 43605 && arr[2] !== 43605 && arr[3] !== 43605) {
