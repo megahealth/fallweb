@@ -88,11 +88,12 @@ export const getTreeLeaf = (node: any, key: any) => {
 };
 
 // 大端位
-export const intToBytesBig = (value: any) => {
+export const intToBytesBig = (value: any, bit: number = 2) => {
   let value1 = value;
   const bytes = [];
-  bytes[1] = (value1 >> 8) & 0xff;
-  bytes[0] = value1 & 0xff;
+  for (let i = 0; i < bit; i++) {
+    bytes[i] = (value1 >> (8 * i)) & 0xff;
+  }
   return bytes;
 };
 

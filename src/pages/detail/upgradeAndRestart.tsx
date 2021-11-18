@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Select, Popconfirm, message, Modal, Progress } from 'antd';
 import { getSDKs } from '@/services/sdks';
-import ConfigDataModal from './configDataModal';
+import ConfigEnvironmentModal from './configEnvironmentModal';
+import ConfigParamModal from './configParamModal';
 
 const { Option } = Select;
 const UpgradeAndRestart = (props: any) => {
@@ -18,7 +19,7 @@ const UpgradeAndRestart = (props: any) => {
   useMemo(() => {
     if (messages) {
       const { payload, topic } = messages;
-      if (topic.indexOf('device/environment/') === -1) {
+      if (topic.indexOf('device/environment/') === -1 && topic.indexOf('device/param/') === -1) {
         const { restart, ota } = JSON.parse(payload);
         if (restart == 0) {
           setRestartVisible(false);
@@ -60,8 +61,6 @@ const UpgradeAndRestart = (props: any) => {
   };
 
   const upgradeSDK = () => {
-    console.log('fadfadfa', sn);
-
     if (client && sn) {
       setUpgradeProgress(0);
       client.subscribe([`device/ota/${sn}`], { qos: 1 }, (error: any) => {
@@ -94,7 +93,8 @@ const UpgradeAndRestart = (props: any) => {
 
   return (
     <div style={{ float: 'right' }}>
-      <ConfigDataModal client={client} messages={messages} sn={sn}></ConfigDataModal>
+      <ConfigParamModal client={client} messages={messages} sn={sn} />
+      <ConfigEnvironmentModal client={client} messages={messages} sn={sn} />
       <Button type="primary" style={{ marginRight: '20px' }} onClick={openModal}>
         升级
       </Button>

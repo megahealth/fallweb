@@ -11,10 +11,8 @@ interface PropsType {
 
 let bedTag: any = []; // 标记床1和床2的顺序
 let doorTag: any = []; // 标记门1和门2的顺序
-const rules = [{ required: true, message: '请填写数值！' }]; // 通用规则
-// let rules_left_right:any = [...rules,{type: 'number',min: -200,max: 200}]
-// let rules_up:any = [...rules,{ type: 'number', min: 0, max: 600 }]
-const ConfigDataModal = (props: PropsType) => {
+const rules: any = [{ required: true, message: '请填写数值！' }]; // 通用规则
+const ConfigEnvironmentModal = (props: PropsType) => {
   const { client, sn, messages } = props;
   const [formRef] = Form.useForm();
   let [activeKey, setActiveKey] = useState('1');
@@ -445,4 +443,4 @@ const ConfigDataModal = (props: PropsType) => {
   );
 };
 
-export default ConfigDataModal;
+export default ConfigEnvironmentModal;
