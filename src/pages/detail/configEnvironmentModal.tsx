@@ -17,6 +17,7 @@ const ConfigEnvironmentModal = (props: PropsType) => {
   const [formRef] = Form.useForm();
   let [activeKey, setActiveKey] = useState('1');
   let [saveConfigLoading, setSaveConfigLoading] = useState(false);
+  let [openModalLoading, setOpenModalLoading] = useState(false);
   let [configDataVisible, setConfigDataVisible] = useState(false);
   let [rules_up, setRules_up] = useState([...rules, { type: 'number', min: 0, max: 600 }]);
   let [rules_left_right, setRules_left_right] = useState([
@@ -189,8 +190,10 @@ const ConfigEnvironmentModal = (props: PropsType) => {
         formRef.setFieldsValue(processingData(payload));
         if (saveConfigLoading) {
           checkResult(processingData(payload));
-        } else {
+        }
+        if (openModalLoading) {
           setConfigDataVisible(true);
+          setOpenModalLoading(false);
         }
       }
     }
@@ -204,6 +207,11 @@ const ConfigEnvironmentModal = (props: PropsType) => {
         }
       });
       client.publish(`/todevice/g_environment/${sn}`, 'hello');
+      setOpenModalLoading(true);
+      setTimeout(() => {
+        setOpenModalLoading(false);
+        message.error('连接响应超时，无法进行配置！');
+      }, 3000);
     } else {
       message.error('没有发现连接，无法进行配置！');
       setConfigDataVisible(false);
@@ -221,7 +229,12 @@ const ConfigEnvironmentModal = (props: PropsType) => {
 
   return (
     <>
-      <Button type="primary" style={{ marginRight: '20px' }} onClick={getConfigInfo}>
+      <Button
+        type="primary"
+        style={{ marginRight: '20px' }}
+        onClick={getConfigInfo}
+        loading={openModalLoading}
+      >
         配置
       </Button>
       <Modal

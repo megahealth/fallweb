@@ -22,6 +22,7 @@ const ConfigParamModal = (props: PropsType) => {
   const [formRef] = Form.useForm();
   let [saveConfigLoading, setSaveConfigLoading] = useState(false);
   let [configParamVisible, setConfigParamVisible] = useState(false);
+  let [openModalLoading, setOpenModalLoading] = useState(false);
   const [configParamData, setConfigParamData] = useState({
     presenceBurnIn: 0,
     sitToFallBurnIn: 0,
@@ -53,7 +54,7 @@ const ConfigParamModal = (props: PropsType) => {
       });
       client.publish(`/todevice/param/${sn}`, uint8Arr);
     } else {
-      message.error('没有发现连接，无法进行配置！');
+      message.error('没有发现连接，无法进行设置！');
       setConfigParamVisible(false);
     }
   };
@@ -103,8 +104,10 @@ const ConfigParamModal = (props: PropsType) => {
         formRef.setFieldsValue(processingData(payload));
         if (saveConfigLoading) {
           checkResult(processingData(payload));
-        } else {
+        }
+        if (openModalLoading) {
           setConfigParamVisible(true);
+          setOpenModalLoading(false);
         }
       }
     }
@@ -118,15 +121,24 @@ const ConfigParamModal = (props: PropsType) => {
         }
       });
       client.publish(`/todevice/g_param/${sn}`, 'hello');
-      setConfigParamVisible(true);
+      setOpenModalLoading(true);
+      setTimeout(() => {
+        setOpenModalLoading(false);
+        message.error('连接响应超时，无法进行设置！');
+      }, 3000);
     } else {
-      message.error('没有发现连接，无法进行配置！');
+      message.error('没有发现连接，无法进行设置！');
       setConfigParamVisible(false);
     }
   };
   return (
     <>
-      <Button type="primary" style={{ marginRight: '20px' }} onClick={getConfigInfo}>
+      <Button
+        type="primary"
+        style={{ marginRight: '20px' }}
+        onClick={getConfigInfo}
+        loading={openModalLoading}
+      >
         设置
       </Button>
       <Modal
