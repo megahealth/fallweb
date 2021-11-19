@@ -9,6 +9,7 @@ interface PropsType {
   sn: any;
 }
 
+let timeout: any = null;
 let bedTag: any = []; // 标记床1和床2的顺序
 let doorTag: any = []; // 标记门1和门2的顺序
 const rules: any = [{ required: true, message: '请填写数值！' }]; // 通用规则
@@ -194,6 +195,7 @@ const ConfigEnvironmentModal = (props: PropsType) => {
         if (openModalLoading) {
           setConfigDataVisible(true);
           setOpenModalLoading(false);
+          if (timeout) clearTimeout(timeout);
         }
       }
     }
@@ -208,7 +210,7 @@ const ConfigEnvironmentModal = (props: PropsType) => {
       });
       client.publish(`/todevice/g_environment/${sn}`, 'hello');
       setOpenModalLoading(true);
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setOpenModalLoading(false);
         message.error('连接响应超时，无法进行配置！');
       }, 3000);

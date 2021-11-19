@@ -16,6 +16,7 @@ interface ParaDataType {
   onBedExceptionBurnIn: number;
 }
 
+let timeout: any = null;
 const rules: any = [{ required: true, message: '请填写数值！' }]; // 通用规则
 const ConfigParamModal = (props: PropsType) => {
   const { client, sn, messages } = props;
@@ -106,6 +107,7 @@ const ConfigParamModal = (props: PropsType) => {
           checkResult(processingData(payload));
         }
         if (openModalLoading) {
+          if (timeout) clearTimeout(timeout);
           setConfigParamVisible(true);
           setOpenModalLoading(false);
         }
@@ -122,7 +124,7 @@ const ConfigParamModal = (props: PropsType) => {
       });
       client.publish(`/todevice/g_param/${sn}`, 'hello');
       setOpenModalLoading(true);
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setOpenModalLoading(false);
         message.error('连接响应超时，无法进行设置！');
       }, 3000);
