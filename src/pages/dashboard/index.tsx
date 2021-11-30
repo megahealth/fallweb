@@ -67,6 +67,10 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   }, interval);
 
   useEffect(() => {
+    if (localStorage.getItem('currentPage')) {
+      setCurrent(parseInt(localStorage.getItem('currentPage') || '1'));
+      localStorage.removeItem('currentPage');
+    }
     return () => {
       setInterval(null);
       if (client) {
@@ -173,9 +177,10 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
 
   const onGroupChange = useCallback(
     (value: any, selectedOptions: any) => {
+      localStorage.removeItem('currentPage');
+      setCurrent(1);
       const groupChain = selectedOptions.map((o: any) => o.label).join(' > ');
       setSelectedGroupChain(groupChain);
-
       if (groupList) {
         const key = selectedOptions.pop().value; // 取 key， eg：1-2，可以支持多选，单选，默认单选，预留后续多选需求
         const node = groupList[0]; // 需进一步计算子节点？需要的，订阅父节点获取不到数据(接口设定)
@@ -247,6 +252,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
               action={action_state}
               breath={breath}
               alert={alert || 0}
+              current={current}
             />
           );
         })}

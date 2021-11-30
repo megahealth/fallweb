@@ -23,6 +23,11 @@ const Detail: FC<DetailProps> = (props) => {
   const [selectedGroupChain] = useLocalStorageState('selectedGroupChain');
 
   useEffect(() => {
+    const { page } = props.location.query;
+    localStorage.setItem('currentPage', page);
+  }, []);
+
+  useEffect(() => {
     if (client && deviceInfo) {
       const { sn } = deviceInfo.msg;
       client.publish(`/todevice/point/${sn}`, 'hello');

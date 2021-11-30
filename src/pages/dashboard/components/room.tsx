@@ -20,9 +20,10 @@ export interface DetailProps {
   name: string;
   id: number;
   alert: number;
+  current: number;
 }
 
-const Room: FC<DetailProps> = ({ sn, online, count, action, breath, name, id, alert }) => {
+const Room: FC<DetailProps> = ({ sn, online, count, action, breath, name, id, alert, current }) => {
   const colors = {
     grey: '#999',
     green: '#51b988',
@@ -95,7 +96,7 @@ const Room: FC<DetailProps> = ({ sn, online, count, action, breath, name, id, al
   }
 
   return (
-    <Link to={`/detail/${id}`}>
+    <Link to={`/detail/${id}?page=${current}`}>
       <div className={Style.container}>
         <div className={Style.head} style={{ background: color }}>
           {pImg && <img src={pImg}></img>}

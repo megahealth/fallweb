@@ -2,11 +2,7 @@ import React, { FC } from 'react';
 import { connect, Dispatch } from 'umi';
 import { ClickParam } from 'antd/es/menu';
 import { Dropdown, Menu } from 'antd';
-import {
-  SettingOutlined,
-  LogoutOutlined,
-  DownOutlined,
-} from '@ant-design/icons';
+import { SettingOutlined, LogoutOutlined, DownOutlined } from '@ant-design/icons';
 import { LoginModelState, GlobalModelState } from '@/models/connect';
 
 export interface HeaderLayoutProps {
@@ -18,6 +14,7 @@ const UserSettingLayout: FC<HeaderLayoutProps> = ({ login, dispatch }) => {
   function handleSubmit(event: ClickParam) {
     const { key } = event;
     if (key === 'logout') {
+      localStorage.removeItem('currentPage');
       dispatch({
         type: 'login/logout',
       });
@@ -55,11 +52,5 @@ const UserSettingLayout: FC<HeaderLayoutProps> = ({ login, dispatch }) => {
 };
 
 export default connect(
-  ({
-    login,
-    global,
-  }: {
-    login: LoginModelState;
-    global: GlobalModelState;
-  }) => ({ login, global }),
+  ({ login, global }: { login: LoginModelState; global: GlobalModelState }) => ({ login, global }),
 )(UserSettingLayout);
