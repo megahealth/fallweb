@@ -18,6 +18,7 @@ export interface SubmitValProps {
 
 const Login: FC<LoginLayoutProps> = ({ dispatch }) => {
   function handleSubmit(values: SubmitValProps) {
+    localStorage.removeItem('currentPage');
     dispatch({
       type: 'login/queryLogin',
       payload: {
