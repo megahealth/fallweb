@@ -256,7 +256,7 @@ const QueryDevice: FC<QueryDeviceProps> = ({ dispatch, device, group, loading })
           <Form.Item label="名称" name="name">
             <Input />
           </Form.Item>
-          {isShowSleepOnSwitch ? (
+          {localStorage.getItem('group_id') == '1' && isShowSleepOnSwitch ? (
             <Form.Item label="睡眠监测" name="sleep_on" valuePropName="checked">
               <Switch />
             </Form.Item>
