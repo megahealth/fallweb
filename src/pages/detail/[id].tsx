@@ -31,10 +31,7 @@ const Detail: FC<DetailProps> = (props) => {
     if (client && deviceInfo) {
       const { sn } = deviceInfo.msg;
       client.publish(`/todevice/point/${sn}`, 'hello');
-      let group_id = localStorage.getItem('group_id');
-      if (group_id === '1') {
-        client.publish(`/todevice/tcount/${sn}`, 'hello');
-      }
+      client.publish(`/todevice/tcount/${sn}`, 'hello');
       client.subscribe(
         [
           `device/ota/${sn}`,

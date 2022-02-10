@@ -31,12 +31,12 @@ const Card = (props) => {
 const Status = (props) => {
   const { breath, state, online, count, rollTime, alert, tcount } = props;
   let group_id = localStorage.getItem('group_id');
-  // if(group_id === '1'){
-  //   let selectedGroups = localStorage.getItem('selectedGroups');
-  //   if(selectedGroups&&JSON.parse(selectedGroups).indexOf('sub_id":176')!=-1){
-  //     group_id = '176';
-  //   }
-  // }
+  if (group_id === '1') {
+    let selectedGroups = localStorage.getItem('selectedGroups');
+    if (selectedGroups && JSON.parse(selectedGroups).indexOf('sub_id":176') != -1) {
+      group_id = '176';
+    }
+  }
   function alertText(alert: number) {
     switch (alert) {
       case 0:
@@ -111,7 +111,7 @@ const Status = (props) => {
       )}
 
       {/* 建行统计人数 */}
-      {group_id === '1' && <Card src={多人圆形} name={'统计人数'} value={tcount || '--'}></Card>}
+      {group_id === '176' && <Card src={多人圆形} name={'统计人数'} value={tcount || '--'}></Card>}
     </div>
   );
 };
