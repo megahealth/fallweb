@@ -108,6 +108,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
           newTopics.push(`web/${sub_id}/upline`);
           newTopics.push(`web/${sub_id}/downline`);
           newTopics.push(`web/${sub_id}/alert`);
+          newTopics.push(`web/${sub_id}/tcount`);
         });
       }
       selectedDeviceList = await Promise.all(promiseArr);

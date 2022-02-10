@@ -31,6 +31,10 @@ const Detail: FC<DetailProps> = (props) => {
     if (client && deviceInfo) {
       const { sn } = deviceInfo.msg;
       client.publish(`/todevice/point/${sn}`, 'hello');
+      let group_id = localStorage.getItem('group_id');
+      if (group_id === '1') {
+        client.publish(`/todevice/tcount/${sn}`, 'hello');
+      }
       client.subscribe(
         [
           `device/ota/${sn}`,
@@ -39,10 +43,11 @@ const Detail: FC<DetailProps> = (props) => {
           `device/breath/${sn}`,
           `device/fall/${sn}`,
           `device/alert/${sn}`,
+          `device/tcount/${sn}`,
           `trans_device/upline/${sn}`,
           `trans_device/downline/${sn}`,
         ],
-        { qos: 1 },
+        { qos: 0 },
         (error) => {
           if (error) {
             console.log('Unsubscribe error', error);
@@ -58,7 +63,9 @@ const Detail: FC<DetailProps> = (props) => {
       const { payload, topic } = messages;
       if (topic.indexOf('device/environment/') != -1 || topic.indexOf('device/param/') != -1)
         return data;
-      const { point, fall, breath, state, alert } = JSON.parse(payload);
+      const { point, fall, breath, state, alert, tcount } = JSON.parse(payload);
+      if (tcount) data.tcount = tcount.c;
+
       let online;
       if (topic.indexOf('downline') !== -1) {
         online = 0;
@@ -131,6 +138,7 @@ const Detail: FC<DetailProps> = (props) => {
             roll={state.roll}
             rollTime={state.last_roll_time}
             alert={state.alert}
+            tcount={state.tcount}
           ></Status>
           <div className={styles.warp}>
             <div className={styles.point}>
