@@ -152,7 +152,10 @@ const Detail: FC<DetailProps> = (props) => {
               <BriefReport state={state.action_state} sn={state.sn}></BriefReport>
             </div>
           </div>
-          {state.sn.indexOf('J01MD') !== -1 && <BreifInfo sn={state.sn}></BreifInfo>}
+          {deviceInfo &&
+            deviceInfo.msg &&
+            deviceInfo.msg.sleep_on == 1 &&
+            state.sn.indexOf('J01MD') !== -1 && <BreifInfo sn={state.sn}></BreifInfo>}
         </div>
       )}
     </div>
