@@ -23,7 +23,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   const [audioSwitch, setAudioSwitch] = useLocalStorageState('audioSwitch', 'OFF');
   const [topics, setTopics] = useState<string[] | []>([]);
   const [current, setCurrent] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [date, setDate] = useState(0);
   const [interval, setInterval] = useState<number | null>(1000);
   const [playing, toggle] = useAudio(
@@ -207,7 +207,7 @@ const Dashboard: React.FunctionComponent<QueryDashboardProps> = () => {
   );
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <div className={styles.tree}>
         <Cascader options={groupList} onChange={onGroupChange} changeOnSelect expandTrigger="hover">
           <a href="#">{selectedGroupChain || '选择群组'}</a>
