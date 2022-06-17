@@ -62,7 +62,17 @@ const SemiTestList: FC = () => {
         );
       },
     },
-    { title: '版本号', dataIndex: 'device_version' },
+    {
+      title: '版本号',
+      dataIndex: 'device_version',
+    },
+    {
+      title: 'mac',
+      dataIndex: 'mac',
+      render: (_, record) => {
+        return <span>{record.mac === 'null' ? '' : record.mac}</span>;
+      },
+    },
     {
       title: '创建时间',
       dataIndex: 'create_time',

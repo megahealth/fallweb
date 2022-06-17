@@ -5,7 +5,7 @@ import styles from './index.less';
 import { useRequest } from 'ahooks';
 import { getFactoryTests, getFactoryTestsSn } from '@/services/factory';
 import moment from 'moment';
-import { Button, DatePicker, Input, Tag } from 'antd';
+import { Button, DatePicker, Input, Tag, Modal } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 
 const { RangePicker } = DatePicker;
@@ -16,6 +16,21 @@ const FactoryList: FC = () => {
   const [limit, setLimit] = useState(10);
   const [startTime, setStartTime] = useState(() => moment().startOf('day').valueOf());
   const [endTime, setEndTime] = useState(() => moment().valueOf());
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [obj, getRecord] = useState(null);
+
+  const showModal = (para: any) => {
+    getRecord(para);
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const { data, loading, run } = useRequest(
     () => {
@@ -52,6 +67,16 @@ const FactoryList: FC = () => {
       dataIndex: 'sn',
       width: 200,
       fixed: 'left',
+      render: (text: any, record: any) => (
+        <span
+          style={{ color: 'blue', cursor: 'pointer' }}
+          onClick={() => {
+            showModal(record);
+          }}
+        >
+          <a>{record.sn}</a>
+        </span>
+      ),
     },
     {
       title: 'total_result',
@@ -278,6 +303,7 @@ const FactoryList: FC = () => {
     setEndTime(moment(e[1]).valueOf());
     run();
   };
+  console.log('jibfd', obj);
 
   return (
     <div className={styles.wrap}>
@@ -319,6 +345,137 @@ const FactoryList: FC = () => {
         loading={loading}
         pagination={pagination}
       />
+
+      <Modal title={obj && obj.sn} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+        <p>
+          <span>
+            total_result:
+            {(obj && obj.total_result === 0 ? (
+              <Tag color="green">成功</Tag>
+            ) : (
+              <Tag color="red">失败</Tag>
+            )) || '--'}
+          </span>
+        </p>
+        <p>
+          bt_result：{' '}
+          {(obj && obj.bt_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>蓝牙期待信号值：{(obj && obj.bt_expect_rssi) || '--'}</p>
+        <p>蓝牙实际信号值：{(obj && obj.bt_current_rssi) || '--'}</p>
+        <p>
+          wifi_result：
+          {(obj && obj.wifi_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>WIFI期待信号值：{(obj && obj.wifi_expect_rssi) || '--'}</p>
+        <p>WIFI实际信号值：{(obj && obj.wifi_current_rssi) || '--'}</p>
+        <p>
+          uart0_result：
+          {(obj && obj.uart0_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          uart1_result：
+          {(obj && obj.uart1_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          uart2_result：
+          {(obj && obj.uart2_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          spi_result：
+          {(obj && obj.spi_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          io5_result：
+          {(obj && obj.io5_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          io23_result：
+          {(obj && obj.io23_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          io18_result：
+          {(obj && obj.io18_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          io19_result：
+          {(obj && obj.io19_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          radar_result：
+          {(obj && obj.radar_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          esp_mem_result：
+          {(obj && obj.esp_mem_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          esp_flash_result：
+          {(obj && obj.esp_flash_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>
+          alps_mem_result：
+          {(obj && obj.alps_mem_result === 0 ? (
+            <Tag color="green">成功</Tag>
+          ) : (
+            <Tag color="red">失败</Tag>
+          )) || '--'}
+        </p>
+        <p>版本号：{(obj && obj.device_version) || '--'}</p>
+        <p>创建时间：{(obj && moment(obj.create_time).format('YYYY-MM-DD HH:mm')) || '--'}</p>
+      </Modal>
     </div>
   );
 };
