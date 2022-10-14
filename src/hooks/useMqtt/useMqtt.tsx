@@ -33,7 +33,7 @@ const useMqtt = () => {
 
   useEffect(() => {
     setClient(
-      mqtt.connect('wss://wss8084.megahealth.cn/mqtt', {
+      mqtt.connect('wss://mmw-emq-ws.megahealth.cn/mqtt', {
         clean: true,
         keepalive: 10,
         connectTimeout: 4000,
