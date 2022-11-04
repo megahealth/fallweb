@@ -292,8 +292,9 @@ const FactoryList: FC = () => {
     pageSize: limit,
     size: 'small',
     onChange: (a, b) => {
-      console.log(a, b);
       setStart((a - 1) * b);
+      setLimit(b);
+      run();
     },
   };
 

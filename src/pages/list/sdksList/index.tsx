@@ -21,6 +21,9 @@ const SdkList: FC = () => {
     setLoading(true);
     const res1 = await getSDKsCount();
     const res2 = await getSDKs(obj);
+    console.log('res1', res1);
+    console.log('res2', res2);
+
     setLoading(false);
     setList(res2.msg);
     setCount(res1.msg);
@@ -28,8 +31,8 @@ const SdkList: FC = () => {
 
   useEffect(() => {
     getSDKsList({
-      skip: 0,
-      limit: 10,
+      skip: start,
+      limit: limit,
     });
   }, []);
   const columns = [
@@ -136,10 +139,11 @@ const SdkList: FC = () => {
     pageSize: limit,
     size: 'small',
     onChange: (a: number, b: number) => {
+      setLimit(b);
       setStart((a - 1) * b);
       getSDKsList({
         skip: (a - 1) * b,
-        limit: limit,
+        limit: b,
       });
     },
   };
