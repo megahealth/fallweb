@@ -38,6 +38,7 @@ const SemiTestList: FC = () => {
       manual: true,
     },
   );
+  // console.log('semi data',data);
 
   useEffect(() => {
     run();
@@ -54,7 +55,7 @@ const SemiTestList: FC = () => {
     {
       title: 'total_result',
       dataIndex: 'total_result',
-      render: (_, record) => {
+      render: (_, record: any) => {
         return record.total_result === 0 ? (
           <Tag color="green">成功</Tag>
         ) : (
@@ -69,15 +70,75 @@ const SemiTestList: FC = () => {
     {
       title: 'mac',
       dataIndex: 'mac',
-      render: (_, record) => {
+      render: (_, record: any) => {
         return <span>{record.mac === 'null' ? '' : record.mac}</span>;
+      },
+    },
+    {
+      //
+      title: 'bt',
+      dataIndex: 'bt',
+      render: (_, record: any) => {
+        return record.bt !== -1 ? (
+          <>{record.bt === 0 ? <Tag color="red">失败</Tag> : <Tag color="green">成功</Tag>}</>
+        ) : (
+          <>
+            <span>--</span>
+          </>
+        );
+      },
+    },
+    {
+      title: 'wifi',
+      dataIndex: 'wifi',
+      render: (_, record: any) => {
+        return record.wifi !== -1 ? (
+          <>{record.wifi === 0 ? <Tag color="red">失败</Tag> : <Tag color="green">成功</Tag>}</>
+        ) : (
+          <>
+            <span>--</span>
+          </>
+        );
+      },
+    },
+    {
+      title: '呼吸测试预期值',
+      dataIndex: 'breath_expect',
+      render: (_, record: any) => {
+        return <span>{record.breath_expect === -1 ? '--' : record.breath_expect}</span>;
+      },
+    },
+    {
+      title: '呼吸测试值',
+      dataIndex: 'breath_current',
+      render: (_, record: any) => {
+        return <span>{record.breath_current === -1 ? '--' : record.breath_current}</span>;
+      },
+    },
+    {
+      title: '呼吸测试结果',
+      dataIndex: 'breath_result',
+      render: (_, record: any) => {
+        return record.breath_result !== -1 ? (
+          <>
+            {record.breath_result === 0 ? (
+              <Tag color="red">失败</Tag>
+            ) : (
+              <Tag color="green">成功</Tag>
+            )}
+          </>
+        ) : (
+          <>
+            <span>--</span>
+          </>
+        );
       },
     },
     {
       title: '创建时间',
       dataIndex: 'create_time',
       key: 'create_time',
-      render: (_, record) => {
+      render: (_, record: any) => {
         return moment(record.create_time).format('YYYY-MM-DD HH:mm');
       },
     },
