@@ -80,7 +80,7 @@ const SemiTestList: FC = () => {
       dataIndex: 'bt',
       render: (_, record: any) => {
         return record.bt !== -1 ? (
-          <>{record.bt === 0 ? <Tag color="red">失败</Tag> : <Tag color="green">成功</Tag>}</>
+          <>{record.bt === 0 ? <Tag color="red">成功</Tag> : <Tag color="green">失败</Tag>}</>
         ) : (
           <>
             <span>--</span>
@@ -93,7 +93,7 @@ const SemiTestList: FC = () => {
       dataIndex: 'wifi',
       render: (_, record: any) => {
         return record.wifi !== -1 ? (
-          <>{record.wifi === 0 ? <Tag color="red">失败</Tag> : <Tag color="green">成功</Tag>}</>
+          <>{record.wifi === 0 ? <Tag color="red">成功</Tag> : <Tag color="green">失败</Tag>}</>
         ) : (
           <>
             <span>--</span>
@@ -122,14 +122,30 @@ const SemiTestList: FC = () => {
         return record.breath_result !== -1 ? (
           <>
             {record.breath_result === 0 ? (
-              <Tag color="red">失败</Tag>
+              <Tag color="red">成功</Tag>
             ) : (
-              <Tag color="green">成功</Tag>
+              <Tag color="green">失败</Tag>
             )}
           </>
         ) : (
           <>
             <span>--</span>
+          </>
+        );
+      },
+    },
+    {
+      //
+      title: 'led',
+      dataIndex: 'led_result',
+      render: (_, record: any) => {
+        return record.led_result !== -1 ? (
+          <>
+            {record.led_result === 0 ? <Tag color="red">成功</Tag> : <Tag color="green">失败</Tag>}
+          </>
+        ) : (
+          <>
+            <Tag color="orange">未测</Tag>
           </>
         );
       },
