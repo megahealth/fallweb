@@ -9,6 +9,8 @@ export default function () {
         return '上海贝生毫米波雷达监测系统';
       case '125':
         return '泽道网络毫米波雷达监测系统';
+      case '273':
+        return '天赞科技毫米波雷达监测系统';
       default:
         return 'Welcome! 兆观无线智能监护系统';
     }
