@@ -29,7 +29,7 @@ const Card = (props) => {
 };
 
 const Status = (props) => {
-  const { breath, state, online, count, rollTime, alert, tcount } = props;
+  let { breath, state, online, count, rollTime, alert, tcount } = props;
   let group_id = localStorage.getItem('group_id');
   if (group_id === '1') {
     let selectedGroups = localStorage.getItem('selectedGroups');
@@ -55,7 +55,15 @@ const Status = (props) => {
     <div className={styles.status}>
       {online === 0 && <Card src={离线圆形} name={'状态'} value={'设备离线'}></Card>}
       {online === 1 && state === 0 && <Card src={无人圆形} name={'状态'} value={'无人'}></Card>}
-      {online === 1 && state >= 5 && <Card src={有人跌倒} name={'状态'} value={'有人跌倒'}></Card>}
+      {online === 1 && state >= 5 && state <= 11 && (
+        <Card src={有人跌倒} name={'状态'} value={'有人跌倒'}></Card>
+      )}
+      {online === 1 && state === 12 && (
+        <Card src={有人跌倒} name={'状态'} value={'马桶异常'}></Card>
+      )}
+      {online === 1 && state === 13 && (
+        <Card src={有人跌倒} name={'状态'} value={'低姿有呼吸'}></Card>
+      )}
       {online === 1 && state === 1 && (
         <Card src={有人活动圆形} name={'状态'} value={'有人活动'}></Card>
       )}
