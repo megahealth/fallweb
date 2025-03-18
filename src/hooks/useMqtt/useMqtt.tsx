@@ -80,18 +80,18 @@ const useMqtt = () => {
   }, [visible, client, reconnectTimes, setMqttStatus]);
 
   useEffect(() => {
-    if (visible) {
-      if (reconnectTimes > 1) {
-        message.error('有人登陆您的账号，已被迫下线！', 5);
-        if (client) {
-          client.end();
-        }
-        localStorage.clear();
-        history.replace({
-          pathname: '/login',
-        });
-      }
-    }
+    // if (visible) {
+    //   if (reconnectTimes > 1) {
+    //     message.error('有人登陆您的账号，已被迫下线！', 5);
+    //     if (client) {
+    //       client.end();
+    //     }
+    //     localStorage.clear();
+    //     history.replace({
+    //       pathname: '/login',
+    //     });
+    //   }
+    // }
   }, [visible, client, reconnectTimes]);
 
   useEffect(() => {
